@@ -1,0 +1,99 @@
+<!--
+**************************************************************************
+* 作成者: 鶴田凌
+* 作成日: 2025/06/15
+* 概要: 本の全体まとめを表示する画面のレイアウト
+* 履歴:
+* 2025/06/15 鶴田凌　新規作成
+**************************************************************************
+-->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- 戻るボタン（左上） -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back"
+        android:contentDescription="戻る"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- ハンバーガーアイコン（右上） -->
+    <ImageButton
+        android:id="@+id/btnMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_highlight"
+        android:contentDescription="ハイライトメモ"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 本の名前選択 -->
+    <AutoCompleteTextView
+        android:id="@+id/bookNameInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="本の名前"
+        android:inputType="text"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintTop_toBottomOf="@+id/btnBack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 全体まとめ入力欄 -->
+    <EditText
+        android:id="@+id/summaryInput"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:hint="全体まとめを入力（最大500文字）"
+        android:inputType="textMultiLine"
+        android:maxLength="500"
+        android:minLines="10"
+        android:gravity="top"
+        android:background="@android:drawable/editbox_background"
+        app:layout_constraintTop_toBottomOf="@id/bookNameInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/footerLayout" />
+
+    <!-- 下部操作エリア -->
+    <LinearLayout
+        android:id="@+id/footerLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="外部に公開" />
+
+        <Switch
+            android:id="@+id/switchPublic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/btnRegisterSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_send"
+            android:contentDescription="登録"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

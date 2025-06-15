@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -32,17 +33,36 @@ android {
 }
 
 dependencies {
+    implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
+    implementation("com.google.firebase:firebase-analytics")
+
+    // Firestore
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    // Firebase Authentication
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation(libs.appcompat)
+    implementation(libs.material)
 
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-
-    implementation(libs.glide)
-    annotationProcessor(libs.glide.compiler)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
+    // Room components
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    // Core Android dependencies
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    //Google Books API
+    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation ("com.android.volley:volley:1.2.1")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    // implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 }

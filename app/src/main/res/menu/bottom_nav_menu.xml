@@ -1,0 +1,23 @@
+<!--
+**************************************************************************
+* 作成者: 鶴田凌
+* 作成日: 2025/06/15
+* 概要: ボトムナビゲーションメニューのレイアウト
+* 履歴:
+* 2025/06/15 鶴田凌　新規作成
+**************************************************************************
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search" />
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="@string/home" />
+    <item
+        android:id="@+id/nav_book"
+        android:icon="@drawable/ic_book"
+        android:title="@string/book" />
+</menu>
