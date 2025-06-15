@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookapp03.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.bookapp03.C5UserInformationManaging.UserAuthManager;
-import com.example.bookapp03.C6BookInformationManaging.VolumeIdProvider;
 
 /**
  * モジュール名: ホーム画面表示
