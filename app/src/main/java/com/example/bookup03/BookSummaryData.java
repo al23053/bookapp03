@@ -4,7 +4,7 @@
  * 作成日: 2025/06/09
  * 概要: 書籍のサマリ情報を保持するデータクラス
  * 履歴:
- *   2025/06/09 横山葉 新規作成
+ * 2025/06/09 横山葉 新規作成
  */
 
 package com.example.bookup03;
@@ -30,9 +30,17 @@ public class BookSummaryData {
         this.imageUrl = imageUrl;
     }
 
-    public String getVolumeId() { return volumeId; }
-    public String getTitle() { return title; }
-    public String getImageUrl() { return imageUrl; }
+    public String getVolumeId() {
+        return volumeId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
     public boolean isPublic() {
         return isPublic;

@@ -4,7 +4,7 @@
  * 作成日: 2025/06/09
  * 概要: ハイライトメモのデータを保持するクラス
  * 履歴:
- *   2025/06/09 横山葉 新規作成
+ * 2025/06/09 横山葉 新規作成
  */
 
 package com.example.bookup03;
@@ -29,7 +29,15 @@ public class HighlightMemoData {
         this.memoContent = memoContent;
     }
 
-    public String getPage() { return page; }
-    public String getLine() { return line; }
-    public String getMemoContent() { return memoContent; }
+    public String getPage() {
+        return page;
+    }
+
+    public String getLine() {
+        return line;
+    }
+
+    public String getMemoContent() {
+        return memoContent;
+    }
 }
