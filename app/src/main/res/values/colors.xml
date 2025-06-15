@@ -2,4 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!-- BottomNavigationView の選択時カラー -->
+    <color name="colorPrimary">#6200EE</color>
+    <!-- BottomNavigationView の非選択時カラー -->
+    <color name="colorOnSurface">#757575</color>
 </resources>
+

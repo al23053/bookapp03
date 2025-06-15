@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">1Bapp</string>
-    <!-- Googleログインに必要なWebクライアントID -->
-    <string name="default_web_client_id">1096669943285-77a6j9jng4lft93brolp79tsv08gl5kq.apps.googleusercontent.com</string>
+
+    <string name="app_name">bookapp03</string>
+    <string name="home">ホーム</string>
+    <string name="search">検索</string>
+    <string name="book">My 全体まとめ</string>
+    <string name="error">エラー</string>
+
 </resources>
