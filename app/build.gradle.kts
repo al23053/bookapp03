@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.bookup03"
+    namespace = "com.example.bookapp03"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.bookup03"
+        applicationId = "com.example.bookapp03"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

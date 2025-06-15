@@ -7,16 +7,16 @@
  *   2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookup03.ui;
+package com.example.bookapp03.ui;
 
 import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bookup03.data.BookDetailData;
-import com.example.bookup03.logic.BookDetailViewController;
-import com.example.bookup03.data.BookDetailViewModel;
-import com.example.bookup03.R;
+import com.example.bookapp03.data.BookDetailData;
+import com.example.bookapp03.logic.BookDetailViewController;
+import com.example.bookapp03.data.BookDetailViewModel;
+import com.example.bookapp03.R;
 
 /**
  * 書籍詳細画面を表示するアクティビティ

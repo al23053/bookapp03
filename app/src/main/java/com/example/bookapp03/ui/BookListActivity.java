@@ -1,13 +1,13 @@
-package com.example.bookup03.ui;
+package com.example.bookapp03.ui;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookup03.logic.BookListViewController;
-import com.example.bookup03.data.BookListViewModel;
-import com.example.bookup03.data.BookSummaryData;
-import com.example.bookup03.R;
+import com.example.bookapp03.logic.BookListViewController;
+import com.example.bookapp03.data.BookListViewModel;
+import com.example.bookapp03.data.BookSummaryData;
+import com.example.bookapp03.R;
 
 import java.util.ArrayList;
 import java.util.List;

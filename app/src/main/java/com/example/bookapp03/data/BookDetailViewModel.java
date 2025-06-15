@@ -7,7 +7,7 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookup03.data;
+package com.example.bookapp03.data;
 
 /**
  * 書籍の詳細情報を保持・管理するビューモデル

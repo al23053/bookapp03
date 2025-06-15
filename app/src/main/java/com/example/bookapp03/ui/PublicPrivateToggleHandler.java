@@ -7,11 +7,11 @@
  * 2025/06/14 横山葉 新規作成
  */
 
-package com.example.bookup03.ui;
+package com.example.bookapp03.ui;
 
 import android.util.Log;
 
-import com.example.bookup03.data.BookListViewModel;
+import com.example.bookapp03.data.BookListViewModel;
 
 /**
  * 公開・非公開切り替えの操作を扱うクラス

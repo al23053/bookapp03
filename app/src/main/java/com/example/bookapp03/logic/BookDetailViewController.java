@@ -7,7 +7,7 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookup03.logic;
+package com.example.bookapp03.logic;
 
 import android.util.Log;
 import android.view.View;
@@ -15,8 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.bookup03.data.BookDetailData;
-import com.example.bookup03.R;
+import com.example.bookapp03.data.BookDetailData;
+import com.example.bookapp03.R;
 
 /**
  * 書籍の詳細情報を画面に表示するためのコントローラー

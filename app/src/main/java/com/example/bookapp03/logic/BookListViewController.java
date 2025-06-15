@@ -7,7 +7,7 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookup03.logic;
+package com.example.bookapp03.logic;
 
 import android.util.Log;
 import android.view.View;
@@ -17,10 +17,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookup03.data.BookListViewModel;
-import com.example.bookup03.data.BookSummaryData;
-import com.example.bookup03.R;
-import com.example.bookup03.ui.BookListAdapter;
+import com.example.bookapp03.data.BookListViewModel;
+import com.example.bookapp03.data.BookSummaryData;
+import com.example.bookapp03.R;
+import com.example.bookapp03.ui.BookListAdapter;
 
 import java.util.List;
 

@@ -7,12 +7,12 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookup03.logic;
+package com.example.bookapp03.logic;
 
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.bookup03.R;
+import com.example.bookapp03.R;
 
 /**
  * ハイライトメモの表示処理を担当するクラス
