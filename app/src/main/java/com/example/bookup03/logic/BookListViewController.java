@@ -7,15 +7,20 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookup03;
+package com.example.bookup03.logic;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.content.Context;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.bookup03.data.BookListViewModel;
+import com.example.bookup03.data.BookSummaryData;
+import com.example.bookup03.R;
+import com.example.bookup03.ui.BookListAdapter;
 
 import java.util.List;
 

@@ -7,8 +7,10 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookup03;
+package com.example.bookup03.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.bookup03.data.BookListViewModel;
+import com.example.bookup03.data.BookSummaryData;
+import com.example.bookup03.R;
 
 import java.util.List;
 
@@ -28,22 +33,9 @@ import java.util.List;
  */
 public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookViewHolder> {
 
-    /**
-     * 表示する書籍リスト
-     */
     private List<BookSummaryData> bookList;
-
-    /**
-     * 書籍一覧のViewModel
-     */
     private BookListViewModel viewModel;
 
-    /**
-     * コンストラクタ
-     *
-     * @param bookList 書籍リスト
-     * @param viewModel ビューモデル
-     */
     public BookListAdapter(List<BookSummaryData> bookList, BookListViewModel viewModel) {
         this.bookList = bookList;
         this.viewModel = viewModel;
@@ -72,12 +64,21 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
         // 公開・非公開スイッチ状態設定
         holder.publicSwitch.setChecked(book.isPublic());
 
-        // スイッチの変更リスナー設定
+        // スイッチの変更リスナー
         holder.publicSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            book.setPublic(isChecked); // モデルも更新
-
-            // ViewModelへ切り替えを通知
+            book.setPublic(isChecked);
             new PublicPrivateToggleHandler(viewModel).handleToggle(book.getVolumeId(), isChecked);
+        });
+
+        // 表紙タップで詳細画面へ
+        holder.coverView.setOnClickListener(v -> {
+            Context context = v.getContext();
+            Intent intent = new Intent(context, BookDetailActivity.class);
+            intent.putExtra("volumeId", book.getVolumeId());
+            intent.putExtra("title", book.getTitle());
+            intent.putExtra("coverImageUrl", book.getImageUrl());
+            intent.putExtra("publicStatus", book.isPublic() ? "public" : "private");
+            context.startActivity(intent);
         });
     }
 
@@ -86,9 +87,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
         return bookList.size();
     }
 
-    /**
-     * 書籍表示用ViewHolder
-     */
     static class BookViewHolder extends RecyclerView.ViewHolder {
         TextView titleView;
         ImageView coverView;

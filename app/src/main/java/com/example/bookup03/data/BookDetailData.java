@@ -7,7 +7,7 @@
  * 2025/06/9 横山葉 新規作成
  */
 
-package com.example.bookup03;
+package com.example.bookup03.data;
 
 /**
  * 書籍の詳細情報を表すクラス
@@ -42,7 +42,7 @@ public class BookDetailData {
      * 書籍の詳細データを初期化する
      * @param volumeId ボリュームID
      * @param name 書籍名
-     * @param summary あらすじ
+     * @param summary 全体まとめ
      * @param coverImageUrl カバー画像のURL
      * @param publicStatus 公開ステータス
      */
@@ -71,7 +71,7 @@ public class BookDetailData {
     }
 
     /**
-     * あらすじを取得する
+     * 全体まとめを取得する
      * @return summary
      */
     public String getSummary() {

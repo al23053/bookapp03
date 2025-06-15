@@ -7,7 +7,7 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookup03;
+package com.example.bookup03.data;
 
 /**
  * ハイライトメモの情報を管理するデータクラス

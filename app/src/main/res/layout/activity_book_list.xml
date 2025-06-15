@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+**************************************************************
+* 作成者: 横山葉
+* 作成日: 2025/06/09
+* 概要: 本一覧画面のレイアウト
+* 履歴:
+*   2025/06/09 横山葉 新規作成
+**************************************************************
+-->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
