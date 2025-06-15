@@ -1,4 +1,4 @@
-package com.example.bookup03;
+package com.example.bookapp03;
 
 import org.junit.Test;
 
