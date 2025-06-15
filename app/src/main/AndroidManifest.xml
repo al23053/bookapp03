@@ -25,6 +25,15 @@
         </activity>
 
         <activity android:name=".ui.BookDetailActivity" />
+        <activity
+            android:name="com.example.bookapp03.C1UIProcessing.DisplaySummary"
+            android:label="要約表示"/>
+        <activity
+            android:name="com.example.bookapp03.C1UIProcessing.DisplayHighlightMemo"
+            android:label="ハイライトメモ表示"/>
+        <activity
+            android:name="com.example.bookapp03.C1UIProcessing.DisplaySetting"
+            android:label="設定"/>
     </application>
 
 </manifest>
