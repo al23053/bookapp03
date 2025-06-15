@@ -1,7 +1,9 @@
 <resources>
+
     <string name="app_name">bookapp03</string>
     <string name="home">ホーム</string>
     <string name="search">検索</string>
     <string name="book">My 全体まとめ</string>
     <string name="error">エラー</string>
+
 </resources>
