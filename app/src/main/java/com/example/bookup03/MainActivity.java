@@ -1,24 +1,35 @@
 package com.example.bookup03;
 
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private BookListViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        viewModel = new BookListViewModel();
+
+        List<BookSummaryData> dummyBooks = new ArrayList<>();
+        dummyBooks.add(new BookSummaryData("1", "本A", "https://example.com/sample1.jpg"));
+        dummyBooks.add(new BookSummaryData("2", "本B", "https://example.com/sample2.jpg"));
+        dummyBooks.add(new BookSummaryData("3", "本C", "https://example.com/sample3.jpg"));
+
+        for (BookSummaryData book : dummyBooks) {
+            book.setPublic(false);
+        }
+
+        viewModel.setBooks(dummyBooks);
+
+        RecyclerView recyclerView = findViewById(R.id.book_list_recycler);
+        new BookListViewController().displayBookList(recyclerView, dummyBooks, viewModel, dummyBooks.isEmpty());
     }
 }

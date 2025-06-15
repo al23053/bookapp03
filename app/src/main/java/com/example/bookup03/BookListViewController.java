@@ -12,8 +12,9 @@ package com.example.bookup03;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.content.Context;
+import androidx.recyclerview.widget.GridLayoutManager;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class BookListViewController {
         }
 
         // レイアウトとアダプター設定
-        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+        recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(), 3));
         BookListAdapter adapter = new BookListAdapter(bookSummaries, viewModel);
         recyclerView.setAdapter(adapter);
 
