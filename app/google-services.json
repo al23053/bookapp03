@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1096669943285",
+    "project_id": "redingapp-89380",
+    "storage_bucket": "redingapp-89380.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096669943285:android:104affb0672fe4f0103cbc",
+        "android_client_info": {
+          "package_name": "com.example.a1bapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096669943285-vgdivjk5s6b3l5u9snepkd2se5b5gmmd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.a1bapp",
+            "certificate_hash": "baabcd71b5edb1225a128a2750b15f53a92ffe13"
+          }
+        },
+        {
+          "client_id": "1096669943285-77a6j9jng4lft93brolp79tsv08gl5kq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxsAqe8JhuLUelPQEhgOa2lxTKxMFXE4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096669943285-77a6j9jng4lft93brolp79tsv08gl5kq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
