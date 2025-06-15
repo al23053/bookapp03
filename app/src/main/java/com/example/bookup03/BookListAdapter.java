@@ -1,3 +1,12 @@
+/**
+ * モジュール名: BookListAdapter
+ * 作成者: 横山葉
+ * 作成日: 2025/06/09
+ * 概要: 書籍一覧をRecyclerViewで表示するためのアダプタークラス
+ * 履歴:
+ *   2025/06/09 横山葉 新規作成
+ */
+
 package com.example.bookup03;
 
 import android.view.LayoutInflater;
@@ -14,12 +23,27 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+/**
+ * 書籍一覧の表示を担当するRecyclerViewアダプター
+ */
 public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookViewHolder> {
 
+    /**
+     * 表示する書籍リスト
+     */
     private List<BookSummaryData> bookList;
+
+    /**
+     * 書籍一覧のViewModel
+     */
     private BookListViewModel viewModel;
 
-    // ViewModelを受け取れるようにする
+    /**
+     * コンストラクタ
+     *
+     * @param bookList 書籍リスト
+     * @param viewModel ビューモデル
+     */
     public BookListAdapter(List<BookSummaryData> bookList, BookListViewModel viewModel) {
         this.bookList = bookList;
         this.viewModel = viewModel;
@@ -37,20 +61,22 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
     public void onBindViewHolder(BookViewHolder holder, int position) {
         BookSummaryData book = bookList.get(position);
 
+        // タイトル表示
         holder.titleView.setText(book.getTitle());
 
+        // 表紙画像読み込み
         Glide.with(holder.coverView.getContext())
                 .load(book.getImageUrl())
                 .into(holder.coverView);
 
-        // スイッチ状態設定
+        // 公開・非公開スイッチ状態設定
         holder.publicSwitch.setChecked(book.isPublic());
 
-        // リスナー設定（状態変更時に ViewModel に通知）
+        // スイッチの変更リスナー設定
         holder.publicSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            book.setPublic(isChecked); // モデルの状態も更新
+            book.setPublic(isChecked); // モデルも更新
 
-            // 公開・非公開切替処理をViewModelに渡す
+            // ViewModelへ切り替えを通知
             new PublicPrivateToggleHandler(viewModel).handleToggle(book.getVolumeId(), isChecked);
         });
     }
@@ -60,6 +86,9 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
         return bookList.size();
     }
 
+    /**
+     * 書籍表示用ViewHolder
+     */
     static class BookViewHolder extends RecyclerView.ViewHolder {
         TextView titleView;
         ImageView coverView;
