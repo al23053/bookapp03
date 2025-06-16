@@ -85,7 +85,7 @@ public class DisplayHighlightMemo extends AppCompatActivity {
         uid = getIntent().getStringExtra("uid");
         volumeId = getIntent().getStringExtra("volumeId");
 
-        dao  = BookInformationDatabase.getDatabase(this).highlightMemoDao();
+        dao = BookInformationDatabase.getDatabase(this).highlightMemoDao();
         exec = Executors.newSingleThreadExecutor();
 
         // DBから読み込み、ドロワーを開いて表示

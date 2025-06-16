@@ -15,7 +15,7 @@ import com.example.bookapp03.C6BookInformationManaging.database.SummaryDao;
 import com.example.bookapp03.C6BookInformationManaging.database.SummaryEntity;
 
 /**
- * モジュール名: 全体まとめ登録
+ * モジュール名: 全体まとめ登録内容保存
  * 作成者: 鶴田凌
  * 作成日: 2025/06/15
  * 概要: ユーザ／書籍ごとの全体まとめ情報をローカルDBとFirestoreに保存するクラス
