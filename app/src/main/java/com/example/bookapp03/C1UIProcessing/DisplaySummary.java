@@ -51,8 +51,8 @@ public class DisplaySummary extends AppCompatActivity {
 
         // SummaryDao／Executor 初期化
         summaryDao = BookInformationDatabase
-                        .getDatabase(this)
-                        .summaryDao();
+                .getDatabase(this)
+                .summaryDao();
         executor = Executors.newSingleThreadExecutor();
 
         // View バインド
@@ -63,7 +63,7 @@ public class DisplaySummary extends AppCompatActivity {
         btnRegisterSummary = findViewById(R.id.btnRegisterSummary);
 
         // UID は FirebaseAuth、volumeId は Intent extras から取得
-        currentUid      = UserAuthManager.getCurrentUid();
+        currentUid = UserAuthManager.getCurrentUid();
         currentVolumeId = getIntent().getStringExtra("volumeId");
 
         // 各コントローラ生成・バインド

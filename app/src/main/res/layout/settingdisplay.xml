@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 **************************************************************************
 * 作成者: 鶴田凌
 * 作成日: 2025/06/15
@@ -11,32 +10,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/background_light"
     android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@android:color/background_light">
+    android:padding="24dp">
 
     <!-- ヘッダー -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="戻る" />
+            android:contentDescription="戻る"
+            android:src="@drawable/ic_back" />
 
         <TextView
             android:id="@+id/txtTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:text="ユーザ設定"
             android:textSize="34sp"
-            android:layout_marginStart="16dp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -45,49 +44,49 @@
         android:id="@+id/btnNicknameIcon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ニックネーム・アイコン"
-        android:textSize="24sp"
-        android:paddingVertical="16dp"
         android:clickable="true"
-        android:foreground="?attr/selectableItemBackground" />
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingVertical="16dp"
+        android:text="ニックネーム・アイコン"
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/btnGenre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="好きな本のジャンル"
-        android:textSize="24sp"
-        android:paddingVertical="16dp"
         android:clickable="true"
-        android:foreground="?attr/selectableItemBackground" />
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingVertical="16dp"
+        android:text="好きな本のジャンル"
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/btnDarkMode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ダークモード切替"
-        android:textSize="24sp"
-        android:paddingVertical="16dp"
         android:clickable="true"
-        android:foreground="?attr/selectableItemBackground" />
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingVertical="16dp"
+        android:text="ダークモード切替"
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/btnAccountSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="アカウント切替"
-        android:textSize="24sp"
-        android:paddingVertical="16dp"
         android:clickable="true"
-        android:foreground="?attr/selectableItemBackground" />
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingVertical="16dp"
+        android:text="アカウント切替"
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ログアウト"
-        android:textSize="24sp"
-        android:paddingVertical="16dp"
         android:clickable="true"
-        android:foreground="?attr/selectableItemBackground" />
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingVertical="16dp"
+        android:text="ログアウト"
+        android:textSize="24sp" />
 </LinearLayout>

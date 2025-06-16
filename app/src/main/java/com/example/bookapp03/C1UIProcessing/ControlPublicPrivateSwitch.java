@@ -12,16 +12,15 @@ import java.util.concurrent.ExecutorService;
  * モジュール名: 公開・非公開スイッチ制御
  * 作成者: 鶴田凌
  * 作成日: 2025/06/15
- * 概要: 全体まとめの公開・非公開フラグをDBから読み込み、
- *       スイッチに反映するクラス
+ * 概要: 全体まとめの公開・非公開フラグをDBから読み込み、スイッチに反映するクラス
  * 履歴:
- *   2025/06/15 鶴田凌 新規作成
+ * 2025/06/15 鶴田凌 新規作成
  */
 public class ControlPublicPrivateSwitch {
-    private final Activity     activity;
-    private final SummaryDao   summaryDao;
-    private final String       uid;
-    private final String       volumeId;
+    private final Activity activity;
+    private final SummaryDao summaryDao;
+    private final String uid;
+    private final String volumeId;
     private final ExecutorService executor;
 
     /**
@@ -32,17 +31,17 @@ public class ControlPublicPrivateSwitch {
      * @param executor   DB操作実行用スレッドプール
      */
     public ControlPublicPrivateSwitch(
-        Activity activity,
-        SummaryDao summaryDao,
-        String uid,
-        String volumeId,
-        ExecutorService executor
+            Activity activity,
+            SummaryDao summaryDao,
+            String uid,
+            String volumeId,
+            ExecutorService executor
     ) {
-        this.activity   = activity;
+        this.activity = activity;
         this.summaryDao = summaryDao;
-        this.uid        = uid;
-        this.volumeId   = volumeId;
-        this.executor   = executor;
+        this.uid = uid;
+        this.volumeId = volumeId;
+        this.executor = executor;
     }
 
     /**

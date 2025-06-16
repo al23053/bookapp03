@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * モジュール名: ハイライトメモ登録
+ * モジュール名: ハイライト・メモ登録情報保存
  * 作成者: 鶴田凌
  * 作成日: 2025/06/15
  * 概要: ユーザ／書籍ごとのハイライトメモをローカルDBに保存するクラス

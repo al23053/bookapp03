@@ -13,7 +13,9 @@ import android.widget.ImageButton;
  */
 public class ControlBackToHomeButton {
 
-    /** Activity を保持し、finish() を呼び出すための参照 */
+    /**
+     * Activity を保持し、finish() を呼び出すための参照
+     */
     private final Activity activity;
 
     /**
