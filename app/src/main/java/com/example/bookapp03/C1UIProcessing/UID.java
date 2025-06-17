@@ -7,7 +7,8 @@
  *   2025/06/15 増田学斗 新規作成
  */
 
-package com.example.a1bapp;
+package com.example.bookapp03.C1UIProcessing;
+
 public class UID {
     /** ユーザーのメールアドレス（今回は使わないなら削除してもOK） */
     public String email;

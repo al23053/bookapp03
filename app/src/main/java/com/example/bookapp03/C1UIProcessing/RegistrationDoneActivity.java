@@ -7,7 +7,7 @@
  *   2025/06/15 増田学斗 新規作成
  */
 
-package com.example.a1bapp;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,7 +17,9 @@ import android.widget.TextView;
 
 import android.util.Log;
 
-import com.example.a1bapp.C1UIProcessing.AccountSettingActivity;
+import com.example.bookapp03.C1UIProcessing.AccountSettingActivity;
+import com.example.bookapp03.R;
+
 
 public class RegistrationDoneActivity extends Activity {
 

@@ -1,3 +1,4 @@
+
 /**
  * モジュール名: AccountSettingActivity
  * 作成者: 増田学斗
@@ -7,7 +8,7 @@
  * 2025/06/15 増田学斗 新規作成
  */
 
-package com.example.a1bapp.C1UIProcessing;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -19,12 +20,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.a1bapp.GenreSelectionActivity;
-import com.example.a1bapp.R;
+import com.example.bookapp03.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,10 +50,6 @@ public class AccountSettingActivity extends Activity {
     /** 選択された画像のURI */
     private Uri selectedImageUri = null;
 
-    /**
-     * アクティビティの初期化処理を行う。
-     * @param savedInstanceState アクティビティの保存状態
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,22 +60,14 @@ public class AccountSettingActivity extends Activity {
         editTextNickname = findViewById(R.id.editTextNickname);
         buttonNext = findViewById(R.id.buttonNext);
 
-        // ギャラリーから画像を選択
         buttonChooseImage.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, REQUEST_CODE_IMAGE_PICK);
         });
 
-        // 「次へ」ボタンが押されたとき、入力内容を保存して次画面へ遷移
         buttonNext.setOnClickListener(v -> saveUserData());
     }
 
-    /**
-     * ギャラリー選択後に呼び出され、画像を取得して表示する。
-     * @param requestCode リクエストコード
-     * @param resultCode 結果コード
-     * @param data インテントデータ
-     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -91,10 +78,6 @@ public class AccountSettingActivity extends Activity {
         }
     }
 
-    /**
-     * ユーザーのニックネームとアイコン画像URIをFirebaseに保存し、
-     * ジャンル選択画面へ遷移する。
-     */
     private void saveUserData() {
         String nickname = editTextNickname.getText().toString().trim();
 
@@ -107,16 +90,15 @@ public class AccountSettingActivity extends Activity {
         String uid = user.getUid();
         String iconUriStr = (selectedImageUri != null) ? selectedImageUri.toString() : "";
 
-        // Firebase Realtime Database に保存するデータ
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("nickname", nickname);
-        userMap.put("iconUri", iconUriStr); // Base64未使用構成
+        userMap.put("iconUri", iconUriStr);
 
-        // Firebaseにデータを保存し、成功時にジャンル選択画面へ遷移
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid);
-        ref.setValue(userMap)
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(uid)
+                .set(userMap)
                 .addOnSuccessListener(unused -> {
-                    Log.d("AccountSetting", "Firebase保存成功、遷移開始");
+                    Log.d("AccountSetting", "Firestore保存成功、遷移開始");
                     Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(AccountSettingActivity.this, GenreSelectionActivity.class);
@@ -125,9 +107,9 @@ public class AccountSettingActivity extends Activity {
                     startActivity(intent);
                     finish();
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "保存失敗: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
-
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "保存失敗: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("AccountSetting", "Firestore保存失敗", e);
+                });
     }
 }
