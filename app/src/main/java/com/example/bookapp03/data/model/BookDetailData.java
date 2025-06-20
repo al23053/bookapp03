@@ -7,7 +7,7 @@
  * 2025/06/9 横山葉 新規作成
  */
 
-package com.example.bookapp03.data;
+package com.example.bookapp03.data.model;
 
 /**
  * 書籍の詳細情報を表すクラス

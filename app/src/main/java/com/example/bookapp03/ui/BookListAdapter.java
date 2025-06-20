@@ -22,8 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.bookapp03.data.BookListViewModel;
-import com.example.bookapp03.data.BookSummaryData;
+import com.example.bookapp03.data.model.BookSummaryData; // パッケージ変更
 import com.example.bookapp03.R;
 
 import java.util.List;
@@ -34,31 +33,43 @@ import java.util.List;
 public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookViewHolder> {
 
     private List<BookSummaryData> bookList;
-    private BookListViewModel viewModel;
+    private final PublicPrivateToggleHandler toggleHandler; // ViewModelではなくHandlerを受け取る
 
-    public BookListAdapter(List<BookSummaryData> bookList, BookListViewModel viewModel) {
+    public BookListAdapter(List<BookSummaryData> bookList, PublicPrivateToggleHandler toggleHandler) {
         this.bookList = bookList;
-        this.viewModel = viewModel;
+        this.toggleHandler = toggleHandler;
     }
+
+    /**
+     * データセットを更新するメソッド
+     * ViewModelのLiveDataを監視してこのメソッドを呼ぶことで、RecyclerViewを更新できます。
+     * @param newBookList 新しい書籍リスト
+     */
+    public void updateBookList(List<BookSummaryData> newBookList) {
+        this.bookList = newBookList;
+        notifyDataSetChanged(); // データが変更されたことをアダプターに通知
+    }
+
 
     @NonNull
     @Override
-    public BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_book, parent, false);
+    public BookViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_book_summary, parent, false);
         return new BookViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(BookViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
         BookSummaryData book = bookList.get(position);
 
-        // タイトル表示
+        // タイトルを設定
         holder.titleView.setText(book.getTitle());
 
-        // 表紙画像読み込み
+        // カバー画像を設定（Glideを使用）
         Glide.with(holder.coverView.getContext())
                 .load(book.getImageUrl())
+                .placeholder(R.drawable.ic_book_placeholder) // プレースホルダー画像があれば設定
+                .error(R.drawable.ic_error_image) // エラー画像があれば設定
                 .into(holder.coverView);
 
         // 公開・非公開スイッチ状態設定
@@ -66,8 +77,11 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
 
         // スイッチの変更リスナー
         holder.publicSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // BookSummaryDataの公開状態も更新
             book.setPublic(isChecked);
-            new PublicPrivateToggleHandler(viewModel).handleToggle(book.getVolumeId(), isChecked);
+            // Handlerを介してViewModelに公開状態の更新を伝える
+            // TODO: ここでユーザーUIDを渡す必要がある (Firebase Authなどから取得)
+            toggleHandler.handleToggle("current_user_id", book.getVolumeId(), isChecked);
         });
 
         // 表紙タップで詳細画面へ
@@ -75,9 +89,10 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
             Context context = v.getContext();
             Intent intent = new Intent(context, BookDetailActivity.class);
             intent.putExtra("volumeId", book.getVolumeId());
-            intent.putExtra("title", book.getTitle());
-            intent.putExtra("coverImageUrl", book.getImageUrl());
-            intent.putExtra("publicStatus", book.isPublic() ? "public" : "private");
+            // 詳細画面でViewModelがデータをロードするので、summaryは渡す必要がなくなる
+            // intent.putExtra("title", book.getTitle()); // 必要なら渡しても良い
+            // intent.putExtra("coverImageUrl", book.getImageUrl()); // 必要なら渡しても良い
+            // intent.putExtra("publicStatus", book.isPublic() ? "public" : "private"); // 必要なら渡しても良い
             context.startActivity(intent);
         });
     }
@@ -96,7 +111,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
             super(itemView);
             titleView = itemView.findViewById(R.id.book_title);
             coverView = itemView.findViewById(R.id.book_cover);
-            publicSwitch = itemView.findViewById(R.id.publicPrivateSwitch);
+            publicSwitch = itemView.findViewById(R.id.public_private_switch); // activity_main.xmlで定義されている必要あり
         }
     }
 }
