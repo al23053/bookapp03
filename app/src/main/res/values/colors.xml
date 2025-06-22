@@ -6,5 +6,9 @@
     <color name="colorPrimary">#6200EE</color>
     <!-- BottomNavigationView の非選択時カラー -->
     <color name="colorOnSurface">#757575</color>
+
+    <!-- ダークモード設定画面用背景色 -->
+    <color name="background_light">#FFFFFF</color>
+    <color name="background_dark">#121212</color>
 </resources>
 
