@@ -1,9 +1,0 @@
-<resources>
-    <!-- もともと定義していた Theme.Bookapp03 を DayNight ベースに -->
-    <style name="Theme.Bookapp03" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- 既存のカラーやフォント設定をここに残す -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorOnSurface">@color/colorOnSurface</item>
-        <!-- 必要なら他の属性も継承 -->
-    </style>
-</resources>
