@@ -38,8 +38,10 @@ dependencies {
 
     // Firestore
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-firestore") //追加06/17
     // Firebase Authentication
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-auth")  //追加06/17
     implementation(libs.appcompat)
     implementation(libs.material)
 
@@ -64,6 +66,10 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation ("com.android.volley:volley:1.2.1")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
+
+    //Google Login
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
+
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")

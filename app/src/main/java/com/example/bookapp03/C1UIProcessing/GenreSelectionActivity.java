@@ -1,3 +1,4 @@
+
 /**
  * モジュール名: GenreSelectionActivity
  * 作成者: 増田学斗
@@ -6,7 +7,7 @@
  * 履歴:
  *   2025/06/15 増田学斗 新規作成
  */
-package com.example.a1bapp;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,9 +17,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
-import com.example.a1bapp.C1UIProcessing.CompleteActivity;
+import com.example.bookapp03.R;
+import com.example.bookapp03.C1UIProcessing.CompleteActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,12 +36,6 @@ public class GenreSelectionActivity extends Activity {
     /** 前画面から受け取るアイコン画像URI文字列 */
     private String iconUri;
 
-    /**
-     * アクティビティの初期化処理。
-     * チェックボックスとボタンのリスナー登録、Intentデータの取得を行う。
-     *
-     * @param savedInstanceState 保存されたインスタンスの状態
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +44,7 @@ public class GenreSelectionActivity extends Activity {
 
         // Intentから受け取るデータ（ニックネームとアイコンURI）
         nickname = getIntent().getStringExtra("nickname");
-        iconUri = getIntent().getStringExtra("iconUri"); // ← ここは iconBase64 ではなく iconUri に揃える
+        iconUri = getIntent().getStringExtra("iconUri");
 
         // 各ジャンルのチェックボックスをリストに追加
         genreCheckboxes.add(findViewById(R.id.checkbox_mystery));
@@ -62,33 +58,28 @@ public class GenreSelectionActivity extends Activity {
         buttonNext.setOnClickListener(v -> {
             ArrayList<String> selectedGenres = new ArrayList<>();
 
-            // 選択されたジャンルをリストに追加
             for (CheckBox cb : genreCheckboxes) {
                 if (cb.isChecked()) {
                     selectedGenres.add(cb.getText().toString());
                 }
             }
 
-            // ジャンルが1つも選択されていない場合は警告
             if (selectedGenres.isEmpty()) {
                 Toast.makeText(this, "1つ以上選択してください", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Firebaseへユーザー情報を保存
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             HashMap<String, Object> userData = new HashMap<>();
             userData.put("nickname", nickname);
             userData.put("genre", selectedGenres);
             userData.put("iconUri", iconUri);
 
-            FirebaseDatabase.getInstance().getReference("users")
-                    .child(uid)
-                    .setValue(userData)
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("users").document(uid)
+                    .set(userData)
                     .addOnSuccessListener(unused -> {
                         Log.d("GenreSelection", "ユーザ情報の保存に成功");
-
-                        // 完了画面に遷移
                         Intent intent = new Intent(this, CompleteActivity.class);
                         startActivity(intent);
                         finish();
