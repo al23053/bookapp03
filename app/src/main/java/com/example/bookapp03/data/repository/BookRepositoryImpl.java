@@ -37,15 +37,15 @@ public class BookRepositoryImpl implements BookRepository {
     private final HighlightMemoDao highlightMemoDao;
     private final RegisterSummary registerSummary;
     private final RegisterHighlightMemo registerHighlightMemo;
-    private final ExecutorService executor; // 非同期処理のためのExecutorService
+    private final ExecutorService executor;
 
     public BookRepositoryImpl(Context context) {
         BookInformationDatabase db = BookInformationDatabase.getDatabase(context);
         this.summaryDao = db.summaryDao();
         this.highlightMemoDao = db.highlightMemoDao();
-        this.registerSummary = new RegisterSummary(context); // RegisterSummaryもContextが必要
-        this.registerHighlightMemo = new RegisterHighlightMemo(context); // RegisterHighlightMemoもContextが必要
-        this.executor = Executors.newFixedThreadPool(4); // 適切なスレッドプールサイズを設定
+        this.registerSummary = new RegisterSummary(context);
+        this.registerHighlightMemo = new RegisterHighlightMemo(context);
+        this.executor = Executors.newFixedThreadPool(4);
     }
 
     @Override
@@ -126,8 +126,8 @@ public class BookRepositoryImpl implements BookRepository {
                 List<HighlightMemoEntity> entities = highlightMemoDao.getByUserAndVolume(uid, volumeId);
                 for (HighlightMemoEntity entity : entities) {
                     memoList.add(new HighlightMemoData(
-                            String.valueOf(entity.page), // intからStringへの変換
-                            String.valueOf(entity.line), // intからStringへの変換
+                            entity.page,
+                            entity.line,
                             entity.memo
                     ));
                 }

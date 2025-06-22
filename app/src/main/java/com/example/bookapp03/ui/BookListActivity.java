@@ -12,16 +12,16 @@ package com.example.bookapp03.ui;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookapp03.R;
-import com.example.bookapp03.data.repository.BookRepositoryImpl; // 新しいimport
+// import com.example.bookapp03.data.repository.BookRepositoryImpl; // ViewModelFactoryで処理するので不要
 import com.example.bookapp03.logic.BookListViewController;
-import com.example.bookapp03.presentation.viewmodel.BookListViewModel; // ViewModelのパッケージ変更
+import com.example.bookapp03.presentation.viewmodel.BookListViewModel; // ViewModelのパッケージ
+import com.example.bookapp03.ui.ViewModelFactory; // ViewModelFactoryをインポート
+import com.example.bookapp03.data.model.BookSummaryData; // BookSummaryDataをインポート
 
 import java.util.List;
 
@@ -31,6 +31,7 @@ public class BookListActivity extends AppCompatActivity {
     private BookListViewController controller;
     private RecyclerView recyclerView;
     private TextView emptyTextView;
+    private PublicPrivateToggleHandler toggleHandler; // ★追加★
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,20 +40,23 @@ public class BookListActivity extends AppCompatActivity {
 
         controller = new BookListViewController();
         recyclerView = findViewById(R.id.book_list_recycler);
-        emptyTextView = findViewById(R.id.empty_text); // レイアウトにempty_textがあることを前提
+        emptyTextView = findViewById(R.id.empty_text);
 
         // ViewModelProviderを使用してViewModelを初期化
-        // ViewModelのコンストラクタにRepositoryを渡すためのFactoryが必要
-        // ViewModelFactoryは別途定義します
         viewModel = new ViewModelProvider(this, new ViewModelFactory(getApplicationContext()))
                 .get(BookListViewModel.class);
+
+        // PublicPrivateToggleHandlerを初期化 (ViewModelを渡す)
+        toggleHandler = new PublicPrivateToggleHandler(viewModel); // ★追加★
 
         // LiveDataの変更を監視
         // ViewModelのbookListが更新されたら、自動的にここが呼ばれる
         viewModel.bookList.observe(this, bookSummaries -> {
             // データが更新されたらUIを更新
             boolean isEmpty = bookSummaries == null || bookSummaries.isEmpty();
-            controller.displayBookList(recyclerView, bookSummaries, viewModel, isEmpty);
+
+            // controller.displayBookListの引数を変更: ViewModelの代わりにtoggleHandlerを渡す
+            controller.displayBookList(recyclerView, bookSummaries, toggleHandler, isEmpty);
 
             // 空の時のメッセージ表示制御
             if (isEmpty) {

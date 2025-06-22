@@ -54,7 +54,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
     @NonNull
     @Override
     public BookViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_book_summary, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_book, parent, false);
         return new BookViewHolder(view);
     }
 
@@ -68,8 +68,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
         // カバー画像を設定（Glideを使用）
         Glide.with(holder.coverView.getContext())
                 .load(book.getImageUrl())
-                .placeholder(R.drawable.ic_book_placeholder) // プレースホルダー画像があれば設定
-                .error(R.drawable.ic_error_image) // エラー画像があれば設定
                 .into(holder.coverView);
 
         // 公開・非公開スイッチ状態設定
@@ -89,10 +87,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
             Context context = v.getContext();
             Intent intent = new Intent(context, BookDetailActivity.class);
             intent.putExtra("volumeId", book.getVolumeId());
-            // 詳細画面でViewModelがデータをロードするので、summaryは渡す必要がなくなる
-            // intent.putExtra("title", book.getTitle()); // 必要なら渡しても良い
-            // intent.putExtra("coverImageUrl", book.getImageUrl()); // 必要なら渡しても良い
-            // intent.putExtra("publicStatus", book.isPublic() ? "public" : "private"); // 必要なら渡しても良い
             context.startActivity(intent);
         });
     }
@@ -111,7 +105,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
             super(itemView);
             titleView = itemView.findViewById(R.id.book_title);
             coverView = itemView.findViewById(R.id.book_cover);
-            publicSwitch = itemView.findViewById(R.id.public_private_switch); // activity_main.xmlで定義されている必要あり
+            publicSwitch = itemView.findViewById(R.id.publicPrivateSwitch);
         }
     }
 }
