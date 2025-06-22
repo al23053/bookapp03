@@ -1,10 +1,10 @@
 /**
  * モジュール名: BookRepositoryImpl
- * 作成者: Gemini
+ * 作成者: 横山葉
  * 作成日: 2025/06/20
  * 概要: BookRepositoryインターフェースの実装クラス。ローカルDBと外部APIから書籍データを取得・更新する。
  * 履歴:
- * 2025/06/20 Gemini 新規作成
+ * 2025/06/20 横山葉 新規作成
  */
 package com.example.bookapp03.data.repository;
 
