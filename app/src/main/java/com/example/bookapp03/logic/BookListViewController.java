@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookapp03.data.BookListViewModel;
-import com.example.bookapp03.data.BookSummaryData;
+import com.example.bookapp03.presentation.viewmodel.BookListViewModel;
+import com.example.bookapp03.data.model.BookSummaryData;
 import com.example.bookapp03.R;
 import com.example.bookapp03.ui.BookListAdapter;
 
