@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+**************************************************************
+* 作成者: 増田学斗
+* 作成日: 2025/06/15
+* 概要: Googleアカウント登録完了画面のレイアウト
+* 履歴:
+*   2025/06/15 増田学斗 新規作成
+**************************************************************
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/registration_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="アカウントの登録が完了しました！"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:paddingBottom="20dp"/>
+
+    <Button
+        android:id="@+id/next_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="次へ" />
+</LinearLayout>

@@ -12,68 +12,52 @@ package com.example.bookapp03.ui;
 import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.example.bookapp03.R;
-import com.example.bookapp03.data.model.BookDetailData; // パッケージ変更
+import com.example.bookapp03.data.BookDetailData;
 import com.example.bookapp03.logic.BookDetailViewController;
-import com.example.bookapp03.presentation.viewmodel.BookDetailViewModel; // ViewModelのパッケージ変更
+import com.example.bookapp03.data.BookDetailViewModel;
+import com.example.bookapp03.R;
 
 /**
  * 書籍詳細画面を表示するアクティビティ
  */
 public class BookDetailActivity extends AppCompatActivity {
 
-    private BookDetailViewController controller;
-    private BookDetailViewModel viewModel;
-    private String currentVolumeId; // 現在表示している書籍のvolumeIdを保持
+    /**
+     * 書籍詳細の表示制御を行うコントローラー
+     */
+    private BookDetailViewController controller = new BookDetailViewController();
 
+    /**
+     * 書籍詳細データの保持および処理を行うViewModel
+     */
+    private BookDetailViewModel viewModel = new BookDetailViewModel();
+
+    /**
+     * アクティビティ生成時の処理。インテントから書籍データを取得し、画面に表示する。
+     *
+     * @param savedInstanceState 前回保存されたインスタンスの状態（未使用）
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_detail);
+        setContentView(R.layout.activity_book_detail); // レイアウトファイルは事前に作成済みであること
 
-        controller = new BookDetailViewController();
-        View rootView = findViewById(android.R.id.content); // Activityのルートビューを取得
+        // インテントから書籍情報を取得
+        String volumeId = getIntent().getStringExtra("volumeId");
+        String name = getIntent().getStringExtra("name");
+        String summary = getIntent().getStringExtra("summary");
+        String coverImageUrl = getIntent().getStringExtra("coverImageUrl");
+        String publicStatus = getIntent().getStringExtra("publicStatus");
 
-        // ViewModelProviderを使用してViewModelを初期化
-        viewModel = new ViewModelProvider(this, new ViewModelFactory(getApplicationContext()))
-                .get(BookDetailViewModel.class);
+        // 取得した情報でデータオブジェクトを生成
+        BookDetailData data = new BookDetailData(volumeId, name, summary, coverImageUrl, publicStatus);
 
-        // インテントからvolumeIdを取得
-        currentVolumeId = getIntent().getStringExtra("volumeId");
+        // ViewModelにデータを設定
+        viewModel.setDetail(data);
 
-        // TODO: 実際のユーザーUIDを取得するロジックをここに実装
-        String currentUserId = "user123"; // 仮のユーザーID
-
-        // LiveDataの変更を監視
-        viewModel.bookDetail.observe(this, bookDetailData -> {
-            // データが更新されたらUIを更新
-            boolean showNoBookMessage = (currentVolumeId == null || currentVolumeId.isEmpty()) || (bookDetailData == null);
-            controller.displayBookDetails(bookDetailData, rootView, showNoBookMessage);
-
-            // ハイライトメモもロード
-            if (bookDetailData != null && bookDetailData.getVolumeId() != null) {
-                // ボトムシートコントローラがあればここでメモ表示ロジックも呼び出す
-                // 例: new HighlightMemoBottomSheetController().displayMemo(rootView, bookDetailData.getSummary()); // 仮に全体まとめをメモとして表示
-                viewModel.loadHighlightMemos(currentUserId, bookDetailData.getVolumeId());
-            }
-        });
-
-        // Activityが作成されたらViewModelにデータのロードを指示
-        if (currentVolumeId != null && !currentVolumeId.isEmpty()) {
-            viewModel.loadBookDetail(currentUserId, currentVolumeId);
-        } else {
-            // volumeIdがない場合は「該当書籍なし」メッセージを表示
-            controller.displayBookDetails(null, rootView, true);
-        }
-
-        // ここからハイライトメモの表示をトリガーする例
-        // 例えば、ボタンがクリックされたらボトムシートを表示する
-        // findViewById(R.id.show_memos_button).setOnClickListener(v -> {
-        //     // ViewModelからハイライトメモを取得し、ボトムシートに渡す
-        //     List<HighlightMemoData> memos = viewModel.highlightMemos.getValue();
-        //     new HighlightMemoBottomSheetController().controlSheetDisplay(memos, true); // ボトムシート表示メソッド
-        // });
+        // 表示制御クラスにデータとルートビューを渡す
+        View rootView = findViewById(android.R.id.content);
+        controller.displayBookDetails(viewModel.getDetail(), rootView, true);
     }
 }
