@@ -11,8 +11,7 @@ import com.example.bookapp03.C2UserInformationProcessing.TransmitAccountSwitchin
  * モジュール名: アカウント切替制御
  * 作成者: 鶴田凌
  * 作成日: 2025/06/16
- * 概要: RadioGroup の選択変更を検知し、
- * TransmitAccountSwitching 経由で切替処理を呼び出す
+ * 概要: RadioGroup の選択変更を検知し、TransmitAccountSwitching 経由で切替処理を呼び出す
  * 履歴:
  * 2025/06/16 鶴田凌 新規作成
  */

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.bookapp03">   <!-- ← 追加 -->
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -20,10 +22,10 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
 
         <activity android:name=".C1UIProcessing.AccountSettingActivity" />
         <activity android:name=".C1UIProcessing.CompleteActivity" />
@@ -34,16 +36,25 @@
         <activity android:name=".C1UIProcessing.RegistrationDoneActivity" />
 
         <activity android:name=".ui.BookDetailActivity" />
+
+        <activity
+            android:name=".ui.BookDetailActivity"
+            android:exported="false" />
+
+        <!-- C1UIProcessing 以下の Activities -->
+
         <activity
             android:name="com.example.bookapp03.C1UIProcessing.DisplaySummary"
-            android:label="要約表示"/>
+            android:exported="false"
+            android:label="要約表示" />
         <activity
             android:name="com.example.bookapp03.C1UIProcessing.DisplayHighlightMemo"
-            android:label="ハイライトメモ表示"/>
+            android:exported="false"
+            android:label="ハイライトメモ表示" />
         <activity
             android:name="com.example.bookapp03.C1UIProcessing.DisplaySetting"
-            android:label="設定"/>
+            android:exported="false"
+            android:label="設定" />
+
     </application>
-
-
 </manifest>

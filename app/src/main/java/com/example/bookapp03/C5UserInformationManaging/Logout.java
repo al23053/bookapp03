@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.example.bookapp03.C1UIProcessing.DisplayLogin;
+
 
 /**
  * モジュール名: ログアウト
@@ -36,7 +36,7 @@ public class Logout {
     public boolean logout() {
         try {
             FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(activity, DisplayLogin.class);
+            Intent intent = new Intent(activity, com.example.a1bapp.LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                     Intent.FLAG_ACTIVITY_CLEAR_TASK);
             activity.startActivity(intent);

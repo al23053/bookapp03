@@ -74,4 +74,14 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     // implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    // JUnit
+    testImplementation("junit:junit:4.13.2")
+    // Mockito
+    testImplementation("org.mockito:mockito-core:4.+")    
+    // Robolectric (RobolectricTestRunner を使っている場合)
+    testImplementation("org.robolectric:robolectric:4.10.2")
+    // AndroidX Test Core（Robolectric 用）
+    testImplementation("androidx.test:core:1.4.0")
+    testImplementation("androidx.test.ext:junit:1.1.3")
 }
