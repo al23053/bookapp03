@@ -15,9 +15,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.bookapp03.data.model.BookDetailData; // パッケージ名を変更
-import com.example.bookapp03.data.model.HighlightMemoData; // 新しいimport
-import com.example.bookapp03.domain.repository.BookRepository; // 新しいimport
+import com.example.bookapp03.data.model.BookDetailData;
+import com.example.bookapp03.data.model.HighlightMemoData;
+import com.example.bookapp03.domain.repository.BookRepository;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
