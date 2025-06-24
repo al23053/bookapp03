@@ -7,6 +7,9 @@
  *   2025/06/15 増田学斗 新規作成
  */
 
+package com.example.bookapp03.C1UIProcessing;
+
+
 public class UID {
 
 }

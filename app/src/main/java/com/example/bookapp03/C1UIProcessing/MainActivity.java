@@ -7,7 +7,8 @@
  *   2025/06/15 増田学斗 新規作成
  */
 
-package com.example.a1bapp;
+package com.example.bookapp03.C1UIProcessing;
+
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,6 +23,12 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
 import com.google.firebase.auth.*;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.example.bookapp03.R;
+
+
 
 
 public class MainActivity extends Activity {

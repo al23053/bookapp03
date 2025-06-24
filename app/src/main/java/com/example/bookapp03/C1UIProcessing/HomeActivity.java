@@ -6,14 +6,16 @@
  * 作成者: 増田学斗
  * 作成日: 2025/06/15
  */
-package com.example.a1bapp;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.example.bookapp03.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 
 public class HomeActivity extends Activity {
 
