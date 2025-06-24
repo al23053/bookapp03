@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
+import java.util.List; // この行が抜けている可能性があるので確認してください。
 
 /**
  * モジュール名: 全体まとめ DAO
@@ -43,6 +44,15 @@ public interface SummaryDao {
      */
     @Update
     int update(SummaryEntity entity);
+
+    /**
+     * 指定のユーザーのすべての全体まとめ情報を取得する。
+     *
+     * @param uid ユーザー UID
+     * @return SummaryEntity のリスト
+     */
+    @Query("SELECT * FROM summary WHERE uid = :uid")
+    List<SummaryEntity> getAllSummariesByUser(String uid); // ★この行を追加/確認★
 
     /**
      * 指定のユーザ／書籍の全体まとめ情報を削除する。

@@ -2,7 +2,7 @@ package com.example.bookapp03.C6BookInformationManaging;
 
 import android.content.Context;
 
-import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
+import com.example.bookapp03.data.model.HighlightMemoData;
 import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoDao;
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
@@ -56,7 +56,7 @@ public class RegisterHighlightMemo {
                         volumeId,
                         data.getPage(),
                         data.getLine(),
-                        data.getMemo()
+                        data.getMemoContent()
                 );
                 long result = dao.insert(entity);
                 return result > 0;
