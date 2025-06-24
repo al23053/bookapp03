@@ -44,4 +44,54 @@ public class VolumeIdProvider {
         }
         return "";
     }
+
+    /**
+     * 指定されたvolumeIdに基づき、Google Books APIから書籍名を取得する。
+     * @param volumeId 書籍のボリュームID
+     * @return 書籍名。取得できない場合は空文字。
+     */
+    public static String fetchBookName(String volumeId) {
+        String url = "https://www.googleapis.com/books/v1/volumes/" + volumeId;
+        try {
+            Request req = new Request.Builder().url(url).build();
+            Response res = client.newCall(req).execute();
+            if (!res.isSuccessful()) return "";
+
+            JSONObject root = new JSONObject(res.body().string());
+            JSONObject volumeInfo = root.optJSONObject("volumeInfo");
+            if (volumeInfo != null) {
+                return volumeInfo.optString("title", "");
+            }
+        } catch (Exception e) {
+            Log.e("VolumeIdProvider", "Error fetching book name for " + volumeId + ": " + e.getMessage());
+        }
+        return "";
+    }
+
+    /**
+     * 指定されたvolumeIdに基づき、Google Books APIから書籍のカバー画像URLを取得する。
+     * @param volumeId 書籍のボリュームID
+     * @return カバー画像のURL。取得できない場合は空文字。
+     */
+    public static String fetchCoverImageUrl(String volumeId) {
+        String url = "https://www.googleapis.com/books/v1/volumes/" + volumeId;
+        try {
+            Request req = new Request.Builder().url(url).build();
+            Response res = client.newCall(req).execute();
+            if (!res.isSuccessful()) return "";
+
+            JSONObject root = new JSONObject(res.body().string());
+            JSONObject volumeInfo = root.optJSONObject("volumeInfo");
+            if (volumeInfo != null) {
+                JSONObject imageLinks = volumeInfo.optJSONObject("imageLinks");
+                if (imageLinks != null) {
+                    // thumbnail, smallThumbnail, medium, large, extraLargeなどがある
+                    return imageLinks.optString("thumbnail", "");
+                }
+            }
+        } catch (Exception e) {
+            Log.e("VolumeIdProvider", "Error fetching cover image URL for " + volumeId + ": " + e.getMessage());
+        }
+        return "";
+    }
 }
