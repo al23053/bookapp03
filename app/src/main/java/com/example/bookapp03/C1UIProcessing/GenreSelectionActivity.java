@@ -20,12 +20,15 @@ import android.widget.Toast;
 import com.example.bookapp03.R;
 import com.example.bookapp03.C1UIProcessing.CompleteActivity;
 import com.google.firebase.auth.FirebaseAuth;
+
 import com.google.firebase.firestore.FirebaseFirestore;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GenreSelectionActivity extends Activity {
+
 
     /** ジャンル選択用のチェックボックスをまとめるリスト */
     private ArrayList<CheckBox> genreCheckboxes = new ArrayList<>();
@@ -90,4 +93,5 @@ public class GenreSelectionActivity extends Activity {
                     });
         });
     }
+
 }

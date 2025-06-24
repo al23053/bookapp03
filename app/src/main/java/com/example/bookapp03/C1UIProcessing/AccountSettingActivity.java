@@ -24,7 +24,9 @@ import com.example.a1bapp.GenreSelectionActivity;
 import com.example.bookapp03.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import com.google.firebase.firestore.FirebaseFirestore;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +35,7 @@ import android.util.Log;
 
 public class AccountSettingActivity extends Activity {
 
-    /** ギャラリー画像選択のリクエストコード */
-    private static final int REQUEST_CODE_IMAGE_PICK = 1;
+
 
     /** ユーザーが入力するニックネーム */
     private EditText editTextNickname;
@@ -113,4 +114,5 @@ public class AccountSettingActivity extends Activity {
                     Log.e("AccountSetting", "Firestore保存失敗", e);
                 });
     }
+
 }

@@ -23,31 +23,4 @@ import com.example.bookapp03.R;
 
 public class RegistrationDoneActivity extends Activity {
 
-    /**
-     * アクティビティの初期化処理。
-     * 登録完了メッセージを表示し、「次へ」ボタンでAccountSettingActivityに遷移する。
-     *
-     * @param savedInstanceState アクティビティの保存状態
-     */
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d("AccountSettingDebug", "onCreate called");
-        setContentView(R.layout.activity_registration_done);
-
-        // 完了メッセージをTextViewに設定
-        TextView message = findViewById(R.id.registration_message);
-        message.setText("アカウントの登録が完了しました！");
-
-        // 「次へ」ボタンを取得してクリック処理を設定
-        Button nextButton = findViewById(R.id.next_button);
-        nextButton.setOnClickListener(view -> {
-            // アカウント設定画面へ遷移
-            Intent intent = new Intent(RegistrationDoneActivity.this, AccountSettingActivity.class);
-            startActivity(intent);
-
-            // この画面には戻らないようにfinishを呼び出す
-            finish();
-        });
-    }
 }

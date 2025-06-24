@@ -19,8 +19,10 @@ import com.google.android.gms.auth.api.signin.*;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
+
 import com.google.firebase.auth.*;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 
 import android.util.Log;
 import com.example.bookapp03.R;
@@ -29,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends Activity {
+
 
     /** Googleログイン用のクライアントインスタンス */
     private GoogleSignInClient googleSignInClient;
@@ -129,4 +132,5 @@ public class LoginActivity extends Activity {
                     }
                 });
     }
+
 }
