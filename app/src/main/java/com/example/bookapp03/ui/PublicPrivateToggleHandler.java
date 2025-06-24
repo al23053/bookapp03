@@ -11,7 +11,7 @@ package com.example.bookapp03.ui;
 
 import android.util.Log;
 
-import com.example.bookapp03.data.BookListViewModel;
+import com.example.bookapp03.presentation.viewmodel.BookListViewModel; // ViewModelのパッケージ変更
 
 /**
  * 公開・非公開切り替えの操作を扱うクラス
@@ -30,17 +30,16 @@ public class PublicPrivateToggleHandler {
 
     /**
      * 公開状態の切り替えをViewModelに伝える
-     * @param bookId 対象の本のID
+     * @param uid ユーザーID
+     * @param volumeId 対象の本のID
      * @param newPublicStatus 新しい公開状態
      */
-    public void handleToggle(String bookId, boolean newPublicStatus) {
-        if (viewModel == null || bookId == null) {
-            Log.w("ToggleHandler", "ViewModel または bookId が null");
+    public void handleToggle(String uid, String volumeId, boolean newPublicStatus) {
+        if (viewModel == null || uid == null || volumeId == null) {
+            Log.w("ToggleHandler", "ViewModel, UID, または VolumeId が null");
             return;
         }
 
-        viewModel.updatePublicStatus(bookId, newPublicStatus);
-
-        Log.d("ToggleHandler", "本ID: " + bookId + " を " + (newPublicStatus ? "公開" : "非公開") + " に更新");
+        viewModel.updatePublicStatus(uid, volumeId, newPublicStatus);
     }
 }
