@@ -38,10 +38,8 @@ dependencies {
 
     // Firestore
     implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-firestore") //追加06/17
     // Firebase Authentication
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-auth")  //追加06/17
     implementation(libs.appcompat)
     implementation(libs.material)
 
@@ -49,6 +47,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.room.runtime.android)
+    implementation(libs.room.common.jvm)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -56,6 +56,7 @@ dependencies {
     // Room components
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
     // Core Android dependencies
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -67,21 +68,10 @@ dependencies {
     implementation ("com.android.volley:volley:1.2.1")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
-    //Google Login
-    implementation("com.google.android.gms:play-services-auth:21.0.0")
-
-
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     // implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
-    // JUnit
     testImplementation("junit:junit:4.13.2")
-    // Mockito
-    testImplementation("org.mockito:mockito-core:4.+")    
-    // Robolectric (RobolectricTestRunner を使っている場合)
-    testImplementation("org.robolectric:robolectric:4.10.2")
-    // AndroidX Test Core（Robolectric 用）
-    testImplementation("androidx.test:core:1.4.0")
-    testImplementation("androidx.test.ext:junit:1.1.3")
+    testImplementation("org.robolectric:robolectric:4.11.1")
 }

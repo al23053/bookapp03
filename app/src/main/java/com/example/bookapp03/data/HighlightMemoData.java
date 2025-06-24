@@ -7,14 +7,14 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookapp03.data;
+package com.example.bookapp03.data.model; // このパッケージであることを確認
 
 /**
  * ハイライトメモの情報を管理するデータクラス
  */
 public class HighlightMemoData {
-    private String page;
-    private String line;
+    private int page;
+    private int line;
     private String memoContent;
 
     /**
@@ -23,17 +23,17 @@ public class HighlightMemoData {
      * @param line 行番号
      * @param memoContent メモ内容
      */
-    public HighlightMemoData(String page, String line, String memoContent) {
+    public HighlightMemoData(int page, int line, String memoContent) {
         this.page = page;
         this.line = line;
         this.memoContent = memoContent;
     }
 
-    public String getPage() {
+    public int getPage() {
         return page;
     }
 
-    public String getLine() {
+    public int getLine() {
         return line;
     }
 
