@@ -43,16 +43,16 @@ public class ControlSettingDisplay {
             TextView btnLogout
     ) {
         btnNicknameIcon.setOnClickListener(v ->
-                activity.startActivity(new Intent(activity, AccountSettingActivity.class))
+                activity.startActivity(new Intent(activity, DisplayNicknameIcon.class))
         );
         btnGenre.setOnClickListener(v ->
-                activity.startActivity(new Intent(activity, GenreSelectionActivity.class))
+                activity.startActivity(new Intent(activity, DisplayGenreSelection.class))
         );
         btnDarkMode.setOnClickListener(v ->
-                activity.startActivity(new Intent(activity, DisplayDarkmodeSetting.class))
+                activity.startActivity(new Intent(activity, DisplayDarkModeToggle.class))
         );
         btnAccountSwitch.setOnClickListener(v ->
-                activity.startActivity(new Intent(activity, DisplayAccountSwitching.class))
+                activity.startActivity(new Intent(activity, DisplayAccountSwitch.class))
         );
         btnLogout.setOnClickListener(v ->
                 new LogoutProcessing(activity).confirmLogout()
