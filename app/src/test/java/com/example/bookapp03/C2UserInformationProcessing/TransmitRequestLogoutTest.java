@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
- * TransmitRequestLogout の単体テスト
+ * TransmitRequestLogoutの単体テスト
  * - ブラックボックス: 戻り値 true/false を検証
  * - ホワイトボックス: 内部で new Logout(...).logout() が呼ばれることを確認
  */

@@ -21,7 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
- * ControlSettingDisplay の単体テスト
+ * ControlSettingDisplayの単体テスト
  * - ブラックボックス: 全ビューにリスナーがセットされる
  * - ホワイトボックス: 各リスナーのクリック後動作を検証
  */

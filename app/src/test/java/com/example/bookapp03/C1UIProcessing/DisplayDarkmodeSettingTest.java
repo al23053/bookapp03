@@ -16,7 +16,7 @@ import org.robolectric.shadows.ShadowView;
 import org.robolectric.shadows.Shadows;
 
 /**
- * DisplayDarkmodeSetting の単体テスト
+ * DisplayDarkmodeSettingの単体テスト
  * - ブラックボックス: onCreate でビューが取得できること
  * - ホワイトボックス: スイッチにリスナーがセットされていること
  */

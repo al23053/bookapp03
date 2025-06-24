@@ -12,7 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * ControlHighlightMemo の単体テスト
- * – ブラックボックス: getHighlightMemo の正常系／異常系
+ * – ブラックボックス: getHighlightMemoの正常系／異常系
  * – ホワイトボックス: 例外メッセージを検証
  */
 @RunWith(MockitoJUnitRunner.class)

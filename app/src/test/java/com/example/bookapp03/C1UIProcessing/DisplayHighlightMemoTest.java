@@ -17,7 +17,7 @@ import org.robolectric.shadows.ShadowDrawerLayout;
 import org.robolectric.shadows.Shadows;
 
 /**
- * DisplayHighlightMemo の単体テスト
+ * DisplayHighlightMemoの単体テスト
  * - ブラックボックス: onCreate で RecyclerView が取得できること
  * - ホワイトボックス: ドロワーが開かれていること
  */

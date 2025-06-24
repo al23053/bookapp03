@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 /**
- * BookInformationDatabase の単体テスト
+ * BookInformationDatabaseの単体テスト
  * - ブラックボックス: getDatabase でインスタンスが取得できること
  * - ホワイトボックス: DAO が non-null であること、シングルトン性を検証
  */

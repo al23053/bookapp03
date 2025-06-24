@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 /**
  * ControlPublicPrivateSwitch の単体テスト
  * - ブラックボックス: bind() で executor.execute() が呼ばれる
- * - ホワイトボックス: スイッチに true/false がセットされる
+ * - ホワイトボックス: スイッチに true/falseがセットされる
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ControlPublicPrivateSwitchTest {

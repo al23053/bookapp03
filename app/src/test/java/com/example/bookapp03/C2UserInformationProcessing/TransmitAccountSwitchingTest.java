@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
- * TransmitAccountSwitching の単体テスト
+ * TransmitAccountSwitchingの単体テスト
  * - ブラックボックス: メソッド戻り値 true/false を検証
  * - ホワイトボックス: 内部で new RegisterAccountSwitching(...).registerAccountSwitching(info) が呼ばれることを確認
  */

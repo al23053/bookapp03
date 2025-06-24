@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 /**
- * ControlSummaryRegistrationButton の単体テスト
+ * ControlSummaryRegistrationButtonの単体テスト
  * - ブラックボックス: setOnClickListener の設定を確認
  * - ホワイトボックス: クリックで executor.execute() が呼ばれることを検証
  */

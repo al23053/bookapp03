@@ -22,7 +22,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * RegisterSummary の単体テスト
+ * RegisterSummaryの単体テスト
  * - ローカル登録成功・失敗時の戻り値検証
  * - 公開フラグ ON/OFF 時の Firestore 呼び出し有無検証
  */

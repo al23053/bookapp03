@@ -20,7 +20,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
- * TransmitHighlightMemo の単体テスト
+ * TransmitHighlightMemoの単体テスト
  * – ブラックボックス: true/false の戻り値を検証
  * – ホワイトボックス: 内部で new RegisterHighlightMemo.registerHighlightMemo が呼ばれることを確認
  */

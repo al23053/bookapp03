@@ -20,7 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * ControlHamburgerBar の単体テスト
  * – ブラックボックス: bind() でリスナーがセットされる
- * – ホワイトボックス: リスナー実行後の Intent 中身を検証
+ * – ホワイトボックス: リスナー実行後の Intent中身を検証
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ControlHamburgerBarTest {

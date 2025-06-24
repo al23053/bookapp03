@@ -21,7 +21,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
- * TransmitSummary の単体テスト
+ * TransmitSummaryの単体テスト
  * - ブラックボックス: メソッド戻り値 (true/false) を検証
  * - ホワイトボックス: RegisterSummary#registerSummary が内部で呼ばれることを確認
  */

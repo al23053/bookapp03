@@ -18,7 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * ControlButtonToSummary の単体テスト
  * – ブラックボックス: startActivity が呼ばれること
- * – ホワイトボックス: Intent の遷移先を検証
+ * – ホワイトボックス: Intentの遷移先を検証
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ControlButtonToSummaryTest {

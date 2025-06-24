@@ -18,7 +18,7 @@ import org.robolectric.shadows.Shadows;
 
 /**
  * DisplaySetting の単体テスト
- * - ブラックボックス: onCreate でビューが正しく inflate されていること
+ * - ブラックボックス: onCreate でビューが正しくinflateされていること
  * - ホワイトボックス: 戻るボタンにリスナーがセットされ、クリックで finish() が呼ばれること
  */
 @RunWith(RobolectricTestRunner.class)

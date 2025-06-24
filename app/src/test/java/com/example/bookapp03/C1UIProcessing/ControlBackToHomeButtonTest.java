@@ -18,7 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * ControlBackToHomeButton の単体テスト
- * -setOnClickListener が呼ばれること
+ * - setOnClickListenerが呼ばれること
  * - クリックで Activity.finish() が呼ばれること
  */
 @RunWith(MockitoJUnitRunner.class)

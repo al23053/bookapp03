@@ -17,7 +17,7 @@ import org.robolectric.RobolectricTestRunner;
 
 /**
  * DisplaySummary の単体テスト
- * - ブラックボックス: onCreate でビュー取得
+ * - ブラックボックス: onCreateでビュー取得
  * - ホワイトボックス: 各ビューにリスナーがセットされている
  */
 @RunWith(RobolectricTestRunner.class)

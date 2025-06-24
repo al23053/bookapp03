@@ -18,7 +18,7 @@ import org.robolectric.shadows.Shadows;
 
 /**
  * DisplayHome の単体テスト
- * - ブラックボックス: onCreate ですべての UI 部品が取得できること
+ * - ブラックボックス: onCreate ですべてのUI部品が取得できること
  * - ホワイトボックス: 各ボタンにリスナーがセットされていること
  */
 @RunWith(RobolectricTestRunner.class)

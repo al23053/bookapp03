@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * HighlightMemoAdapter の単体テスト
  * - ブラックボックス: setItems → getItemCount の検証
- * - ホワイトボックス: onBindViewHolder で holder.bind 呼び出し
+ * - ホワイトボックス: onBindViewHolder で holder.bind呼び出し
  */
 @RunWith(MockitoJUnitRunner.class)
 public class HighlightMemoAdapterTest {

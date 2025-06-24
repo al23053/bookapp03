@@ -20,7 +20,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * RegisterHighlightMemo の単体テスト
+ * RegisterHighlightMemoの単体テスト
  * - DAO insert 成功／失敗で戻り値を検証
  * - insert 呼び出しパラメータを検証
  */

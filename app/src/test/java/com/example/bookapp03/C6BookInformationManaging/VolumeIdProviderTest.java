@@ -12,7 +12,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 /**
- * VolumeIdProvider の単体テスト
+ * VolumeIdProviderの単体テスト
  * - ブラックボックス: 成功・アイテムなし・例外時で返値を確認
  * - ホワイトボックス: JSON パースロジックの境界を検証
  */

@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 /**
- * SummaryDao の単体テスト
+ * SummaryDaoの単体テスト
  * - ブラックボックス: insert/get/update/delete の動作検証
  * - ホワイトボックス: SQL クエリ結果と戻り値を検証
  */

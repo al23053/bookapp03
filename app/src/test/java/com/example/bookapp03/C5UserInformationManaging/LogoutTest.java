@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Logout の単体テスト
+ * Logoutの単体テスト
  * - ブラックボックス: true/false の戻り値を検証
  * - ホワイトボックス: FirebaseAuth.signOut() と startActivity 呼び出しを検証
  */

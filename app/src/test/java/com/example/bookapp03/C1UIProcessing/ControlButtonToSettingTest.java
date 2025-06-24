@@ -21,7 +21,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * ControlButtonToSetting の単体テスト
  * - ブラックボックス: startActivity が呼ばれること
- * - ホワイトボックス: Intent のクラス名を検証
+ * - ホワイトボックス: Intentのクラス名を検証
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ControlButtonToSettingTest {

@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * RegisterAccountSwitching の単体テスト
+ * RegisterAccountSwitchingの単体テスト
  * - ブラックボックス: true/false の戻り値を検証
  * - ホワイトボックス: SharedPreferences.Editor の呼び出しを検証
  */

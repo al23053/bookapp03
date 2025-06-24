@@ -23,7 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * ControlBottomNavigationBar の単体テスト
  * - nav_home 選択時の遷移
- * - 未知の ID の場合に遷移しないこと
+ * - 未知の IDの場合に遷移しないこと
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ControlBottomNavigationBarTest {

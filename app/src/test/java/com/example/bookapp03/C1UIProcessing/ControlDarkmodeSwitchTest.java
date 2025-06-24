@@ -23,7 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * ControlDarkmodeSwitch の単体テスト
  * – ブラックボックス: bind() で Switch#setChecked が呼ばれる
- * – ホワイトボックス: チェック変更時の SharedPreferences／recreate 呼び出し検証
+ * – ホワイトボックス: チェック変更時の SharedPreferences／recreate呼び出し検証
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ControlDarkmodeSwitchTest {

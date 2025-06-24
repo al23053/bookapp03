@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
- * HighlightMemoData の単体テスト
+ * HighlightMemoDataの単体テスト
  * - ブラックボックス: コンストラクタ／ゲッターの入出力
  * - ホワイトボックス: フィールド不変性の検証
  */

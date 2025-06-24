@@ -15,7 +15,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * UserAuthManager の単体テスト
+ * UserAuthManagerの単体テスト
  * - ブラックボックス: getCurrentUid が空文字／UID を返すこと
  * - ホワイトボックス: FirebaseAuth.getInstance(), getCurrentUser() の呼び出し検証
  */

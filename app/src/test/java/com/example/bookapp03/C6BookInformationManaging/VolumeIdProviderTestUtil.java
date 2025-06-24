@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 public final class VolumeIdProviderTestUtil {
     public static void overrideBaseUrl(String url) {
-        try {
+        try{
             Field f = VolumeIdProvider.class.getDeclaredField("BASE_URL");
             f.setAccessible(true);
             Field mod = Field.class.getDeclaredField("modifiers");

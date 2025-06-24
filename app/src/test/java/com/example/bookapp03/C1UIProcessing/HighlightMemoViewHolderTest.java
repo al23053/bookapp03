@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
- * HighlightMemoViewHolder の単体テスト
+ * HighlightMemoViewHolderの単体テスト
  * - ブラックボックス: bind 呼び出しで TextView#setText が呼ばれる
  * - ホワイトボックス: 表示フォーマットを検証
  */

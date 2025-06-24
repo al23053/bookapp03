@@ -16,7 +16,7 @@ import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowView;
 
 /**
- * DisplayAccountSwitching の単体テスト
+ * DisplayAccountSwitchingの単体テスト
  * - ブラックボックス: onCreate() でビューが inflate されているか
  * - ホワイトボックス: 戻るボタンに OnClickListener がセットされているか
  */

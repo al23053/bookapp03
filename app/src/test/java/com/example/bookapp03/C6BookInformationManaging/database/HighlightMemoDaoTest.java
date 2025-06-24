@@ -14,7 +14,7 @@ import org.robolectric.RobolectricTestRunner;
 import java.util.List;
 
 /**
- * HighlightMemoDao の単体テスト
+ * HighlightMemoDaoの単体テスト
  * - ブラックボックス: insert/getByUserAndVolume/delete/deleteAll の動作検証
  * - ホワイトボックス: リストサイズや戻り値を検証
  */
