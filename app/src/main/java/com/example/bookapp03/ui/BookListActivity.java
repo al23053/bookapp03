@@ -1,64 +1,74 @@
 /**
  * モジュール名: BookListActivity
- * 作成者: ユーザー名
+ * 作成者: 横山葉
  * 作成日: 2025/06/09
  * 概要: 書籍一覧を表示するActivity。初期データを生成し、RecyclerViewに表示する。
  * 履歴:
- *   2025/06/09 ユーザー名 新規作成
+ *   2025/06/09 横山葉 新規作成
  */
 
 package com.example.bookapp03.ui;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookapp03.R;
+// import com.example.bookapp03.data.repository.BookRepositoryImpl; // ViewModelFactoryで処理するので不要
 import com.example.bookapp03.logic.BookListViewController;
-import com.example.bookapp03.data.BookListViewModel;
-import com.example.bookapp03.data.BookSummaryData;
+import com.example.bookapp03.presentation.viewmodel.BookListViewModel; // ViewModelのパッケージ
+import com.example.bookapp03.ui.ViewModelFactory; // ViewModelFactoryをインポート
+import com.example.bookapp03.data.model.BookSummaryData; // BookSummaryDataをインポート
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BookListActivity extends AppCompatActivity {
 
-    /**
-     * 書籍一覧の表示・管理用ViewModel
-     */
     private BookListViewModel viewModel;
+    private BookListViewController controller;
+    private RecyclerView recyclerView;
+    private TextView emptyTextView;
+    private PublicPrivateToggleHandler toggleHandler; // ★追加★
 
-    /**
-     * Activity起動時に呼び出される。初期化処理とRecyclerViewの設定を行う。
-     * @param savedInstanceState 保存されたインスタンス状態（未使用）
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        viewModel = new BookListViewModel();
+        controller = new BookListViewController();
+        recyclerView = findViewById(R.id.book_list_recycler);
+        emptyTextView = findViewById(R.id.empty_text);
 
-        // 初期データを仮で用意
-        List<BookSummaryData> initialBookList = new ArrayList<>();
-        initialBookList.add(new BookSummaryData("1", "本A", "https://example.com/sample1.jpg"));
-        initialBookList.add(new BookSummaryData("2", "本B", "https://example.com/sample2.jpg"));
-        initialBookList.add(new BookSummaryData("3", "本C", "https://example.com/sample3.jpg"));
+        // ViewModelProviderを使用してViewModelを初期化
+        viewModel = new ViewModelProvider(this, new ViewModelFactory(getApplicationContext()))
+                .get(BookListViewModel.class);
 
-        // 全て非公開に設定
-        for (BookSummaryData book : initialBookList) {
-            book.setPublic(false);
-        }
+        // PublicPrivateToggleHandlerを初期化 (ViewModelを渡す)
+        toggleHandler = new PublicPrivateToggleHandler(viewModel); // ★追加★
 
-        viewModel.setBooks(initialBookList);
+        // LiveDataの変更を監視
+        // ViewModelのbookListが更新されたら、自動的にここが呼ばれる
+        viewModel.bookList.observe(this, bookSummaries -> {
+            // データが更新されたらUIを更新
+            boolean isEmpty = bookSummaries == null || bookSummaries.isEmpty();
 
-        // RecyclerViewに書籍リストを表示
-        RecyclerView recyclerView = findViewById(R.id.book_list_recycler);
-        boolean isEmpty = initialBookList.isEmpty();
+            // controller.displayBookListの引数を変更: ViewModelの代わりにtoggleHandlerを渡す
+            controller.displayBookList(recyclerView, bookSummaries, toggleHandler, isEmpty);
 
-        BookListViewController controller = new BookListViewController();
-        controller.displayBookList(recyclerView, initialBookList, viewModel, isEmpty);
+            // 空の時のメッセージ表示制御
+            if (isEmpty) {
+                emptyTextView.setVisibility(View.VISIBLE);
+            } else {
+                emptyTextView.setVisibility(View.GONE);
+            }
+        });
 
-        // TODO: データベースから実データを取得するように変更する (ユーザー名)
+        // Activityが作成されたらViewModelにデータのロードを指示
+        // TODO: 実際のユーザーUIDを取得するロジックをここに実装
+        String currentUserId = "user123"; // 仮のユーザーID
+        viewModel.loadBooks(currentUserId);
     }
 }

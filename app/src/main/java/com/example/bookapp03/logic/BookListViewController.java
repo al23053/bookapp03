@@ -14,13 +14,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
-
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookapp03.data.BookListViewModel;
-import com.example.bookapp03.data.BookSummaryData;
+// import com.example.bookapp03.presentation.viewmodel.BookListViewModel; // ViewModelは直接不要になるためコメントアウト/削除
+import com.example.bookapp03.data.model.BookSummaryData;
 import com.example.bookapp03.R;
 import com.example.bookapp03.ui.BookListAdapter;
+import com.example.bookapp03.ui.PublicPrivateToggleHandler; // ★追加★
 
 import java.util.List;
 
@@ -39,11 +39,11 @@ public class BookListViewController {
      *
      * @param recyclerView RecyclerView本体
      * @param bookSummaries 表示する書籍サマリ一覧
-     * @param viewModel ビューモデル
+     * @param toggleHandler 公開/非公開切り替えハンドラ ★型を変更★
      * @param showEmptyMessage 書籍がないときのメッセージ表示有無
      */
     public void displayBookList(RecyclerView recyclerView, List<BookSummaryData> bookSummaries,
-                                BookListViewModel viewModel, boolean showEmptyMessage) {
+                                PublicPrivateToggleHandler toggleHandler, boolean showEmptyMessage) { // ★シグネチャ変更★
         if (recyclerView == null) {
             Log.e(TAG, "RecyclerViewがnull");
             return;
@@ -51,7 +51,7 @@ public class BookListViewController {
 
         // レイアウトとアダプター設定
         recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(), 3));
-        BookListAdapter adapter = new BookListAdapter(bookSummaries, viewModel);
+        BookListAdapter adapter = new BookListAdapter(bookSummaries, toggleHandler); // ★修正: viewModelをtoggleHandlerに変更★
         recyclerView.setAdapter(adapter);
 
         // 空の時のメッセージ表示処理
