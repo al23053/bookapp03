@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.bookapp03">   <!-- ← 追加 -->
 
@@ -26,22 +25,33 @@
             </intent-filter>
         </activity>
 
-
-        <activity android:name=".C1UIProcessing.AccountSettingActivity" />
-        <activity android:name=".C1UIProcessing.CompleteActivity" />
-        <activity android:name=".C1UIProcessing.GenreSelectionActivity" />
-        <activity android:name=".C1UIProcessing.HomeActivity" />
-        <activity android:name=".C1UIProcessing.LoginActivity" />
-        <activity android:name=".C1UIProcessing.MainActivity" />
-        <activity android:name=".C1UIProcessing.RegistrationDoneActivity" />
-
-        <activity android:name=".ui.BookDetailActivity" />
-
+        <!-- BookDetailActivity は1つだけ定義 -->
         <activity
             android:name=".ui.BookDetailActivity"
             android:exported="false" />
 
-        <!-- C1UIProcessing 以下の Activities -->
+        <!-- C1UIProcessing Activities に exported を追加 -->
+        <activity
+            android:name=".C1UIProcessing.AccountSettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".C1UIProcessing.CompleteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".C1UIProcessing.GenreSelectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".C1UIProcessing.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".C1UIProcessing.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".C1UIProcessing.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".C1UIProcessing.RegistrationDoneActivity"
+            android:exported="false" />
 
         <activity
             android:name="com.example.bookapp03.C1UIProcessing.DisplaySummary"
