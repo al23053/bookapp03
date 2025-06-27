@@ -3,9 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
-        android:allowBackup="true"
+        android:usesCleartextTraffic="true"
+        android:name=".Serchmain.MyApplication"  android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -15,16 +18,16 @@
         android:theme="@style/Theme.Bookapp03"
         tools:targetApi="31">
         <activity
-            android:name=".ui.BookListActivity"
+            android:name=".Serchmain.MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-
-        <activity android:name=".ui.BookDetailActivity" />
+        <activity android:name=".Serchmain.SearchResultActivity" />
+        <activity android:name=".ui.UserReviewListActivity"
+            android:exported="false"
+            />
+        <activity android:name=".ui.NoReviewsActivity" />
+        <activity android:name=".ui.BookNotFoundActivity" />
+        <activity android:name=".ui.BookSelectionActivity" android:exported="true"/>
     </application>
 
 </manifest>
