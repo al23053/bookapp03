@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements BookCardAdapter.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_search_main);
         searchInputView = findViewById(R.id.main_search_input_view);
         matchingBooksRecyclerView = findViewById(R.id.matching_books_recycler_view);
         nonMatchingBooksRecyclerView = findViewById(R.id.non_matching_books_recycler_view);
