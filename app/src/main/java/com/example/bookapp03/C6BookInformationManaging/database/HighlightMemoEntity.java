@@ -1,5 +1,6 @@
 package com.example.bookapp03.C6BookInformationManaging.database;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -13,35 +14,26 @@ import androidx.room.PrimaryKey;
  */
 @Entity(tableName = "highlight_memo")
 public class HighlightMemoEntity {
-    /**
-     * レコード識別用の自動採番 ID
-     */
+
+    /** レコード識別用の自動採番 ID */
     @PrimaryKey(autoGenerate = true)
     public long id;
 
-    /**
-     * Firebase Authentication で取得したユーザ UID
-     */
+    /** Firebase Authentication で取得したユーザ UID */
+    @NonNull
     public String uid;
 
-    /**
-     * Google Books API で取得した書籍のボリュームID
-     */
+    /** Google Books API で取得した書籍のボリュームID */
+    @NonNull
     public String volumeId;
 
-    /**
-     * ハイライト対象のページ番号
-     */
+    /** ハイライト対象のページ番号 */
     public int page;
 
-    /**
-     * ハイライト対象の行数
-     */
+    /** ハイライト対象の行数 */
     public int line;
 
-    /**
-     * ハイライトメモの文字列
-     */
+    /** ハイライトメモの文字列 */
     public String memo;
 
     /**
@@ -53,13 +45,11 @@ public class HighlightMemoEntity {
      * @param line     行数
      * @param memo     メモ文字列
      */
-    public HighlightMemoEntity(
-            String uid,
-            String volumeId,
-            int page,
-            int line,
-            String memo
-    ) {
+    public HighlightMemoEntity(@NonNull String uid,
+                               @NonNull String volumeId,
+                               int page,
+                               int line,
+                               String memo) {
         this.uid = uid;
         this.volumeId = volumeId;
         this.page = page;
