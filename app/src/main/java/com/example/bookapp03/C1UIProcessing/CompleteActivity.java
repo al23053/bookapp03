@@ -38,7 +38,7 @@ public class CompleteActivity extends Activity {
         Button buttonToHome = findViewById(R.id.buttonToHome);
         buttonToHome.setOnClickListener(v -> {
             // ホーム画面に遷移するIntentを作成し起動
-            Intent intent = new Intent(CompleteActivity.this, HomeActivity.class);
+            Intent intent = new Intent(CompleteActivity.this, DisplayHome.class);
             startActivity(intent);
             finish();
         });
