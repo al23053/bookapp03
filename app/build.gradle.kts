@@ -74,4 +74,8 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.11.1")
+
+    //
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
+
 }
