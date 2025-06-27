@@ -53,7 +53,7 @@ public class HighlightMemoAdapter
             int viewType
     ) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_highlight_memo, parent, false);
+                .inflate(R.layout.highlightmemodisplay, parent, false);
         return new HighlightMemoViewHolder(view);
     }
 

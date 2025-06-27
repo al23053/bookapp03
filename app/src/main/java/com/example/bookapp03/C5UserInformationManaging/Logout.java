@@ -3,6 +3,7 @@ package com.example.bookapp03.C5UserInformationManaging;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.example.bookapp03.C1UIProcessing.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 
@@ -36,7 +37,7 @@ public class Logout {
     public boolean logout() {
         try {
             FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(activity, com.example.a1bapp.LoginActivity.class);
+            Intent intent = new Intent(activity, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                     Intent.FLAG_ACTIVITY_CLEAR_TASK);
             activity.startActivity(intent);
