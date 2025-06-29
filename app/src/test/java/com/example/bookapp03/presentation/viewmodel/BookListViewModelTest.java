@@ -1,197 +1,293 @@
 package com.example.bookapp03.presentation.viewmodel;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import android.util.Log;
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.bookapp03.data.model.BookSummaryData;
 import com.example.bookapp03.domain.repository.BookRepository;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.Rule;
+import org.mockito.MockitoAnnotations;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@RunWith(RobolectricTestRunner.class)
+@Config(sdk = 29)
 public class BookListViewModelTest {
 
-    @Rule
-    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+    private BookListViewModel viewModel;
 
     @Mock
     private BookRepository mockBookRepository;
     @Mock
-    private Observer<List<BookSummaryData>> mockBookListObserver;
+    private Future<List<BookSummaryData>> mockBooksFuture;
+    @Mock
+    private Future<Boolean> mockUpdatePublicStatusFuture;
 
-    private BookListViewModel viewModel;
+    // Log.e と Log.d をモックするためのMockedStatic
+    private MockedStatic<Log> mockedLog;
 
-    @BeforeEach
-    void setUp() {
-        // Log.e, Log.d をモック化
-        try (MockedStatic<Log> mockedLog = mockStatic(Log.class)) {
-            mockedLog.when(() -> Log.e(anyString(), anyString())).thenReturn(0);
-            mockedLog.when(() -> Log.e(anyString(), anyString(), any(Throwable.class))).thenReturn(0);
-            mockedLog.when(() -> Log.d(anyString(), anyString())).thenReturn(0);
-        }
-
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         viewModel = new BookListViewModel(mockBookRepository);
-        viewModel.bookList.observeForever(mockBookListObserver);
+
+        // Logのモック設定
+        mockedLog = mockStatic(Log.class);
+        when(Log.e(anyString(), anyString())).thenReturn(0);
+        when(Log.d(anyString(), anyString())).thenReturn(0);
     }
 
+    @After
+    public void tearDown() {
+        if (mockedLog != null) {
+            mockedLog.close();
+        }
+    }
+
+    /**
+     * loadBooks: 書籍リストの取得が成功した場合
+     * _bookList LiveDataが正しいデータで更新されることをテスト
+     * 命令網羅、分岐網羅
+     */
     @Test
-    void testLoadBooks_success() {
-        String uid = "user1";
-        List<BookSummaryData> expectedList = Arrays.asList(
-                new BookSummaryData("vol1", "Title A", "urlA"),
-                new BookSummaryData("vol2", "Title B", "urlB")
+    public void loadBooks_success_postsBookSummaryList() throws Exception {
+        // Given
+        List<BookSummaryData> testList = Arrays.asList(
+                new BookSummaryData("id1", "Title 1", "url1"),
+                new BookSummaryData("id2", "Title 2", "url2")
         );
-        expectedList.get(0).setPublic(true); // 仮の状態設定
+        when(mockBookRepository.getAllBooks(anyString())).thenReturn(mockBooksFuture);
+        when(mockBooksFuture.get()).thenReturn(testList);
 
-        when(mockBookRepository.getAllBookSummaries(uid))
-                .thenReturn(CompletableFuture.completedFuture(expectedList));
+        // When
+        viewModel.loadBooks("uid");
 
-        viewModel.loadBooks(uid);
-
-        verify(mockBookRepository).getAllBookSummaries(uid);
-        verify(mockBookListObserver).onChanged(expectedList);
-        assertEquals(expectedList, viewModel.bookList.getValue());
+        // Then
+        verify(mockBookRepository).getAllBooks(eq("uid"));
+        Thread.sleep(100); // 非同期処理完了を待機
+        assertEquals(testList, viewModel.bookList.getValue());
+        mockedLog.verify(() -> Log.e(anyString(), anyString()), never());
     }
 
+    /**
+     * loadBooks: 書籍リストの取得中にExecutionExceptionが発生した場合
+     * _bookList LiveDataがnullで更新され、エラーログが出力されることをテスト
+     * 命令網羅、分岐網羅
+     */
     @Test
-    void testLoadBooks_empty() {
-        String uid = "user1";
-        List<BookSummaryData> expectedList = Collections.emptyList();
+    public void loadBooks_executionException_postsNullAndLogsError() throws Exception {
+        // Given
+        when(mockBookRepository.getAllBooks(anyString())).thenReturn(mockBooksFuture);
+        when(mockBooksFuture.get()).thenThrow(new ExecutionException(new Throwable("Test Exception")));
 
-        when(mockBookRepository.getAllBookSummaries(uid))
-                .thenReturn(CompletableFuture.completedFuture(expectedList));
+        // When
+        viewModel.loadBooks("uid");
 
-        viewModel.loadBooks(uid);
-
-        verify(mockBookRepository).getAllBookSummaries(uid);
-        verify(mockBookListObserver).onChanged(expectedList);
-        assertEquals(expectedList, viewModel.bookList.getValue());
-        assertTrue(viewModel.isEmpty());
+        // Then
+        verify(mockBookRepository).getAllBooks(eq("uid"));
+        Thread.sleep(100); // 非同期処理完了を待機
+        assertEquals(null, viewModel.bookList.getValue());
+        mockedLog.verify(() -> Log.e(eq("BookListViewModel"), contains("Error loading books")), times(1));
     }
 
+    /**
+     * loadBooks: 書籍リストの取得中にInterruptedExceptionが発生した場合
+     * _bookList LiveDataがnullで更新され、エラーログが出力されることをテスト
+     * 命令網羅、分岐網羅
+     */
     @Test
-    void testLoadBooks_exception() {
-        String uid = "user1";
+    public void loadBooks_interruptedException_postsNullAndLogsError() throws Exception {
+        // Given
+        when(mockBookRepository.getAllBooks(anyString())).thenReturn(mockBooksFuture);
+        when(mockBooksFuture.get()).thenThrow(new InterruptedException("Test Interrupted"));
 
-        when(mockBookRepository.getAllBookSummaries(uid))
-                .thenReturn(CompletableFuture.supplyAsync(() -> { throw new RuntimeException("Book Load Error"); }));
+        // When
+        viewModel.loadBooks("uid");
 
-        viewModel.loadBooks(uid);
-
-        verify(mockBookRepository).getAllBookSummaries(uid);
-        verify(mockBookListObserver).onChanged(null); // エラー時はnullがpostされる
-        assertNull(viewModel.bookList.getValue());
+        // Then
+        verify(mockBookRepository).getAllBooks(eq("uid"));
+        Thread.sleep(100); // 非同期処理完了を待機
+        assertEquals(null, viewModel.bookList.getValue());
+        mockedLog.verify(() -> Log.e(eq("BookListViewModel"), contains("Error loading books")), times(1));
     }
 
+    /**
+     * isEmpty: LiveDataが空のリストを保持している場合
+     * trueを返すことをテスト
+     */
     @Test
-    void testIsEmpty_withBooks() {
-        List<BookSummaryData> currentList = Arrays.asList(new BookSummaryData("vol1", "Title A", "urlA"));
-        viewModel.bookList.setValue(currentList);
-        assertFalse(viewModel.isEmpty());
+    public void isEmpty_emptyList_returnsTrue() throws Exception {
+        // Given
+        List<BookSummaryData> emptyList = new ArrayList<>();
+        when(mockBookRepository.getAllBooks(anyString())).thenReturn(mockBooksFuture);
+        when(mockBooksFuture.get()).thenReturn(emptyList);
+        viewModel.loadBooks("uid");
+        Thread.sleep(100); // 非同期処理完了を待機
+
+        // When
+        boolean result = viewModel.isEmpty();
+
+        // Then
+        assertTrue(result);
     }
 
+    /**
+     * isEmpty: LiveDataがnullを保持している場合
+     * trueを返すことをテスト
+     */
     @Test
-    void testIsEmpty_noBooks() {
-        viewModel.bookList.setValue(Collections.emptyList());
-        assertTrue(viewModel.isEmpty());
+    public void isEmpty_nullList_returnsTrue() throws Exception {
+        // Given
+        when(mockBookRepository.getAllBooks(anyString())).thenReturn(mockBooksFuture);
+        when(mockBooksFuture.get()).thenReturn(null);
+        viewModel.loadBooks("uid");
+        Thread.sleep(100); // 非同期処理完了を待機
 
-        viewModel.bookList.setValue(null);
-        assertTrue(viewModel.isEmpty());
+        // When
+        boolean result = viewModel.isEmpty();
+
+        // Then
+        assertTrue(result);
     }
 
+    /**
+     * isEmpty: LiveDataが空でないリストを保持している場合
+     * falseを返すことをテスト
+     */
     @Test
-    void testUpdatePublicStatus_success() {
-        String uid = "user1";
-        String volumeId = "vol1";
+    public void isEmpty_nonEmptyList_returnsFalse() throws Exception {
+        // Given
+        List<BookSummaryData> nonEmptyList = Arrays.asList(new BookSummaryData("id1", "Title 1", "url1"));
+        when(mockBookRepository.getAllBooks(anyString())).thenReturn(mockBooksFuture);
+        when(mockBooksFuture.get()).thenReturn(nonEmptyList);
+        viewModel.loadBooks("uid");
+        Thread.sleep(100); // 非同期処理完了を待機
+
+        // When
+        boolean result = viewModel.isEmpty();
+
+        // Then
+        assertFalse(result);
+    }
+
+    /**
+     * updatePublicStatus: 公開ステータスの更新が成功した場合
+     * 成功ログが出力され、書籍リストが再ロードされることをテスト
+     * 命令網羅、分岐網羅
+     */
+    @Test
+    public void updatePublicStatus_success_logsSuccessAndReloadsBooks() throws Exception {
+        // Given
+        String uid = "testUid";
+        String volumeId = "testVolumeId";
         boolean newPublicStatus = true;
-        List<BookSummaryData> initialList = Arrays.asList(
-                new BookSummaryData("vol1", "Title A", "urlA"),
-                new BookSummaryData("vol2", "Title B", "urlB")
-        );
-        initialList.get(0).setPublic(false); // 初期状態
 
-        List<BookSummaryData> updatedList = Arrays.asList(
-                new BookSummaryData("vol1", "Title A", "urlA"),
-                new BookSummaryData("vol2", "Title B", "urlB")
-        );
-        updatedList.get(0).setPublic(true); // 更新後の状態
+        when(mockBookRepository.updateBookPublicStatus(anyString(), anyString(), anyBoolean()))
+                .thenReturn(mockUpdatePublicStatusFuture);
+        when(mockUpdatePublicStatusFuture.get()).thenReturn(true); // 更新成功
 
-        when(mockBookRepository.updateBookPublicStatus(uid, volumeId, newPublicStatus))
-                .thenReturn(CompletableFuture.completedFuture(true));
-        when(mockBookRepository.getAllBookSummaries(uid))
-                .thenReturn(CompletableFuture.completedFuture(updatedList));
+        // loadBooksが呼ばれた時に返される書籍リストのモック
+        List<BookSummaryData> reloadedBooks = Arrays.asList(new BookSummaryData("id1", "Title 1", "url1"));
+        Future<List<BookSummaryData>> reloadedFuture = mock(Future.class);
+        when(mockBookRepository.getAllBooks(anyString())).thenReturn(reloadedFuture);
+        when(reloadedFuture.get()).thenReturn(reloadedBooks);
 
-        viewModel.bookList.setValue(initialList); // ViewModelに初期リストをセット
-
+        // When
         viewModel.updatePublicStatus(uid, volumeId, newPublicStatus);
 
-        verify(mockBookRepository).updateBookPublicStatus(uid, volumeId, newPublicStatus);
-        // 更新成功後、loadBooksが呼ばれ、リストが再ロードされることを検証
-        verify(mockBookRepository).getAllBookSummaries(uid);
-        verify(mockBookListObserver, atLeastOnce()).onChanged(updatedList);
-        assertEquals(updatedList, viewModel.bookList.getValue());
+        // Then
+        verify(mockBookRepository).updateBookPublicStatus(eq(uid), eq(volumeId), eq(newPublicStatus));
+        Thread.sleep(100); // 非同期処理完了を待機
+
+        mockedLog.verify(() -> Log.d(eq("BookListViewModel"), contains("Public status updated successfully")), times(1));
+        // 更新成功後にloadBooksが呼ばれるため、getAllBooksが再度呼ばれる
+        verify(mockBookRepository, times(1)).getAllBooks(eq(uid)); // 1回目はテスト設定のため、2回目はreloadのため
+        // loadBooksの結果がLiveDataに反映されることを検証
+        Thread.sleep(100); // reload処理完了を待機
+        assertEquals(reloadedBooks, viewModel.bookList.getValue());
+        mockedLog.verify(() -> Log.e(anyString(), anyString()), never());
     }
 
+    /**
+     * updatePublicStatus: 公開ステータスの更新が失敗した場合 (repositoryがfalseを返す)
+     * 失敗ログが出力され、書籍リストが再ロードされないことをテスト
+     * 命令網羅、分岐網羅
+     */
     @Test
-    void testUpdatePublicStatus_failure() {
-        String uid = "user1";
-        String volumeId = "vol1";
+    public void updatePublicStatus_failure_logsFailureAndDoesNotReloadBooks() throws Exception {
+        // Given
+        String uid = "testUid";
+        String volumeId = "testVolumeId";
         boolean newPublicStatus = false;
-        List<BookSummaryData> initialList = Arrays.asList(
-                new BookSummaryData("vol1", "Title A", "urlA")
-        );
-        initialList.get(0).setPublic(true);
 
-        when(mockBookRepository.updateBookPublicStatus(uid, volumeId, newPublicStatus))
-                .thenReturn(CompletableFuture.completedFuture(false));
+        when(mockBookRepository.updateBookPublicStatus(anyString(), anyString(), anyBoolean()))
+                .thenReturn(mockUpdatePublicStatusFuture);
+        when(mockUpdatePublicStatusFuture.get()).thenReturn(false); // 更新失敗
 
-        viewModel.bookList.setValue(initialList);
-
+        // When
         viewModel.updatePublicStatus(uid, volumeId, newPublicStatus);
 
-        verify(mockBookRepository).updateBookPublicStatus(uid, volumeId, newPublicStatus);
-        // 失敗時はloadBooksが呼ばれないこと (または元のデータが維持されること)
-        verify(mockBookRepository, never()).getAllBookSummaries(uid);
-        assertEquals(initialList, viewModel.bookList.getValue()); // データが変更されていないことを確認
+        // Then
+        verify(mockBookRepository).updateBookPublicStatus(eq(uid), eq(volumeId), eq(newPublicStatus));
+        Thread.sleep(100); // 非同期処理完了を待機
+
+        mockedLog.verify(() -> Log.e(eq("BookListViewModel"), contains("Failed to update public status")), times(1));
+        // 更新失敗の場合、loadBooksは呼ばれないことを検証
+        verify(mockBookRepository, never()).getAllBooks(anyString());
     }
 
+    /**
+     * updatePublicStatus: 公開ステータスの更新中にExecutionExceptionが発生した場合
+     * エラーログが出力され、書籍リストが再ロードされないことをテスト
+     * 命令網羅、分岐網羅
+     */
     @Test
-    void testUpdatePublicStatus_exception() {
-        String uid = "user1";
-        String volumeId = "vol1";
+    public void updatePublicStatus_executionException_logsErrorAndDoesNotReloadBooks() throws Exception {
+        // Given
+        String uid = "testUid";
+        String volumeId = "testVolumeId";
         boolean newPublicStatus = true;
-        List<BookSummaryData> initialList = Arrays.asList(
-                new BookSummaryData("vol1", "Title A", "urlA")
-        );
-        initialList.get(0).setPublic(false);
 
-        when(mockBookRepository.updateBookPublicStatus(uid, volumeId, newPublicStatus))
-                .thenReturn(CompletableFuture.supplyAsync(() -> { throw new RuntimeException("Update Error"); }));
+        when(mockBookRepository.updateBookPublicStatus(anyString(), anyString(), anyBoolean()))
+                .thenReturn(mockUpdatePublicStatusFuture);
+        when(mockUpdatePublicStatusFuture.get()).thenThrow(new ExecutionException(new Throwable("Test Exception")));
 
-        viewModel.bookList.setValue(initialList);
-
+        // When
         viewModel.updatePublicStatus(uid, volumeId, newPublicStatus);
 
-        verify(mockBookRepository).updateBookPublicStatus(uid, volumeId, newPublicStatus);
-        // エラー発生時はloadBooksが呼ばれないこと
-        verify(mockBookRepository, never()).getAllBookSummaries(uid);
-        assertEquals(initialList, viewModel.bookList.getValue()); // データが変更されていないことを確認
+        // Then
+        verify(mockBookRepository).updateBookPublicStatus(eq(uid), eq(volumeId), eq(newPublicStatus));
+        Thread.sleep(100); // 非同期処理完了を待機
+
+        mockedLog.verify(() -> Log.e(eq("BookListViewModel"), contains("Error updating public status")), times(1));
+        // 更新失敗の場合、loadBooksは呼ばれないことを検証
+        verify(mockBookRepository, never()).getAllBooks(anyString());
     }
 }

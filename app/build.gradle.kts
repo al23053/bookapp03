@@ -83,4 +83,7 @@ dependencies {
     //
     implementation("com.google.android.gms:play-services-auth:21.0.0")
 
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("org.mockito:mockito-inline:5.12.0")
+
 }
