@@ -2,8 +2,9 @@ package com.example.bookapp03.C1UIProcessing;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageButton;
+import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -93,17 +94,17 @@ public class DisplayHighlightMemo extends AppCompatActivity {
         // DrawerLayout のリスナー設定
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
-            public void onDrawerSlide(androidx.annotation.NonNull android.view.View drawerView, float slideOffset) {
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
                 // 何もしない
             }
 
             @Override
-            public void onDrawerOpened(androidx.annotation.NonNull android.view.View drawerView) {
+            public void onDrawerOpened(@NonNull View drawerView) {
                 Log.d(TAG, "ドロワーが開かれました");
             }
 
             @Override
-            public void onDrawerClosed(androidx.annotation.NonNull android.view.View drawerView) {
+            public void onDrawerClosed(@NonNull View drawerView) {
                 Log.d(TAG, "ドロワーが閉じられました - 画面を終了");
                 // ドロワーが閉じられたら画面を終了して元の画面に戻る
                 finish();
@@ -127,7 +128,7 @@ public class DisplayHighlightMemo extends AppCompatActivity {
         
         executor.execute(() -> {
             try {
-                List<HighlightMemoEntity> entities = highlightMemoDao.getHighlightMemo(uid, volumeId);
+                List<HighlightMemoEntity> entities = highlightMemoDao.getByUserAndVolume(uid, volumeId);
                 List<HighlightMemoData> dataList = new ArrayList<>();
                 
                 for (HighlightMemoEntity entity : entities) {
