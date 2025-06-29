@@ -1,6 +1,7 @@
 package com.example.bookapp03.C1UIProcessing;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -18,6 +19,8 @@ import com.example.bookapp03.R;
  */
 public class DisplaySetting extends AppCompatActivity {
 
+    private static final String TAG = "DisplaySetting";
+
     private ImageButton btnBack;
     private TextView btnNicknameIcon;
     private TextView btnGenre;
@@ -33,14 +36,36 @@ public class DisplaySetting extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settingdisplay);
 
-        // View バインド
+        Log.d(TAG, "DisplaySetting onCreate開始");
+
+        try {
+            // View バインド
+            initializeViews();
+
+            // コントローラー設定
+            setupControllers();
+
+        } catch (Exception e) {
+            Log.e(TAG, "DisplaySetting 初期化エラー", e);
+        }
+    }
+
+    /**
+     * View要素を初期化
+     */
+    private void initializeViews() {
         btnBack           = findViewById(R.id.btnBack);
         btnNicknameIcon   = findViewById(R.id.btnNicknameIcon);
         btnGenre          = findViewById(R.id.btnGenre);
         btnDarkMode       = findViewById(R.id.btnDarkMode);
         btnAccountSwitch  = findViewById(R.id.btnAccountSwitch);
         btnLogout         = findViewById(R.id.btnLogout);
+    }
 
+    /**
+     * コントローラーを設定
+     */
+    private void setupControllers() {
         // 戻るボタン制御
         ctrlBack = new ControlBackToHomeButton(this);
         ctrlBack.bind(btnBack);
