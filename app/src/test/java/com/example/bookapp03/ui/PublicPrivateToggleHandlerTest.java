@@ -1,19 +1,17 @@
-package com.example.bookapp03.ui;
-
-import static org.mockito.Mockito.*;
-
-import android.util.Log;
-
 import com.example.bookapp03.presentation.viewmodel.BookListViewModel;
+import com.example.bookapp03.ui.PublicPrivateToggleHandler;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
-@ExtendWith(MockitoExtension.class)
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 public class PublicPrivateToggleHandlerTest {
 
     @Mock
@@ -21,77 +19,67 @@ public class PublicPrivateToggleHandlerTest {
 
     private PublicPrivateToggleHandler toggleHandler;
 
-    @BeforeEach
-    void setUp() {
-        // Log.w をモック化
-        try (MockedStatic<Log> mockedLog = mockStatic(Log.class)) {
-            mockedLog.when(() -> Log.w(anyString(), anyString())).thenReturn(0);
-        }
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
         toggleHandler = new PublicPrivateToggleHandler(mockViewModel);
     }
 
+    /**
+     * handleToggleが正しい引数でViewModelのupdatePublicStatusを呼び出すことを確認する
+     */
     @Test
-    void testHandleToggle_success() {
-        String uid = "testUser";
-        String volumeId = "testVolume";
-        boolean newStatus = true;
+    public void handleToggle_callsViewModelUpdatePublicStatusWithCorrectArguments() {
+        String uid = "testUser1";
+        String volumeId = "testVolume1";
+        boolean newPublicStatus = true;
 
-        toggleHandler.handleToggle(uid, volumeId, newStatus);
+        toggleHandler.handleToggle(uid, volumeId, newPublicStatus);
 
-        // ViewModelのupdatePublicStatusが正しい引数で呼ばれたことを検証
-        verify(mockViewModel).updatePublicStatus(uid, volumeId, newStatus);
+        verify(mockViewModel, times(1)).updatePublicStatus(eq(uid), eq(volumeId), eq(newPublicStatus));
     }
 
+    /**
+     * ViewModelがnullの場合にupdatePublicStatusが呼び出されないことを確認する
+     */
     @Test
-    void testHandleToggle_nullViewModel() {
-        String uid = "testUser";
-        String volumeId = "testVolume";
-        boolean newStatus = true;
-
-        // ViewModelがnullの場合
+    public void handleToggle_doesNotCallUpdatePublicStatusWhenViewModelIsNull() {
         PublicPrivateToggleHandler nullViewModelHandler = new PublicPrivateToggleHandler(null);
-        nullViewModelHandler.handleToggle(uid, volumeId, newStatus);
 
-        // ViewModelのメソッドは呼び出されないことを検証
-        verifyNoInteractions(mockViewModel); // mockViewModelがnullHandlerに渡されていないので、これでOK
+        String uid = "testUser1";
+        String volumeId = "testVolume1";
+        boolean newPublicStatus = true;
 
-        // Log.w が呼ばれたことを検証 (これはstatic methodなので別途モックが必要)
-        try (MockedStatic<Log> mockedLog = mockStatic(Log.class)) {
-            mockedLog.when(() -> Log.w(anyString(), anyString())).thenReturn(0);
-            nullViewModelHandler.handleToggle(uid, volumeId, newStatus);
-            mockedLog.verify(() -> Log.w(eq("ToggleHandler"), eq("ViewModel, UID, または VolumeId が null")));
-        }
+        nullViewModelHandler.handleToggle(uid, volumeId, newPublicStatus);
+
+        verify(mockViewModel, never()).updatePublicStatus(any(), any(), anyBoolean());
     }
 
+    /**
+     * UIDがnullの場合にupdatePublicStatusが呼び出されないことを確認する
+     */
     @Test
-    void testHandleToggle_nullUid() {
-        String volumeId = "testVolume";
-        boolean newStatus = true;
+    public void handleToggle_doesNotCallUpdatePublicStatusWhenUidIsNull() {
+        String uid = null;
+        String volumeId = "testVolume1";
+        boolean newPublicStatus = true;
 
-        toggleHandler.handleToggle(null, volumeId, newStatus);
+        toggleHandler.handleToggle(uid, volumeId, newPublicStatus);
 
-        verifyNoInteractions(mockViewModel); // ViewModelのメソッドは呼び出されないことを検証
-
-        try (MockedStatic<Log> mockedLog = mockStatic(Log.class)) {
-            mockedLog.when(() -> Log.w(anyString(), anyString())).thenReturn(0);
-            toggleHandler.handleToggle(null, volumeId, newStatus);
-            mockedLog.verify(() -> Log.w(eq("ToggleHandler"), eq("ViewModel, UID, または VolumeId が null")));
-        }
+        verify(mockViewModel, never()).updatePublicStatus(any(), any(), anyBoolean());
     }
 
+    /**
+     * VolumeIdがnullの場合にupdatePublicStatusが呼び出されないことを確認する
+     */
     @Test
-    void testHandleToggle_nullVolumeId() {
-        String uid = "testUser";
-        boolean newStatus = true;
+    public void handleToggle_doesNotCallUpdatePublicStatusWhenVolumeIdIsNull() {
+        String uid = "testUser1";
+        String volumeId = null;
+        boolean newPublicStatus = true;
 
-        toggleHandler.handleToggle(uid, null, newStatus);
+        toggleHandler.handleToggle(uid, volumeId, newPublicStatus);
 
-        verifyNoInteractions(mockViewModel); // ViewModelのメソッドは呼び出されないことを検証
-
-        try (MockedStatic<Log> mockedLog = mockStatic(Log.class)) {
-            mockedLog.when(() -> Log.w(anyString(), anyString())).thenReturn(0);
-            toggleHandler.handleToggle(uid, null, newStatus);
-            mockedLog.verify(() -> Log.w(eq("ToggleHandler"), eq("ViewModel, UID, または VolumeId が null")));
-        }
+        verify(mockViewModel, never()).updatePublicStatus(any(), any(), anyBoolean());
     }
 }

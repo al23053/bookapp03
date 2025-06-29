@@ -16,7 +16,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.bookapp03.data.model.BookDetailData;
-import com.example.bookapp03.data.model.HighlightMemoData;
+import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 import com.example.bookapp03.domain.repository.BookRepository;
 
 import java.util.List;

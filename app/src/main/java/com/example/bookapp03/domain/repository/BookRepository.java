@@ -10,7 +10,7 @@ package com.example.bookapp03.domain.repository;
 
 import com.example.bookapp03.data.model.BookDetailData;
 import com.example.bookapp03.data.model.BookSummaryData;
-import com.example.bookapp03.data.model.HighlightMemoData;
+import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 
 import java.util.List;
 import java.util.concurrent.Future;
