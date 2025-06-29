@@ -66,6 +66,9 @@
             android:exported="false"
             android:label="設定" />
         <activity
+            android:name=".C1UIProcessing.DisplayHome"
+            android:exported="false" />
+        <activity
             android:name=".Searchmain.SearchResultActivity" />
         <activity
             android:name=".ui.UserReviewListActivity"
@@ -80,6 +83,7 @@
         <activity
             android:name=".Searchmain.MainActivity"
             android:exported="true"/>
+      
     </application>
 
 </manifest>

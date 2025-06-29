@@ -4,7 +4,7 @@
  * 作成日: 2025/06/15
  * 概要: googleカウント登録完了画面の処理
  * 履歴:
- *   2025/06/15 増田学斗 新規作成
+ * 2025/06/15 増田学斗 新規作成
  */
 
 package com.example.bookapp03.C1UIProcessing;
