@@ -1,104 +1,184 @@
 package com.example.bookapp03.C1UIProcessing;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.GravityCompat;
 
+import com.example.bookapp03.R;
+import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
+import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoDao;
+import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
-import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoDao;
-import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
-import com.example.bookapp03.R;
-
 /**
- * モジュール名: ハイライトメモ表示
+ * モジュール名: ハイライトメモ表示画面
  * 作成者: 鶴田凌
  * 作成日: 2025/06/15
- * 概要: ローカルDBから読み込んだハイライトメモを右側からスライドするナビゲーションドロワーに一覧表示するActivity
+ * 概要: ハイライトメモ一覧を表示する画面
  * 履歴:
  * 2025/06/15 鶴田凌 新規作成
  */
 public class DisplayHighlightMemo extends AppCompatActivity {
-
-    /**
-     * DrawerLayout 本体（右側スライドドロワー）
-     */
-    private DrawerLayout drawer;
-
-    /**
-     * 表示用 RecyclerView
-     */
-    private RecyclerView recycler;
-
-    /**
-     * RecyclerView に渡すアダプター
-     */
+    
+    private static final String TAG = "DisplayHighlightMemo";
+    
+    private DrawerLayout drawerLayout;
+    private RecyclerView recyclerView;
     private HighlightMemoAdapter adapter;
-
-    /**
-     * Room DAO：ハイライトメモアクセス
-     */
-    private HighlightMemoDao dao;
-
-    /**
-     * 現在のユーザID
-     */
+    
     private String uid;
-
-    /**
-     * 現在の書籍ボリュームID
-     */
     private String volumeId;
+    
+    private HighlightMemoDao highlightMemoDao;
+    private ExecutorService executor;
 
-    /**
-     * DB操作用スレッドプール
-     */
-    private ExecutorService exec;
-
-    /**
-     * Activity 起動時にレイアウトをセットし、Intent extras・DAO準備、
-     * DBからの読み込みとドロワー表示を行う。
-     *
-     * @param savedInstanceState 前回の状態保存情報
-     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.highlightmemodisplay);
-
-        drawer = findViewById(R.id.drawer_layout);
-        recycler = findViewById(R.id.recyclerHighlight);
+        
+        Log.d(TAG, "DisplayHighlightMemo onCreate開始");
+        
+        try {
+            // Intent からパラメータ取得
+            uid = getIntent().getStringExtra("uid");
+            volumeId = getIntent().getStringExtra("volumeId");
+            
+            Log.d(TAG, "UID: " + uid + ", VolumeID: " + volumeId);
+            
+            // Database 初期化
+            highlightMemoDao = BookInformationDatabase
+                    .getDatabase(this)
+                    .highlightMemoDao();
+            executor = Executors.newSingleThreadExecutor();
+            
+            // View 初期化
+            initializeViews();
+            
+            // データ読み込み
+            loadHighlightMemos();
+            
+            // ドロワーを自動で開く
+            openDrawer();
+            
+        } catch (Exception e) {
+            Log.e(TAG, "DisplayHighlightMemo 初期化エラー", e);
+            finish();
+        }
+    }
+    
+    /**
+     * View要素を初期化
+     */
+    private void initializeViews() {
+        drawerLayout = findViewById(R.id.drawer_layout);
+        recyclerView = findViewById(R.id.recyclerHighlight);
+        
+        // RecyclerView設定
         adapter = new HighlightMemoAdapter();
-        recycler.setLayoutManager(new LinearLayoutManager(this));
-        recycler.setAdapter(adapter);
-
-        // IntentからUID/volumeIdを取得
-        uid = getIntent().getStringExtra("uid");
-        volumeId = getIntent().getStringExtra("volumeId");
-
-        dao = BookInformationDatabase.getDatabase(this).highlightMemoDao();
-        exec = Executors.newSingleThreadExecutor();
-
-        // DBから読み込み、ドロワーを開いて表示
-        exec.execute(() -> {
-            List<HighlightMemoEntity> list = dao.getByUserAndVolume(uid, volumeId);
-            List<HighlightMemoData> data = new ArrayList<>();
-            for (HighlightMemoEntity e : list) {
-                data.add(new HighlightMemoData(e.page, e.line, e.memo));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+        
+        // DrawerLayout のリスナー設定
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+                // 何もしない
             }
-            runOnUiThread(() -> {
-                adapter.setItems(data);
-                drawer.openDrawer(androidx.core.view.GravityCompat.END);
-            });
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+                Log.d(TAG, "ドロワーが開かれました");
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                Log.d(TAG, "ドロワーが閉じられました - 画面を終了");
+                // ドロワーが閉じられたら画面を終了して元の画面に戻る
+                finish();
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                // 何もしない
+            }
         });
+    }
+    
+    /**
+     * ハイライトメモデータを読み込み
+     */
+    private void loadHighlightMemos() {
+        if (uid == null || volumeId == null) {
+            Log.e(TAG, "UID または VolumeID が null です");
+            return;
+        }
+        
+        executor.execute(() -> {
+            try {
+                List<HighlightMemoEntity> entities = highlightMemoDao.getByUserAndVolume(uid, volumeId);
+                List<HighlightMemoData> dataList = new ArrayList<>();
+                
+                for (HighlightMemoEntity entity : entities) {
+                    HighlightMemoData data = new HighlightMemoData(
+                            entity.page,
+                            entity.line,
+                            entity.memo
+                    );
+                    dataList.add(data);
+                }
+                
+                runOnUiThread(() -> {
+                    adapter.setItems(dataList);
+                    Log.d(TAG, "ハイライトメモ " + dataList.size() + " 件を表示");
+                });
+                
+            } catch (Exception e) {
+                Log.e(TAG, "ハイライトメモ読み込みエラー", e);
+                runOnUiThread(() -> {
+                    adapter.setItems(new ArrayList<>());
+                });
+            }
+        });
+    }
+    
+    /**
+     * ドロワーを開く
+     */
+    private void openDrawer() {
+        if (drawerLayout != null) {
+            drawerLayout.openDrawer(GravityCompat.END);
+        }
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            // ドロワーが開いている場合は閉じる
+            drawerLayout.closeDrawer(GravityCompat.END);
+        } else {
+            // ドロワーが閉じている場合は通常のバック処理
+            super.onBackPressed();
+        }
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (executor != null && !executor.isShutdown()) {
+            executor.shutdown();
+        }
     }
 }

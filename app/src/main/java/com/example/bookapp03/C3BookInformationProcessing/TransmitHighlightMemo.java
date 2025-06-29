@@ -1,6 +1,7 @@
 package com.example.bookapp03.C3BookInformationProcessing;
 
 import android.content.Context;
+
 import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 import com.example.bookapp03.C6BookInformationManaging.RegisterHighlightMemo;
 
@@ -13,7 +14,7 @@ import com.example.bookapp03.C6BookInformationManaging.RegisterHighlightMemo;
  * 2025/06/15 鶴田凌 新規作成
  */
 public class TransmitHighlightMemo {
-    
+
     private Context context;
     private String uid;
     private String volumeId;
@@ -40,15 +41,15 @@ public class TransmitHighlightMemo {
     public boolean transmitHighlightMemo(HighlightMemoData data) {
         try {
             RegisterHighlightMemo register = new RegisterHighlightMemo(context);
-            
+
             // UI層のデータを管理層のデータ型に変換
-            com.example.bookapp03.data.model.HighlightMemoData modelData = 
-                new com.example.bookapp03.data.model.HighlightMemoData(
-                    data.getPage(), 
-                    data.getLine(), 
-                    data.getMemo()
-                );
-            
+            HighlightMemoData modelData =
+                    new HighlightMemoData(
+                            data.getPage(),
+                            data.getLine(),
+                            data.getMemo()
+                    );
+
             return register.registerHighlightMemo(uid, volumeId, modelData);
         } catch (Exception e) {
             return false;

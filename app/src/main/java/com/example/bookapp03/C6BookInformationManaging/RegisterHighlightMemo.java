@@ -1,56 +1,61 @@
 package com.example.bookapp03.C6BookInformationManaging;
 
 import android.content.Context;
-
-import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoDao;
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
+import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * モジュール名: ハイライト・メモ登録情報保存
+ * モジュール名: ハイライトメモ登録処理
  * 作成者: 鶴田凌
  * 作成日: 2025/06/15
- * 概要: ユーザ／書籍ごとのハイライトメモをローカルDBに保存するクラス
+ * 概要: ハイライトメモをデータベースに登録する処理
  * 履歴:
  * 2025/06/15 鶴田凌 新規作成
  */
 public class RegisterHighlightMemo {
 
-    private final HighlightMemoDao dao;
-    private final ExecutorService executor;
+    /**
+     * Android コンテキスト
+     */
+    private Context context;
 
     /**
      * コンストラクタ
      *
-     * @param context アプリケーションコンテキスト
+     * @param context Android コンテキスト
      */
     public RegisterHighlightMemo(Context context) {
-        BookInformationDatabase db = BookInformationDatabase.getDatabase(context);
-        this.dao = db.highlightMemoDao();
-        this.executor = Executors.newFixedThreadPool(2);
+        this.context = context;
     }
 
     /**
-     * ハイライトメモをローカルDBに登録する。
-     * overallSummaryおよびisPublicはデフォルト値を使用する。
+     * ハイライトメモを登録する
      *
-     * @param uid      ユーザUID
+     * @param uid ユーザID
      * @param volumeId 書籍ボリュームID
-     * @param data     ハイライトメモデータ（ページ、行、メモ）
-     * @return true=登録成功、false=失敗
+     * @param data ハイライトメモデータ
+     * @return 登録成功時 true、失敗時 false
      */
     public boolean registerHighlightMemo(
             String uid,
             String volumeId,
             HighlightMemoData data
     ) {
+        ExecutorService executor = null;
         try {
+            executor = Executors.newSingleThreadExecutor();
+            
             Future<Boolean> future = executor.submit(() -> {
+                HighlightMemoDao dao = BookInformationDatabase
+                        .getDatabase(context)
+                        .highlightMemoDao();
+
                 HighlightMemoEntity entity = new HighlightMemoEntity(
                         uid,
                         volumeId,
@@ -58,13 +63,21 @@ public class RegisterHighlightMemo {
                         data.getLine(),
                         data.getMemo()
                 );
+
+                // データベースにハイライトメモを挿入
                 long result = dao.insert(entity);
-                return result > 0;
+                return result > 0; // 挿入成功時は行IDが返される
             });
+
             return future.get();
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        } finally {
+            if (executor != null) {
+                executor.shutdown();
+            }
         }
     }
 }

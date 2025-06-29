@@ -1,3 +1,4 @@
+
 /**
  * モジュール名: AccountSettingActivity
  * 作成者: 増田学斗
@@ -29,9 +30,7 @@ import java.util.Map;
 
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-public class AccountSettingActivity extends AppCompatActivity {
+public class AccountSettingActivity extends Activity {
 
     /**
      * ギャラリー画像選択のリクエストコード
@@ -108,9 +107,11 @@ public class AccountSettingActivity extends AppCompatActivity {
         userMap.put("iconUri", iconUriStr);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users").document(uid).set(userMap).addOnSuccessListener(unused -> {
-            Log.d("AccountSetting", "Firestore保存成功、遷移開始");
-            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+        db.collection("users").document(uid)
+                .set(userMap)
+                .addOnSuccessListener(unused -> {
+                    Log.d("AccountSetting", "Firestore保存成功、遷移開始");
+                    Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(AccountSettingActivity.this, GenreSelectionActivity.class);
             intent.putExtra("nickname", nickname);
