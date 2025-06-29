@@ -4,9 +4,12 @@
     package="com.example.bookapp03">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
-        android:allowBackup="true"
+        android:usesCleartextTraffic="true"
+        android:name=".Searchmain.MyApplication"  android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -42,7 +45,7 @@
         <activity
             android:name=".C1UIProcessing.GenreSelectionActivity"
             android:exported="false" />
-        
+
         <activity
             android:name=".C1UIProcessing.LoginActivity"
             android:exported="false" />
@@ -62,6 +65,21 @@
             android:name="com.example.bookapp03.C1UIProcessing.DisplaySetting"
             android:exported="false"
             android:label="設定" />
-
+        <activity
+            android:name=".Searchmain.SearchResultActivity" />
+        <activity
+            android:name=".ui.UserReviewListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.NoReviewsActivity" />
+        <activity
+            android:name=".ui.BookNotFoundActivity" />
+        <activity
+            android:name=".ui.BookSelectionActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".Searchmain.MainActivity"
+            android:exported="true"/>
     </application>
+
 </manifest>
