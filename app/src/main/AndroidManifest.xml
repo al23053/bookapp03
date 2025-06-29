@@ -8,7 +8,7 @@
 
     <application
         android:usesCleartextTraffic="true"
-        android:name=".Serchmain.MyApplication"  android:allowBackup="true"
+        android:name=".Searchmain.MyApplication"  android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -18,10 +18,10 @@
         android:theme="@style/Theme.Bookapp03"
         tools:targetApi="31">
         <activity
-            android:name=".Serchmain.MainActivity"
+            android:name=".Searchmain.MainActivity"
             android:exported="true">
         </activity>
-        <activity android:name=".Serchmain.SearchResultActivity" />
+        <activity android:name=".Searchmain.SearchResultActivity" />
         <activity android:name=".ui.UserReviewListActivity"
             android:exported="false"
             />
