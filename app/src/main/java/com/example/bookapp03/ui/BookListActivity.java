@@ -36,10 +36,10 @@ public class BookListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_book_list);
 
         controller = new BookListViewController();
-        recyclerView = findViewById(R.id.book_list_recycler);
+        recyclerView = findViewById(R.id.book_recycler_view);
         emptyTextView = findViewById(R.id.empty_text);
 
         // ViewModelProviderを使用してViewModelを初期化
