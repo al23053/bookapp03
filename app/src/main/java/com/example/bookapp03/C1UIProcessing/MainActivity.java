@@ -58,13 +58,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Googleサインインの設定を構築
+        // Googleサインインの設定
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
 
         googleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
 
-        // ログインボタン処理
+        // すでにログイン済みの場合は自動で処理に進む
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            checkIfUserExistsAndProceed(currentUser);
+            return; // ボタン処理を実行しないようにここで終了
+        }
+
+        // ログインボタン処理（ログインしていない場合のみ）
         Button loginButton = findViewById(R.id.to_login_button);
         loginButton.setOnClickListener(v -> {
             Intent signInIntent = googleSignInClient.getSignInIntent();

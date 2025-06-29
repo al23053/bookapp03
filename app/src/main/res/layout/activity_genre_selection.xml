@@ -53,6 +53,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="恋愛" />
+
+        <CheckBox
+            android:id="@+id/checkbox_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="歴史" />
+
+        <CheckBox
+            android:id="@+id/checkbox_business"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ビジネス" />
+
+        <CheckBox
+            android:id="@+id/checkbox_scifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SF" />
+
+        <CheckBox
+            android:id="@+id/checkbox_fantasy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ファンタジー" />
+
+        <CheckBox
+            android:id="@+id/checkbox_technology"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="コンピュータ・IT" />
+
         <!-- 必要に応じてジャンルを追加 -->
 
         <Button
