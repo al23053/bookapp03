@@ -1,21 +1,28 @@
 package com.example.bookapp03.logic;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.DialogInterface;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.ArgumentCaptor; // AlertDialogのビルダーをキャプチャするため
+import org.mockito.MockedStatic;
+import org.mockito.MockitoAnnotations;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.Shadows; // Shadowsクラスをインポート
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+// RobolectricTestRunner を使用してAndroid環境をシミュレート
+@RunWith(RobolectricTestRunner.class)
+@Config(sdk = 29) // テスト対象のSDKバージョンを指定 (API 29 は Android 10)
 public class TutorialManagerTest {
 
     @Mock
@@ -25,103 +32,145 @@ public class TutorialManagerTest {
     @Mock
     private SharedPreferences.Editor mockEditor;
     @Mock
-    private Activity mockActivity; // showTutorialIfNeeded のテスト用
+    private Activity mockActivity;
     @Mock
-    private AlertDialog.Builder mockAlertDialogBuilder; // AlertDialogのモック用
-    @Mock
-    private AlertDialog mockAlertDialog; // AlertDialogのモック用
+    private Runnable mockOnCompleteCallback;
 
     private TutorialManager tutorialManager;
 
-    @BeforeEach
-    void setUp() {
-        // Context.getSharedPreferences() が mockPrefs を返すように設定
-        when(mockContext.getSharedPreferences(anyString(), anyInt())).thenReturn(mockPrefs);
-        // SharedPreferences.edit() が mockEditor を返すように設定
+    private static final String PREF_NAME = "tutorial_pref";
+    private static final String KEY_SHOWN = "tutorial_shown";
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+
+        when(mockContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)).thenReturn(mockPrefs);
         when(mockPrefs.edit()).thenReturn(mockEditor);
-        // SharedPreferences.Editor の putBoolean と apply をチェイン可能にする
         when(mockEditor.putBoolean(anyString(), anyBoolean())).thenReturn(mockEditor);
+
+        // voidメソッドのモックには doAnswer().when() を使用
+        doAnswer(invocation -> {
+            Boolean value = invocation.getArgument(1); // putBooleanの第2引数 (value)
+            // SharedPreferencesの状態をモックで表現 (getBooleanの戻り値を更新)
+            when(mockPrefs.getBoolean(KEY_SHOWN, false)).thenReturn(value);
+            return null; // voidメソッドなのでnullを返す
+        }).when(mockEditor).apply();
 
         tutorialManager = new TutorialManager(mockContext);
     }
 
     @Test
-    void testShouldShowTutorial_true() {
-        // KEY_SHOWN が false の場合 (まだ表示されていない場合)
-        when(mockPrefs.getBoolean("tutorial_shown", false)).thenReturn(false);
-        assertTrue(tutorialManager.shouldShowTutorial());
+    public void shouldShowTutorial_returnsTrue_whenNotShown() {
+        when(mockPrefs.getBoolean(KEY_SHOWN, false)).thenReturn(false);
+        assertTrue("チュートリアルが表示されていない場合、trueを返すこと", tutorialManager.shouldShowTutorial());
+        verify(mockPrefs).getBoolean(KEY_SHOWN, false);
     }
 
     @Test
-    void testShouldShowTutorial_false() {
-        // KEY_SHOWN が true の場合 (すでに表示されている場合)
-        when(mockPrefs.getBoolean("tutorial_shown", false)).thenReturn(true);
-        assertFalse(tutorialManager.shouldShowTutorial());
+    public void shouldShowTutorial_returnsFalse_whenAlreadyShown() {
+        when(mockPrefs.getBoolean(KEY_SHOWN, false)).thenReturn(true);
+        assertFalse("チュートリアルが既に表示されている場合、falseを返すこと", tutorialManager.shouldShowTutorial());
+        verify(mockPrefs).getBoolean(KEY_SHOWN, false);
     }
 
     @Test
-    void testMarkTutorialAsShown() {
+    public void markTutorialAsShown_updatesSharedPreferences() {
         tutorialManager.markTutorialAsShown();
-        // putBoolean が KEY_SHOWN と true で呼ばれ、apply が呼ばれたことを検証
-        verify(mockEditor).putBoolean("tutorial_shown", true);
+        verify(mockEditor).putBoolean(KEY_SHOWN, true);
         verify(mockEditor).apply();
     }
 
     @Test
-    void testShowTutorialIfNeeded_showsTutorial() {
-        // チュートリアルが表示されるべき場合
-        when(mockPrefs.getBoolean("tutorial_shown", false)).thenReturn(false);
+    public void showTutorialIfNeeded_showsDialogAndMarksShown_whenNotShownAndOKClicked() {
+        when(mockPrefs.getBoolean(KEY_SHOWN, false)).thenReturn(false); // チュートリアルはまだ表示されていない
 
-        // AlertDialog.Builder をモック化
-        when(mockActivity.getApplicationContext()).thenReturn(mockContext); // BuilderのコンストラクタがContextを使うため
         try (MockedStatic<AlertDialog.Builder> mockedBuilder = mockStatic(AlertDialog.Builder.class)) {
-            mockedBuilder.when(() -> new AlertDialog.Builder(mockActivity)).thenReturn(mockAlertDialogBuilder);
-            when(mockAlertDialogBuilder.setTitle(anyString())).thenReturn(mockAlertDialogBuilder);
-            when(mockAlertDialogBuilder.setMessage(anyString())).thenReturn(mockAlertDialogBuilder);
-            when(mockAlertDialogBuilder.setPositiveButton(anyString(), any())).thenReturn(mockAlertDialogBuilder);
-            when(mockAlertDialogBuilder.setNegativeButton(anyString(), any())).thenReturn(mockAlertDialogBuilder);
-            when(mockAlertDialogBuilder.show()).thenReturn(mockAlertDialog); // show()が呼ばれてAlertDialogが返る
+            AlertDialog.Builder builder = mock(AlertDialog.Builder.class);
 
-            Runnable mockOnComplete = mock(Runnable.class);
-            tutorialManager.showTutorialIfNeeded(mockActivity, mockOnComplete);
+            when(builder.setTitle(anyString())).thenReturn(builder);
+            when(builder.setMessage(anyString())).thenReturn(builder);
+            when(builder.setPositiveButton(anyString(), any(DialogInterface.OnClickListener.class))).thenReturn(builder);
+            when(builder.setNegativeButton(anyString(), any(DialogInterface.OnClickListener.class))).thenReturn(builder);
 
-            // AlertDialog.Builder が作成され、show() が呼ばれたことを検証
-            mockedBuilder.verify(() -> new AlertDialog.Builder(mockActivity));
-            verify(mockAlertDialogBuilder).show();
+            mockedBuilder.when(() -> new AlertDialog.Builder(mockActivity)).thenReturn(builder);
 
-            // 正のボタンクリックの引数をキャプチャし、実行してみる
-            ArgumentCaptor<android.content.DialogInterface.OnClickListener> positiveClickListenerCaptor =
-                    ArgumentCaptor.forClass(android.content.DialogInterface.OnClickListener.class);
-            verify(mockAlertDialogBuilder).setPositiveButton(anyString(), positiveClickListenerCaptor.capture());
+            // When
+            tutorialManager.showTutorialIfNeeded(mockActivity, mockOnCompleteCallback);
 
-            // キャプチャしたリスナーを実行 (ダイアログが閉じられたことをシミュレート)
-            positiveClickListenerCaptor.getValue().onClick(mock(android.content.DialogInterface.class), 0);
+            // Then
+            verify(builder).setTitle("使い方");
+            verify(builder).setMessage("ここで使い方を説明する");
+            verify(builder).setPositiveButton(eq("OK"), any(DialogInterface.OnClickListener.class));
+            verify(builder).setNegativeButton(eq("スキップ"), any(DialogInterface.OnClickListener.class));
+            verify(builder).show(); // show()が呼ばれたことを検証
 
-            // チュートリアルが表示済みになり、onComplete が実行されることを検証
-            verify(mockEditor).putBoolean("tutorial_shown", true);
+            // Robolectricから表示されたダイアログのシャドウを取得します。
+            // AlertDialog.getLatestAlertDialog() は android.app.AlertDialog を返しますが、
+            // テスト用のメソッド (clickPositiveButtonなど) は ShadowAlertDialog にあるため、
+            // Shadows.shadowOf() を使って ShadowAlertDialog にキャストします。
+            AlertDialog actualAlertDialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull("ダイアログが表示されていること", actualAlertDialog);
+            ShadowAlertDialog shadowAlertDialog = Shadows.shadowOf(actualAlertDialog);
+
+
+            // OKボタンのクリックをシミュレート
+            shadowAlertDialog.clickPositiveButton();
+
+            // markTutorialAsShown()が呼び出されたことを検証
+            verify(mockEditor).putBoolean(KEY_SHOWN, true);
             verify(mockEditor).apply();
-            verify(mockOnComplete).run();
+            // onCompleteコールバックが呼び出されたことを検証
+            verify(mockOnCompleteCallback, times(1)).run();
         }
     }
 
     @Test
-    void testShowTutorialIfNeeded_skipsTutorial() {
-        // チュートリアルがすでに表示されている場合
-        when(mockPrefs.getBoolean("tutorial_shown", false)).thenReturn(true);
+    public void showTutorialIfNeeded_showsDialogAndDoesNotMarkShown_whenNotShownAndSkipClicked() {
+        when(mockPrefs.getBoolean(KEY_SHOWN, false)).thenReturn(false); // チュートリアルはまだ表示されていない
 
-        Runnable mockOnComplete = mock(Runnable.class);
-        tutorialManager.showTutorialIfNeeded(mockActivity, mockOnComplete);
-
-        // AlertDialog.Builder は作成されないことを検証
         try (MockedStatic<AlertDialog.Builder> mockedBuilder = mockStatic(AlertDialog.Builder.class)) {
-            mockedBuilder.verifyNoInteractions();
+            AlertDialog.Builder builder = mock(AlertDialog.Builder.class);
+            when(builder.setTitle(anyString())).thenReturn(builder);
+            when(builder.setMessage(anyString())).thenReturn(builder);
+            when(builder.setPositiveButton(anyString(), any(DialogInterface.OnClickListener.class))).thenReturn(builder);
+            when(builder.setNegativeButton(anyString(), any(DialogInterface.OnClickListener.class))).thenReturn(builder);
+            mockedBuilder.when(() -> new AlertDialog.Builder(mockActivity)).thenReturn(builder);
+
+            tutorialManager.showTutorialIfNeeded(mockActivity, mockOnCompleteCallback);
+
+            verify(builder).setTitle("使い方");
+            verify(builder).setMessage("ここで使い方を説明する");
+            verify(builder).setPositiveButton(eq("OK"), any(DialogInterface.OnClickListener.class));
+            verify(builder).setNegativeButton(eq("スキップ"), any(DialogInterface.OnClickListener.class));
+            verify(builder).show();
+
+            AlertDialog actualAlertDialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull("ダイアログが表示されていること", actualAlertDialog);
+            ShadowAlertDialog shadowAlertDialog = Shadows.shadowOf(actualAlertDialog);
+
+            // スキップボタンのクリックをシミュレート
+            shadowAlertDialog.clickNegativeButton();
+
+            // markTutorialAsShown()が呼び出されていないことを検証
+            verify(mockEditor, never()).putBoolean(eq(KEY_SHOWN), eq(true));
+            verify(mockEditor, never()).apply();
+            // onCompleteコールバックが呼び出されたことを検証
+            verify(mockOnCompleteCallback, times(1)).run();
         }
+    }
 
-        // チュートリアルが表示済みにマークされないことを検証
-        verify(mockEditor, never()).putBoolean(anyString(), anyBoolean());
-        verify(mockEditor, never()).apply();
+    @Test
+    public void showTutorialIfNeeded_doesNotShowDialog_whenAlreadyShown() {
+        when(mockPrefs.getBoolean(KEY_SHOWN, false)).thenReturn(true); // チュートリアルは既に表示済み
 
-        // onComplete が直接実行されることを検証
-        verify(mockOnComplete).run();
+        try (MockedStatic<AlertDialog.Builder> mockedBuilder = mockStatic(AlertDialog.Builder.class)) {
+            tutorialManager.showTutorialIfNeeded(mockActivity, mockOnCompleteCallback);
+
+            mockedBuilder.verifyNoInteractions(); // AlertDialog.Builderのメソッドが何も呼び出されていないことを検証
+            verify(mockOnCompleteCallback, times(1)).run(); // onCompleteコールバックが呼び出されたことを検証
+            verify(mockEditor, never()).putBoolean(anyString(), anyBoolean());
+            verify(mockEditor, never()).apply();
+        }
     }
 }

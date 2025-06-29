@@ -1,47 +1,69 @@
 package com.example.bookapp03.C1UIProcessing;
 
-import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.ImageButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 /**
- * モジュール名: ハンバーガーバー制御
+ * モジュール名: ハンバーガーメニュー制御
  * 作成者: 鶴田凌
  * 作成日: 2025/06/15
- * 概要: 右上のハンバーガーアイコン押下でハイライトメモ画面を起動するクラス
+ * 概要: ハンバーガーメニューボタンの制御クラス
  * 履歴:
  * 2025/06/15 鶴田凌 新規作成
  */
 public class ControlHamburgerBar {
-    private final Context context;
+    
+    private static final String TAG = "ControlHamburgerBar";
+    
+    private final AppCompatActivity activity;
     private final String uid;
     private final String volumeId;
 
     /**
      * コンストラクタ
      *
-     * @param context  呼び出し元 Context
-     * @param uid      ログイン中のユーザID
-     * @param volumeId 書籍ボリュームID
+     * @param activity 呼び出し元Activity
+     * @param uid      ユーザID
+     * @param volumeId 書籍ID
      */
-    public ControlHamburgerBar(Context context, String uid, String volumeId) {
-        this.context = context;
+    public ControlHamburgerBar(AppCompatActivity activity, String uid, String volumeId) {
+        this.activity = activity;
         this.uid = uid;
         this.volumeId = volumeId;
     }
 
     /**
-     * ImageButton にリスナーを設定し、押下時に
-     * DisplayHighlightMemo Activity を起動する。
+     * ハンバーガーメニューボタンにイベントリスナーを設定
      *
-     * @param btnMenu ハンバーガーアイコンボタン
+     * @param btnMenu ハンバーガーメニューボタン
      */
     public void bind(ImageButton btnMenu) {
-        btnMenu.setOnClickListener(v -> {
-            Intent intent = new Intent(context, DisplayHighlightMemo.class);
+        if (btnMenu != null) {
+            btnMenu.setOnClickListener(v -> openHighlightMemoScreen());
+        } else {
+            Log.e(TAG, "ハンバーガーメニューボタンが null です");
+        }
+    }
+
+    /**
+     * ハイライトメモ画面を開く
+     */
+    private void openHighlightMemoScreen() {
+        try {
+            Log.d(TAG, "ハイライトメモ画面を開く");
+            
+            Intent intent = new Intent(activity, DisplayHighlightMemo.class);
             intent.putExtra("uid", uid);
             intent.putExtra("volumeId", volumeId);
-            context.startActivity(intent);
-        });
+            
+            // 新しい画面として起動（戻るボタンで元画面に戻る）
+            activity.startActivity(intent);
+            
+        } catch (Exception e) {
+            Log.e(TAG, "ハイライトメモ画面の起動に失敗", e);
+        }
     }
 }

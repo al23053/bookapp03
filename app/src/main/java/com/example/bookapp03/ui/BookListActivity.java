@@ -16,12 +16,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bookapp03.C1UIProcessing.ControlBottomNavigationBar;
 import com.example.bookapp03.R;
 // import com.example.bookapp03.data.repository.BookRepositoryImpl; // ViewModelFactoryで処理するので不要
 import com.example.bookapp03.logic.BookListViewController;
 import com.example.bookapp03.presentation.viewmodel.BookListViewModel; // ViewModelのパッケージ
 import com.example.bookapp03.ui.ViewModelFactory; // ViewModelFactoryをインポート
 import com.example.bookapp03.data.model.BookSummaryData; // BookSummaryDataをインポート
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
@@ -36,10 +38,10 @@ public class BookListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_book_list);
 
         controller = new BookListViewController();
-        recyclerView = findViewById(R.id.book_list_recycler);
+        recyclerView = findViewById(R.id.book_recycler_view);
         emptyTextView = findViewById(R.id.empty_text);
 
         // ViewModelProviderを使用してViewModelを初期化
@@ -66,9 +68,17 @@ public class BookListActivity extends AppCompatActivity {
             }
         });
 
+        BottomNavigationView nav = findViewById(R.id.bottom_navigation);
+        nav.setOnItemSelectedListener(item -> {
+            new ControlBottomNavigationBar().handledisplay(item.getItemId(), this);
+            return true;
+        });
+
         // Activityが作成されたらViewModelにデータのロードを指示
         // TODO: 実際のユーザーUIDを取得するロジックをここに実装
         String currentUserId = "user123"; // 仮のユーザーID
         viewModel.loadBooks(currentUserId);
+
+
     }
 }
