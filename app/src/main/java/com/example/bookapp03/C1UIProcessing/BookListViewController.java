@@ -7,7 +7,7 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookapp03.logic;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.util.Log;
 import android.view.View;
@@ -16,11 +16,9 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-// import com.example.bookapp03.presentation.viewmodel.BookListViewModel; // ViewModelは直接不要になるためコメントアウト/削除
-import com.example.bookapp03.data.model.BookSummaryData;
+// import com.example.bookapp03.C3BookInformationProcessing.BookListViewModel; // ViewModelは直接不要になるためコメントアウト/削除
+import com.example.bookapp03.C3BookInformationProcessing.BookSummaryData;
 import com.example.bookapp03.R;
-import com.example.bookapp03.ui.BookListAdapter;
-import com.example.bookapp03.ui.PublicPrivateToggleHandler; // ★追加★
 
 import java.util.List;
 

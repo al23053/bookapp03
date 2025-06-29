@@ -7,7 +7,7 @@
  *   2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookapp03.ui;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.os.Bundle;
 import android.view.View;
@@ -15,9 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.bookapp03.R;
-import com.example.bookapp03.data.model.BookDetailData; // パッケージ変更
-import com.example.bookapp03.logic.BookDetailViewController;
-import com.example.bookapp03.presentation.viewmodel.BookDetailViewModel; // ViewModelのパッケージ変更
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailViewModel; // ViewModelのパッケージ変更
+
 
 /**
  * 書籍詳細画面を表示するアクティビティ

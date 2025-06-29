@@ -10,8 +10,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.example.bookapp03.C1UIProcessing.BookDetailViewController;
 import com.example.bookapp03.R;
-import com.example.bookapp03.data.model.BookDetailData;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailData;
 
 import org.junit.Before;
 import org.junit.Test;

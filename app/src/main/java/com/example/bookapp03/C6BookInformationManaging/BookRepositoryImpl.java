@@ -6,23 +6,19 @@
  * 履歴:
  * 2025/06/20 横山葉 新規作成
  */
-package com.example.bookapp03.data.repository;
+package com.example.bookapp03.C6BookInformationManaging;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.example.bookapp03.C6BookInformationManaging.RegisterHighlightMemo;
-import com.example.bookapp03.C6BookInformationManaging.RegisterSummary;
-import com.example.bookapp03.C6BookInformationManaging.VolumeIdProvider;
 import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoDao;
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
 import com.example.bookapp03.C6BookInformationManaging.database.SummaryDao;
 import com.example.bookapp03.C6BookInformationManaging.database.SummaryEntity;
-import com.example.bookapp03.data.model.BookDetailData;
-import com.example.bookapp03.data.model.BookSummaryData;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailData;
+import com.example.bookapp03.C3BookInformationProcessing.BookSummaryData;
 import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
-import com.example.bookapp03.domain.repository.BookRepository;
 
 import java.util.ArrayList;
 import java.util.List;

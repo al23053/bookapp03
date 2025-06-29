@@ -20,6 +20,8 @@ import org.robolectric.Shadows; // Shadowsクラスをインポート
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import com.example.bookapp03.C1UIProcessing.TutorialManager;
+
 // RobolectricTestRunner を使用してAndroid環境をシミュレート
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 29) // テスト対象のSDKバージョンを指定 (API 29 は Android 10)

@@ -1,12 +1,10 @@
-package com.example.bookapp03.ui;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.bookapp03.R;
-import com.example.bookapp03.logic.TutorialManager;
 
 public class TutorialActivity extends AppCompatActivity {
     private int totalPages = 3;

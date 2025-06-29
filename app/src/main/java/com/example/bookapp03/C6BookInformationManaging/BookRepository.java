@@ -6,10 +6,10 @@
  * 履歴:
  * 2025/06/20 横山葉 新規作成
  */
-package com.example.bookapp03.domain.repository;
+package com.example.bookapp03.C6BookInformationManaging;
 
-import com.example.bookapp03.data.model.BookDetailData;
-import com.example.bookapp03.data.model.BookSummaryData;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailData;
+import com.example.bookapp03.C3BookInformationProcessing.BookSummaryData;
 import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 
 import java.util.List;

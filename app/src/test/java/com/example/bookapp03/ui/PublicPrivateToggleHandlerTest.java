@@ -1,5 +1,5 @@
-import com.example.bookapp03.presentation.viewmodel.BookListViewModel;
-import com.example.bookapp03.ui.PublicPrivateToggleHandler;
+import com.example.bookapp03.C3BookInformationProcessing.BookListViewModel;
+import com.example.bookapp03.C1UIProcessing.PublicPrivateToggleHandler;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -1,8 +1,8 @@
 package com.example.bookapp03.data.repository;
 
 import android.content.Context;
-import android.util.Log; // Logは静的クラスですが、テストでは通常無視するか、専用のテストルールで扱うことが多いです。
 
+import com.example.bookapp03.C6BookInformationManaging.BookRepositoryImpl;
 import com.example.bookapp03.C6BookInformationManaging.RegisterHighlightMemo;
 import com.example.bookapp03.C6BookInformationManaging.RegisterSummary;
 import com.example.bookapp03.C6BookInformationManaging.VolumeIdProvider; // 静的メソッドを含みます
@@ -11,8 +11,8 @@ import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoDao
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
 import com.example.bookapp03.C6BookInformationManaging.database.SummaryDao;
 import com.example.bookapp03.C6BookInformationManaging.database.SummaryEntity;
-import com.example.bookapp03.data.model.BookDetailData;
-import com.example.bookapp03.data.model.BookSummaryData;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailData;
+import com.example.bookapp03.C3BookInformationProcessing.BookSummaryData;
 import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 
 import org.junit.Before;

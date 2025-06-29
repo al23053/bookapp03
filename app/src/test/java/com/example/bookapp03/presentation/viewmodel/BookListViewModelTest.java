@@ -2,10 +2,9 @@ package com.example.bookapp03.presentation.viewmodel;
 
 import android.util.Log;
 
-import androidx.lifecycle.MutableLiveData;
-
-import com.example.bookapp03.data.model.BookSummaryData;
-import com.example.bookapp03.domain.repository.BookRepository;
+import com.example.bookapp03.C3BookInformationProcessing.BookListViewModel;
+import com.example.bookapp03.C3BookInformationProcessing.BookSummaryData;
+import com.example.bookapp03.C6BookInformationManaging.BookRepository;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,7 +27,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;

@@ -7,7 +7,7 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookapp03.data.model;
+package com.example.bookapp03.C3BookInformationProcessing;
 
 /**
  * 書籍の概要情報を管理するクラス

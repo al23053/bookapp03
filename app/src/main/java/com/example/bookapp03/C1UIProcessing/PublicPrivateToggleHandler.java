@@ -7,11 +7,11 @@
  * 2025/06/14 横山葉 新規作成
  */
 
-package com.example.bookapp03.ui;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.util.Log;
 
-import com.example.bookapp03.presentation.viewmodel.BookListViewModel; // ViewModelのパッケージ変更
+import com.example.bookapp03.C3BookInformationProcessing.BookListViewModel; // ViewModelのパッケージ変更
 
 /**
  * 公開・非公開切り替えの操作を扱うクラス

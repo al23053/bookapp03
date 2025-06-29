@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import com.example.bookapp03.C3BookInformationProcessing.BookSummaryData;
+
 /**
  * BookSummaryDataの単体テスト (JUnit 4)
  */

@@ -7,7 +7,7 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookapp03.logic;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.util.Log;
 import android.view.View;
@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.bookapp03.data.model.BookDetailData;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailData;
 import com.example.bookapp03.R;
 
 /**

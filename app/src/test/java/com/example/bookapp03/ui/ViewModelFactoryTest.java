@@ -4,17 +4,13 @@ import android.content.Context;
 
 import androidx.lifecycle.ViewModel;
 
-import com.example.bookapp03.data.repository.BookRepositoryImpl;
-import com.example.bookapp03.domain.repository.BookRepository;
-import com.example.bookapp03.presentation.viewmodel.BookDetailViewModel;
-import com.example.bookapp03.presentation.viewmodel.BookListViewModel;
-import com.example.bookapp03.ui.ViewModelFactory;
+import com.example.bookapp03.C1UIProcessing.ViewModelFactory;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailViewModel;
+import com.example.bookapp03.C3BookInformationProcessing.BookListViewModel;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -23,7 +19,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 29)

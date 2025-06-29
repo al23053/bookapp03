@@ -1,20 +1,20 @@
 package com.example.bookapp03.ui;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ImageView; // Added for testing ImageView with Glide
-import android.widget.Switch; // Assuming Switch might be in some part of the detail view or related
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.bookapp03.C1UIProcessing.BookDetailActivity;
+import com.example.bookapp03.C1UIProcessing.ViewModelFactory;
 import com.example.bookapp03.R;
-import com.example.bookapp03.data.model.BookDetailData;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailData;
 import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
-import com.example.bookapp03.logic.BookDetailViewController;
-import com.example.bookapp03.presentation.viewmodel.BookDetailViewModel;
+import com.example.bookapp03.C1UIProcessing.BookDetailViewController;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailViewModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +26,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLooper;
-import org.robolectric.shadows.ShadowView;
 import org.robolectric.shadows.ShadowImageView; // For Glide check
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +35,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
