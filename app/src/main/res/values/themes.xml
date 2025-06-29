@@ -1,9 +1,15 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Bookapp03" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+           xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.Bookapp03" parent="Base.Theme.Bookapp03" />
+    <!-- Base application theme. -->
+    <style name="Theme.Bookapp03" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- アプリケーションアイコン／ラベル／バックアップ設定は Manifest 側で維持 -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+        <!-- ステータスバーを Primary と同色に -->
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <!-- ナビゲーションバーなどをライト／ダークで切り替え -->
+        <item name="android:forceDarkAllowed">true</item>
+    </style>
+  
 </resources>
