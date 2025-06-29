@@ -59,6 +59,11 @@ public class GenreSelectionActivity extends AppCompatActivity {
         genreCheckboxes.add(findViewById(R.id.checkbox_biography));
         genreCheckboxes.add(findViewById(R.id.checkbox_selfhelp));
         genreCheckboxes.add(findViewById(R.id.checkbox_romance));
+        genreCheckboxes.add(findViewById(R.id.checkbox_history));
+        genreCheckboxes.add(findViewById(R.id.checkbox_business));
+        genreCheckboxes.add(findViewById(R.id.checkbox_scifi));
+        genreCheckboxes.add(findViewById(R.id.checkbox_fantasy));
+        genreCheckboxes.add(findViewById(R.id.checkbox_technology));
 
         // 「次へ」ボタン押下時の処理
         Button buttonNext = findViewById(R.id.buttonNextToComplete);
