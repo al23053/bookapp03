@@ -7,7 +7,7 @@
  * 2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookapp03.presentation.viewmodel;
+package com.example.bookapp03.C3BookInformationProcessing;
 
 import android.util.Log;
 
@@ -15,9 +15,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.bookapp03.data.model.BookDetailData;
 import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
-import com.example.bookapp03.domain.repository.BookRepository;
+import com.example.bookapp03.C6BookInformationManaging.BookRepository;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

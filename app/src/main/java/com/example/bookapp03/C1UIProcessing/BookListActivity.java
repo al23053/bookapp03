@@ -7,7 +7,7 @@
  *   2025/06/09 横山葉 新規作成
  */
 
-package com.example.bookapp03.ui;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.os.Bundle;
 import android.view.View;
@@ -16,16 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookapp03.C1UIProcessing.ControlBottomNavigationBar;
 import com.example.bookapp03.R;
-// import com.example.bookapp03.data.repository.BookRepositoryImpl; // ViewModelFactoryで処理するので不要
-import com.example.bookapp03.logic.BookListViewController;
-import com.example.bookapp03.presentation.viewmodel.BookListViewModel; // ViewModelのパッケージ
-import com.example.bookapp03.ui.ViewModelFactory; // ViewModelFactoryをインポート
-import com.example.bookapp03.data.model.BookSummaryData; // BookSummaryDataをインポート
+// import com.example.bookapp03.C6BookInformationManaging.BookRepositoryImpl; // ViewModelFactoryで処理するので不要
+import com.example.bookapp03.C3BookInformationProcessing.BookListViewModel; // ViewModelのパッケージ
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.List;
 
 public class BookListActivity extends AppCompatActivity {
 

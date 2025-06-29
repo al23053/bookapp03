@@ -3,9 +3,10 @@ package com.example.bookapp03.presentation.viewmodel;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
-import com.example.bookapp03.data.model.BookDetailData;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailData;
 import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
-import com.example.bookapp03.domain.repository.BookRepository;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailViewModel;
+import com.example.bookapp03.C6BookInformationManaging.BookRepository;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,7 +18,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -25,10 +25,8 @@ import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;

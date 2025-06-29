@@ -8,16 +8,16 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bookapp03.C1UIProcessing.BookListViewController;
 import com.example.bookapp03.R;
-import com.example.bookapp03.data.model.BookSummaryData;
-import com.example.bookapp03.ui.BookListAdapter;
-import com.example.bookapp03.ui.PublicPrivateToggleHandler;
+import com.example.bookapp03.C3BookInformationProcessing.BookSummaryData;
+import com.example.bookapp03.C1UIProcessing.BookListAdapter;
+import com.example.bookapp03.C1UIProcessing.PublicPrivateToggleHandler;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;

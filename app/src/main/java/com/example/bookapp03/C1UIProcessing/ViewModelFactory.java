@@ -6,17 +6,17 @@
  * 履歴:
  * 2025/06/20 横山葉 新規作成
  */
-package com.example.bookapp03.ui;
+package com.example.bookapp03.C1UIProcessing;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.bookapp03.data.repository.BookRepositoryImpl;
-import com.example.bookapp03.domain.repository.BookRepository;
-import com.example.bookapp03.presentation.viewmodel.BookDetailViewModel;
-import com.example.bookapp03.presentation.viewmodel.BookListViewModel;
+import com.example.bookapp03.C6BookInformationManaging.BookRepositoryImpl;
+import com.example.bookapp03.C6BookInformationManaging.BookRepository;
+import com.example.bookapp03.C3BookInformationProcessing.BookDetailViewModel;
+import com.example.bookapp03.C3BookInformationProcessing.BookListViewModel;
 
 /**
  * ViewModelのインスタンスを生成するためのファクトリークラス。

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.example.bookapp03.R;
-import com.example.bookapp03.ui.BookListActivity;
 
 
 /**
