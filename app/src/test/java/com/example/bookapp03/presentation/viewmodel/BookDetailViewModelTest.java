@@ -4,7 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import com.example.bookapp03.data.model.BookDetailData;
-import com.example.bookapp03.data.model.HighlightMemoData;
+import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 import com.example.bookapp03.domain.repository.BookRepository;
 
 import org.junit.After;

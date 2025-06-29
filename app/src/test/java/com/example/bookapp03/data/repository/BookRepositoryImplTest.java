@@ -13,7 +13,7 @@ import com.example.bookapp03.C6BookInformationManaging.database.SummaryDao;
 import com.example.bookapp03.C6BookInformationManaging.database.SummaryEntity;
 import com.example.bookapp03.data.model.BookDetailData;
 import com.example.bookapp03.data.model.BookSummaryData;
-import com.example.bookapp03.data.model.HighlightMemoData;
+import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -325,7 +325,7 @@ public class BookRepositoryImplTest {
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(1, result.get(0).getPage());
-        assertEquals("Memo 2", result.get(1).getMemoContent());
+        assertEquals("Memo 2", result.get(1).getMemo());
 
         verify(mockHighlightMemoDao).getByUserAndVolume(uid, volumeId);
     }

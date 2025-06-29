@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.bookapp03.R;
 import com.example.bookapp03.data.model.BookDetailData;
-import com.example.bookapp03.data.model.HighlightMemoData;
+import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 import com.example.bookapp03.logic.BookDetailViewController;
 import com.example.bookapp03.presentation.viewmodel.BookDetailViewModel;
 
