@@ -3,7 +3,7 @@ package com.example.bookapp03.service;
 import android.util.Log;
 
 import com.example.bookapp03.model.Book;
-import com.example.bookapp03.model.BooksApiResponse;
+import com.example.bookapp03.model.BooksApiResponse; // このクラスは使われていないようですが、残しておきます
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -25,17 +25,18 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * 楽天Kobo APIにアクセスするためのサービスです。
+ * 楽天市場ランキングAPIとGoogle Books APIにアクセスするためのサービスです。
  * 書籍ランキングの取得と、その結果をGoogle Books APIで補完するロジックを担当します。
  */
 public class RakutenBooksApiService {
 
     private static final String TAG = "RakutenBooksApiService";
-    private static final String RAKUTEN_BOOKS_API_RANKING_URL = "https://app.rakuten.co.jp/services/api/Kobo/BookSearch/20170424";
+    // 楽天市場ランキングAPIのエンドポイントに変更
+    private static final String RAKUTEN_ICHIBA_RANKING_API_URL = "https://app.rakuten.co.jp/services/api/IchibaItem/Ranking/20170628";
     private static final String GOOGLE_BOOKS_API_BASE_URL = "https://www.googleapis.com/books/v1/volumes";
 
     /**
-     * 楽天APIにアクセスするためのアプリケーションID。
+     * 楽天市場APIにアクセスするためのアプリケーションID。
      */
     private final String rakutenApplicationId;
     /**
@@ -93,7 +94,7 @@ public class RakutenBooksApiService {
 
 
     /**
-     * 楽天Kobo APIから話題の書籍（ランキング）を取得し、可能であればGoogle Books APIで情報を補完します。
+     * 楽天市場ランキングAPIから売れ筋の書籍（ランキング）を取得し、可能であればGoogle Books APIで情報を補完します。
      * この処理はバックグラウンドスレッドで実行されます。
      *
      * @param callback 結果を返すRakutenBooksApiCallback
@@ -101,46 +102,54 @@ public class RakutenBooksApiService {
     public void fetchRankingBooks(RakutenBooksApiCallback callback) {
         executorService.execute(() -> {
             try {
-                // 楽天APIのリクエストURLを構築
-                HttpUrl.Builder urlBuilder = HttpUrl.parse(RAKUTEN_BOOKS_API_RANKING_URL).newBuilder();
+                // 楽天市場ランキングAPIのリクエストURLを構築
+                HttpUrl.Builder urlBuilder = HttpUrl.parse(RAKUTEN_ICHIBA_RANKING_API_URL).newBuilder();
                 urlBuilder.addQueryParameter("applicationId", rakutenApplicationId);
-                urlBuilder.addQueryParameter("booksGenreId", "001"); // 全体ランキングのジャンルID
-                urlBuilder.addQueryParameter("formatVersion", "2"); // APIのフォーマットバージョン
-                urlBuilder.addQueryParameter("elements", "title,author,itemUrl,largeImageUrl"); // 取得する要素を指定
+                // 本・雑誌・コミックのジャンルID (2025年6月時点の確認に基づきますが、最新の楽天APIドキュメントで再確認してください)
+                // 楽天のジャンルIDは変更される可能性があるため、実際に動作させる前に確認することを強く推奨します。
+                // 以下のIDは例であり、正確なIDは楽天APIのジャンル検索などで取得してください。
+                // 通常、「本・雑誌・コミック」は '101240' あるいは '001' (Koboの場合) などですが、
+                // 楽天市場ランキングAPIの場合は '100004' (本・雑誌・コミックの大ジャンルID) や、
+                // より具体的なカテゴリ（例: '100005' 漫画、'100006' 文学など）を使用することが考えられます。
+                // ここでは、一般的な「本・雑誌・コミック」の大ジャンルIDの例として '100004' を使用します。
+                urlBuilder.addQueryParameter("genreId", "200162"); // 楽天市場の「本・雑誌・コミック」ジャンルIDの例
                 urlBuilder.addQueryParameter("hits", "10"); // 取得する書籍数を10件に制限
+                urlBuilder.addQueryParameter("elements", "itemName,artistName,itemUrl,mediumImageUrl,affiliateUrl"); // 取得する要素を指定 (楽天市場ランキングAPIの要素名)
+
 
                 String url = urlBuilder.build().toString();
                 Request request = new Request.Builder().url(url).build();
 
                 try (Response response = httpClient.newCall(request).execute()) {
                     if (!response.isSuccessful()) {
-                        throw new IOException("楽天API呼び出し失敗: " + response.code() + " " + response.message());
+                        throw new IOException("楽天市場ランキングAPI呼び出し失敗: " + response.code() + " " + response.message());
                     }
 
                     String responseBody = response.body().string();
-                    Log.d(TAG, "Rakuten Ranking API Response: " + responseBody);
+                    Log.d(TAG, "Rakuten Ichiba Ranking API Response: " + responseBody);
 
                     // JSONレスポンスをパース
                     JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
-                    JsonArray itemsArray = jsonObject.getAsJsonArray("Items");
+                    JsonArray itemsArray = jsonObject.getAsJsonArray("Items"); // "Items"キーの下に配列がある
 
                     List<Book> hotBooks = new ArrayList<>();
                     if (itemsArray != null) {
                         for (JsonElement itemElement : itemsArray) {
-                            JsonObject itemObject = itemElement.getAsJsonObject().getAsJsonObject("Item");
+                            JsonObject itemObject = itemElement.getAsJsonObject().getAsJsonObject("Item"); // 各要素が "Item" オブジェクトの中にネストされている
                             if (itemObject != null) {
-                                // 楽天APIから書籍情報を抽出
-                                String rakutenTitle = itemObject.has("title") ? itemObject.get("title").getAsString() : "タイトル不明";
-                                String rakutenAuthor = itemObject.has("author") ? itemObject.get("author").getAsString() : "著者不明";
+                                // 楽天市場ランキングAPIから書籍情報を抽出 (要素名に注意)
+                                String rakutenTitle = itemObject.has("itemName") ? itemObject.get("itemName").getAsString() : "タイトル不明";
+                                String rakutenAuthor = itemObject.has("artistName") ? itemObject.get("artistName").getAsString() : "著者不明"; // artistName が著者名として使われることが多い
                                 String rakutenItemUrl = itemObject.has("itemUrl") ? itemObject.get("itemUrl").getAsString() : null;
-                                String rakutenLargeImageUrl = itemObject.has("largeImageUrl") ? itemObject.get("largeImageUrl").getAsString() : null;
+                                // 楽天市場ランキングAPIでは largeImageUrl ではなく mediumImageUrl が提供されることが多い
+                                String rakutenLargeImageUrl = itemObject.has("mediumImageUrl") ? itemObject.get("mediumImageUrl").getAsString() : null;
 
                                 Book book = new Book();
                                 book.setTitle(rakutenTitle);
                                 book.setAuthor(rakutenAuthor);
                                 book.setRakutenItemUrl(rakutenItemUrl);
                                 book.setRakutenLargeImageUrl(rakutenLargeImageUrl);
-                                book.setThumbnailUrl(rakutenLargeImageUrl);
+                                book.setThumbnailUrl(rakutenLargeImageUrl); // 最初は楽天の画像URLを設定
                                 fetchGoogleBooksDataForRakutenBook(book, rakutenTitle, rakutenAuthor);
 
                                 hotBooks.add(book);
@@ -151,11 +160,11 @@ public class RakutenBooksApiService {
                 }
             } catch (IOException e) {
                 // ネットワーク関連のエラーハンドリング
-                Log.e(TAG, "楽天ランキングAPI呼び出しエラー: " + e.getMessage(), e);
+                Log.e(TAG, "楽天市場ランキングAPI呼び出しエラー: " + e.getMessage(), e);
                 callback.onFailure("話題の本の取得に失敗しました: " + e.getMessage());
             } catch (Exception e) {
                 // JSONパースなど、その他のエラーハンドリング
-                Log.e(TAG, "楽天ランキングデータ処理エラー: " + e.getMessage(), e);
+                Log.e(TAG, "楽天市場ランキングデータ処理エラー: " + e.getMessage(), e);
                 callback.onFailure("話題の本の処理に失敗しました: " + e.getMessage());
             }
         });
