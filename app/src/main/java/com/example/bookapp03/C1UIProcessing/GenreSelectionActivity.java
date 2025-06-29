@@ -1,11 +1,10 @@
-
 /**
  * モジュール名: GenreSelectionActivity
  * 作成者: 増田学斗
  * 作成日: 2025/06/15
  * 概要: 本のジャンル選択処理
  * 履歴:
- *   2025/06/15 増田学斗 新規作成
+ * 2025/06/15 増田学斗 新規作成
  */
 package com.example.bookapp03.C1UIProcessing;
 
@@ -17,6 +16,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.bookapp03.R;
 import com.example.bookapp03.C1UIProcessing.CompleteActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,15 +26,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GenreSelectionActivity extends Activity {
+public class GenreSelectionActivity extends AppCompatActivity {
 
-    /** ジャンル選択用のチェックボックスをまとめるリスト */
+    /**
+     * ジャンル選択用のチェックボックスをまとめるリスト
+     */
     private ArrayList<CheckBox> genreCheckboxes = new ArrayList<>();
 
-    /** 前画面から受け取るニックネーム */
+    /**
+     * 前画面から受け取るニックネーム
+     */
     private String nickname;
 
-    /** 前画面から受け取るアイコン画像URI文字列 */
+    /**
+     * 前画面から受け取るアイコン画像URI文字列
+     */
     private String iconUri;
 
     @Override
@@ -76,18 +83,15 @@ public class GenreSelectionActivity extends Activity {
             userData.put("iconUri", iconUri);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("users").document(uid)
-                    .set(userData)
-                    .addOnSuccessListener(unused -> {
-                        Log.d("GenreSelection", "ユーザ情報の保存に成功");
-                        Intent intent = new Intent(this, CompleteActivity.class);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("GenreSelection", "ユーザ情報の保存に失敗", e);
-                        Toast.makeText(this, "登録失敗", Toast.LENGTH_SHORT).show();
-                    });
+            db.collection("users").document(uid).set(userData).addOnSuccessListener(unused -> {
+                Log.d("GenreSelection", "ユーザ情報の保存に成功");
+                Intent intent = new Intent(this, CompleteActivity.class);
+                startActivity(intent);
+                finish();
+            }).addOnFailureListener(e -> {
+                Log.e("GenreSelection", "ユーザ情報の保存に失敗", e);
+                Toast.makeText(this, "登録失敗", Toast.LENGTH_SHORT).show();
+            });
         });
     }
 }
