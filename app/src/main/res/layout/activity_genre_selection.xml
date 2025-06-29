@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 **************************************************************
 * 作成者: 増田学斗
 * 作成日: 2025/06/15
@@ -14,29 +13,53 @@
     android:padding="16dp">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:text="好きなジャンルを選んでください"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+            android:textSize="18sp" />
 
-        <CheckBox android:id="@+id/checkbox_mystery" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ミステリー" />
-        <CheckBox android:id="@+id/checkbox_horror" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ホラー" />
-        <CheckBox android:id="@+id/checkbox_biography" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="伝記" />
-        <CheckBox android:id="@+id/checkbox_selfhelp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="自己啓発" />
-        <CheckBox android:id="@+id/checkbox_romance" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="恋愛" />
+        <CheckBox
+            android:id="@+id/checkbox_mystery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ミステリー" />
+
+        <CheckBox
+            android:id="@+id/checkbox_horror"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ホラー" />
+
+        <CheckBox
+            android:id="@+id/checkbox_biography"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="伝記" />
+
+        <CheckBox
+            android:id="@+id/checkbox_selfhelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="自己啓発" />
+
+        <CheckBox
+            android:id="@+id/checkbox_romance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="恋愛" />
         <!-- 必要に応じてジャンルを追加 -->
 
         <Button
             android:id="@+id/buttonNextToComplete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="次へ"
-            android:layout_marginTop="24dp" />
+            android:layout_marginTop="24dp"
+            android:text="次へ" />
     </LinearLayout>
 </ScrollView>

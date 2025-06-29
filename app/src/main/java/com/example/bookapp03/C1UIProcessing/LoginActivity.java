@@ -23,12 +23,15 @@ import com.google.firebase.auth.*;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.bookapp03.R;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends AppCompatActivity {
 
     /** Googleログイン用のクライアントインスタンス */
     private GoogleSignInClient googleSignInClient;
@@ -107,7 +110,7 @@ public class LoginActivity extends Activity {
                         Log.e("LoginDebug", "Firestore読み込み失敗", task.getException());
                     } else if (task.getResult().exists()) {
                         Log.d("LoginDebug", "ユーザーは登録済み");
-                        startActivity(new Intent(this, HomeActivity.class));
+                        startActivity(new Intent(this, DisplayHome.class));
                     } else {
                         Log.d("LoginDebug", "初回ログイン。ユーザー情報を登録中...");
 

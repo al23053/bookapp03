@@ -32,22 +32,34 @@ import android.util.Log;
 
 public class AccountSettingActivity extends Activity {
 
-    /** ギャラリー画像選択のリクエストコード */
+    /**
+     * ギャラリー画像選択のリクエストコード
+     */
     private static final int REQUEST_CODE_IMAGE_PICK = 1;
 
-    /** ユーザーが入力するニックネーム */
+    /**
+     * ユーザーが入力するニックネーム
+     */
     private EditText editTextNickname;
 
-    /** 選択したアイコン画像を表示するビュー */
+    /**
+     * 選択したアイコン画像を表示するビュー
+     */
     private ImageView imageViewIcon;
 
-    /** ギャラリー画像を選択するボタン */
+    /**
+     * ギャラリー画像を選択するボタン
+     */
     private Button buttonChooseImage;
 
-    /** 入力完了後、次の画面に進むボタン */
+    /**
+     * 入力完了後、次の画面に進むボタン
+     */
     private Button buttonNext;
 
-    /** 選択された画像のURI */
+    /**
+     * 選択された画像のURI
+     */
     private Uri selectedImageUri = null;
 
     @Override
@@ -101,15 +113,14 @@ public class AccountSettingActivity extends Activity {
                     Log.d("AccountSetting", "Firestore保存成功、遷移開始");
                     Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(AccountSettingActivity.this, GenreSelectionActivity.class);
-                    intent.putExtra("nickname", nickname);
-                    intent.putExtra("iconUri", iconUriStr);
-                    startActivity(intent);
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "保存失敗: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e("AccountSetting", "Firestore保存失敗", e);
-                });
+            Intent intent = new Intent(AccountSettingActivity.this, GenreSelectionActivity.class);
+            intent.putExtra("nickname", nickname);
+            intent.putExtra("iconUri", iconUriStr);
+            startActivity(intent);
+            finish();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "保存失敗: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("AccountSetting", "Firestore保存失敗", e);
+        });
     }
 }

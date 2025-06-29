@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/bottom_sheet_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="投稿者名"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_rating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="評価: 5.0"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_timestamp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="投稿日時: 2023/01/01 12:34"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/bottom_sheet_review_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ここにレビューの全文が表示されます..."
+            android:textSize="16sp" />
+    </ScrollView>
+
+</LinearLayout>
