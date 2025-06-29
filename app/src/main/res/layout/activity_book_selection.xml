@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+**************************************************************
+* 作成者: 三浦寛生
+* 作成日: 2025/06/09
+* 概要: 本の情報確認処理中のレイアウト
+* 履歴:
+*   2025/06/29 三浦寛生 新規作成
+**************************************************************
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
