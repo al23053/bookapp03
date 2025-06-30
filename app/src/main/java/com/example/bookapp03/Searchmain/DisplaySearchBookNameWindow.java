@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * そして各処理部（検索、ユーザー情報、本の情報）へのリクエストの委譲を担当します。
  * BookCardAdapter.OnBookClickListenerを実装し、書籍カードのクリックイベントを処理します。
  */
-public class MainActivity extends AppCompatActivity implements BookCardAdapter.OnBookClickListener {
+public class DisplaySearchBookNameWindow extends AppCompatActivity implements BookCardAdapter.OnBookClickListener {
 
     /**
      * 楽天サービス内でGoogle Books APIの二次検索に使用されるAPIキーです。
@@ -202,11 +202,11 @@ public class MainActivity extends AppCompatActivity implements BookCardAdapter.O
                 mainHandler.post(() -> {
                     if (!searchResults.isEmpty()) {
                         String jsonSearchResults = gson.toJson(searchResults);
-                        Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+                        Intent intent = new Intent(DisplaySearchBookNameWindow.this, SearchResultActivity.class);
                         intent.putExtra(SearchResultActivity.EXTRA_SEARCH_RESULTS, jsonSearchResults);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(MainActivity.this, "検索結果が見つかりませんでした。", Toast.LENGTH_LONG).show();
+                        Toast.makeText(DisplaySearchBookNameWindow.this, "検索結果が見つかりませんでした。", Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements BookCardAdapter.O
             @Override
             public void onSearchFailed(String errorMessage) {
                 mainHandler.post(() -> {
-                    Toast.makeText(MainActivity.this, "書籍検索に失敗しました: " + errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(DisplaySearchBookNameWindow.this, "書籍検索に失敗しました: " + errorMessage, Toast.LENGTH_LONG).show();
                 });
             }
         });
@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements BookCardAdapter.O
             public void onFailure(String errorMessage) {
                 Log.e("MainActivity", "好きなジャンルの取得エラー: " + errorMessage);
                 mainHandler.post(() -> {
-                    Toast.makeText(MainActivity.this, "おすすめジャンルの取得に失敗しました: " + errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(DisplaySearchBookNameWindow.this, "おすすめジャンルの取得に失敗しました: " + errorMessage, Toast.LENGTH_LONG).show();
                     matchingBooksAdapter.setBookList(new ArrayList<>());
                     nonMatchingBooksAdapter.setBookList(new ArrayList<>());
                     noMatchingBooksMessage.setText("ジャンル取得エラー: " + errorMessage);
@@ -370,7 +370,7 @@ public class MainActivity extends AppCompatActivity implements BookCardAdapter.O
             public void onFailure(String errorMessage) {
                 Log.e("MainActivity", "Firestoreからおすすめ本の取得エラー: " + errorMessage);
                 mainHandler.post(() -> {
-                    Toast.makeText(MainActivity.this, "おすすめ本の取得に失敗しました: " + errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(DisplaySearchBookNameWindow.this, "おすすめ本の取得に失敗しました: " + errorMessage, Toast.LENGTH_LONG).show();
                     matchingBooksAdapter.setBookList(new ArrayList<>());
                     noMatchingBooksMessage.setText("本の取得中にエラーが発生しました。");
                     noMatchingBooksMessage.setVisibility(View.VISIBLE);
@@ -416,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements BookCardAdapter.O
             @Override
             public void onFailure(String errorMessage) {
                 mainHandler.post(() -> {
-                    Toast.makeText(MainActivity.this, "話題の本の取得に失敗しました: " + errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(DisplaySearchBookNameWindow.this, "話題の本の取得に失敗しました: " + errorMessage, Toast.LENGTH_LONG).show();
                     hotBooksAdapter.setBookList(new ArrayList<>());
                     noHotBooksMessage.setText("本の取得中にエラーが発生しました。");
                     noHotBooksMessage.setVisibility(View.VISIBLE);
@@ -443,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements BookCardAdapter.O
      * @param book 遷移先のActivityに渡す書籍オブジェクト
      */
     private void navigateToReviewActivity(Book book) {
-        Intent intent = new Intent(MainActivity.this, UserReviewListActivity.class);
+        Intent intent = new Intent(DisplaySearchBookNameWindow.this, UserReviewListActivity.class);
         // Intentに書籍情報をextraとして追加
         intent.putExtra("bookId", book.getId());
         intent.putExtra("bookTitle", book.getTitle());
