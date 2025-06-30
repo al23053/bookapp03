@@ -92,7 +92,7 @@
             android:name=".ui.BookSelectionActivity"
             android:exported="true"/>
         <activity
-            android:name=".Searchmain.MainActivity"
+            android:name=".Searchmain.DisplaySearchBookNameWindow"
             android:exported="true"/>
 
     </application>
