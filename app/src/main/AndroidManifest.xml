@@ -61,8 +61,7 @@
             android:label="要約表示" />
         <activity
             android:name="com.example.bookapp03.C1UIProcessing.DisplayHighlightMemo"
-            android:exported="false"
-            android:label="ハイライトメモ表示" />
+            android:exported="false" />
         <activity
             android:name="com.example.bookapp03.C1UIProcessing.DisplaySetting"
             android:exported="false"

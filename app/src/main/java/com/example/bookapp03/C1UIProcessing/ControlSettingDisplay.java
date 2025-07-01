@@ -13,6 +13,7 @@ import com.example.bookapp03.R;
  * 概要: 設定項目のタップを監視し、該当画面へ遷移またはログアウト処理を呼び出す
  * 履歴:
  * 2025/06/16 鶴田凌 新規作成
+ * 2025/07/01 増田学斗　.putExtra追加
  */
 public class ControlSettingDisplay {
     private final Activity activity;
@@ -42,12 +43,13 @@ public class ControlSettingDisplay {
             TextView btnAccountSwitch,
             TextView btnLogout
     ) {
-        btnNicknameIcon.setOnClickListener(v ->
-                activity.startActivity(new Intent(activity, AccountSettingActivity.class))
-        );
-        btnGenre.setOnClickListener(v ->
-                activity.startActivity(new Intent(activity, GenreSelectionActivity.class))
-        );
+        btnNicknameIcon.setOnClickListener(v -> {
+            activity.startActivity(new Intent(activity, AccountSettingActivity.class).putExtra("isFirstTime", false));
+        });
+
+        btnGenre.setOnClickListener(v -> {
+            activity.startActivity(new Intent(activity, GenreSelectionActivity.class).putExtra("isFirstTime", false));
+        });
         btnDarkMode.setOnClickListener(v ->
                 activity.startActivity(new Intent(activity, DisplayDarkmodeSetting.class))
         );
