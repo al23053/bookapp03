@@ -56,28 +56,34 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        // Googleサインインの設定
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
+        // Firebase認証とGoogleサインインクライアントの初期化
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
 
         googleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
 
-        // すでにログイン済みの場合は自動で処理に進む
+        // ログイン済みの場合、ログイン画面を表示せずに処理を進める
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             checkIfUserExistsAndProceed(currentUser);
-            return; // ボタン処理を実行しないようにここで終了
+            return;
         }
 
-        // ログインボタン処理（ログインしていない場合のみ）
+        // ここまで来たらログインしていない → ログイン画面を表示する
+        setContentView(R.layout.activity_login);
+
+        // ログインボタン処理（未ログイン時のみ）
         Button loginButton = findViewById(R.id.to_login_button);
         loginButton.setOnClickListener(v -> {
             Intent signInIntent = googleSignInClient.getSignInIntent();
             startActivityForResult(signInIntent, RC_SIGN_IN);
         });
     }
+
 
     /**
      * Googleサインインからの戻り結果を処理

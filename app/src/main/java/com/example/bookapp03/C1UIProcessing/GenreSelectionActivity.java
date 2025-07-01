@@ -27,6 +27,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GenreSelectionActivity extends AppCompatActivity {
+    /**
+     * 初回設定とその他の設定を判断
+     */
+    private boolean isFirstTime = true;
 
     /**
      * ジャンル選択用のチェックボックスをまとめるリスト
@@ -52,6 +56,7 @@ public class GenreSelectionActivity extends AppCompatActivity {
         // Intentから受け取るデータ（ニックネームとアイコンURI）
         nickname = getIntent().getStringExtra("nickname");
         iconUri = getIntent().getStringExtra("iconUri");
+        isFirstTime = getIntent().getBooleanExtra("isFirstTime", true); // 初回登録判定
 
         // 各ジャンルのチェックボックスをリストに追加
         genreCheckboxes.add(findViewById(R.id.checkbox_mystery));
@@ -90,13 +95,23 @@ public class GenreSelectionActivity extends AppCompatActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("users").document(uid).set(userData).addOnSuccessListener(unused -> {
                 Log.d("GenreSelection", "ユーザ情報の保存に成功");
-                Intent intent = new Intent(this, CompleteActivity.class);
-                startActivity(intent);
-                finish();
+
+                if (isFirstTime) {
+                    // 初回登録 → 完了画面に進む
+                    Intent intent = new Intent(this, CompleteActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    // 2回目以降 → 元の画面に戻る
+                    setResult(Activity.RESULT_OK);
+                    finish();
+                }
+
             }).addOnFailureListener(e -> {
                 Log.e("GenreSelection", "ユーザ情報の保存に失敗", e);
                 Toast.makeText(this, "登録失敗", Toast.LENGTH_SHORT).show();
             });
+
         });
     }
 }

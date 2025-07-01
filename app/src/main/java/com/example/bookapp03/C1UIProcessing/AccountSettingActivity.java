@@ -1,4 +1,3 @@
-
 /**
  * モジュール名: AccountSettingActivity
  * 作成者: 増田学斗
@@ -31,7 +30,10 @@ import java.util.Map;
 import android.util.Log;
 
 public class AccountSettingActivity extends Activity {
-
+    /**
+     * 初回設定とその他の設定を判断
+     */
+    private boolean isFirstTime = true;
     /**
      * ギャラリー画像選択のリクエストコード
      */
@@ -67,6 +69,8 @@ public class AccountSettingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_setting);
 
+        isFirstTime = getIntent().getBooleanExtra("isFirstTime", true);
+
         imageViewIcon = findViewById(R.id.imageViewIcon);
         buttonChooseImage = findViewById(R.id.buttonChooseImage);
         editTextNickname = findViewById(R.id.editTextNickname);
@@ -77,7 +81,9 @@ public class AccountSettingActivity extends Activity {
             startActivityForResult(intent, REQUEST_CODE_IMAGE_PICK);
         });
 
-        buttonNext.setOnClickListener(v -> saveUserData());
+        buttonNext.setOnClickListener(v -> {
+            saveUserData();
+        });
     }
 
     @Override
@@ -107,20 +113,25 @@ public class AccountSettingActivity extends Activity {
         userMap.put("iconUri", iconUriStr);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users").document(uid)
-                .set(userMap)
+        db.collection("users").document(uid).update(userMap)
                 .addOnSuccessListener(unused -> {
-                    Log.d("AccountSetting", "Firestore保存成功、遷移開始");
-                    Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+                    if (isFirstTime) {
+                        // 初回 → ジャンル選択画面へ
+                        Intent intent = new Intent(this, GenreSelectionActivity.class);
+                        intent.putExtra("nickname", nickname);
+                        intent.putExtra("iconUri", iconUriStr);
+                        intent.putExtra("isFirstTime", true); // 次も初回判定を渡す
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        // 設定変更 → 呼び出し元に戻る
+                        setResult(Activity.RESULT_OK);
+                        finish();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "保存に失敗しました", Toast.LENGTH_SHORT).show();
+                });
 
-            Intent intent = new Intent(AccountSettingActivity.this, GenreSelectionActivity.class);
-            intent.putExtra("nickname", nickname);
-            intent.putExtra("iconUri", iconUriStr);
-            startActivity(intent);
-            finish();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "保存失敗: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e("AccountSetting", "Firestore保存失敗", e);
-        });
     }
 }
