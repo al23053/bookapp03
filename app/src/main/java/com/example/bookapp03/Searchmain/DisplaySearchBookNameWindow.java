@@ -26,6 +26,9 @@ import com.example.bookapp03.processor.UserFeatureProcessor;
 import com.example.bookapp03.processor.BookFeatureProcessor;
 import com.example.bookapp03.view.SearchInputView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.bookapp03.C1UIProcessing.ControlBottomNavigationBar;
+
 import com.google.gson.Gson;
 
 import okhttp3.OkHttpClient;
@@ -230,6 +233,12 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
         fetchUserFavoriteGenres(currentUserId);
 
         fetchRakutenRankingBooks();
+
+        BottomNavigationView nav = findViewById(R.id.bottom_navigation);
+        nav.setOnItemSelectedListener(item -> {
+            new ControlBottomNavigationBar().handledisplay(item.getItemId(), this);
+            return true;
+        });
     }
 
     /**
