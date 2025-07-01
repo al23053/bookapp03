@@ -3,6 +3,7 @@ package com.example.bookapp03.C1UIProcessing;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ import java.util.concurrent.Executors;
  * 概要: ハイライトメモ一覧を表示する画面
  * 履歴:
  * 2025/06/15 鶴田凌 新規作成
+ * 2025/07/01 鶴田凌 エラーハンドリングと表示処理を改善
  */
 public class DisplayHighlightMemo extends AppCompatActivity {
     
@@ -47,16 +49,32 @@ public class DisplayHighlightMemo extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.highlightmemodisplay);
         
         Log.d(TAG, "DisplayHighlightMemo onCreate開始");
         
         try {
+            setContentView(R.layout.highlightmemodisplay);
+            
             // Intent からパラメータ取得
             uid = getIntent().getStringExtra("uid");
             volumeId = getIntent().getStringExtra("volumeId");
             
-            Log.d(TAG, "UID: " + uid + ", VolumeID: " + volumeId);
+            Log.d(TAG, "Intent データ - UID: " + uid + ", VolumeID: " + volumeId);
+            
+            // パラメータ検証
+            if (uid == null || uid.isEmpty()) {
+                Log.e(TAG, "UIDが null または空です");
+                Toast.makeText(this, "ユーザー情報が無効です", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+            
+            if (volumeId == null || volumeId.isEmpty()) {
+                Log.e(TAG, "VolumeIDが null または空です");
+                Toast.makeText(this, "書籍情報が無効です", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
             
             // Database 初期化
             highlightMemoDao = BookInformationDatabase
@@ -70,11 +88,14 @@ public class DisplayHighlightMemo extends AppCompatActivity {
             // データ読み込み
             loadHighlightMemos();
             
-            // ドロワーを自動で開く
-            openDrawer();
+            // ドロワーを自動で開く（少し遅延して実行）
+            recyclerView.postDelayed(() -> {
+                openDrawer();
+            }, 300);
             
         } catch (Exception e) {
             Log.e(TAG, "DisplayHighlightMemo 初期化エラー", e);
+            Toast.makeText(this, "画面の初期化に失敗しました", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -83,52 +104,74 @@ public class DisplayHighlightMemo extends AppCompatActivity {
      * View要素を初期化
      */
     private void initializeViews() {
-        drawerLayout = findViewById(R.id.drawer_layout);
-        recyclerView = findViewById(R.id.recyclerHighlight);
-        
-        // RecyclerView設定
-        adapter = new HighlightMemoAdapter();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-        
-        // DrawerLayout のリスナー設定
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-                // 何もしない
+        try {
+            drawerLayout = findViewById(R.id.drawer_layout);
+            recyclerView = findViewById(R.id.recyclerHighlight);
+            
+            if (drawerLayout == null) {
+                Log.e(TAG, "DrawerLayout が見つかりません");
+                throw new RuntimeException("DrawerLayout not found");
             }
+            
+            if (recyclerView == null) {
+                Log.e(TAG, "RecyclerView が見つかりません");
+                throw new RuntimeException("RecyclerView not found");
+            }
+            
+            // RecyclerView設定
+            adapter = new HighlightMemoAdapter();
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setAdapter(adapter);
+            
+            Log.d(TAG, "RecyclerView設定完了");
+            
+            // DrawerLayout のリスナー設定
+            drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+                @Override
+                public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+                    // 何もしない
+                }
 
-            @Override
-            public void onDrawerOpened(@NonNull View drawerView) {
-                Log.d(TAG, "ドロワーが開かれました");
-            }
+                @Override
+                public void onDrawerOpened(@NonNull View drawerView) {
+                    Log.d(TAG, "ドロワーが開かれました");
+                }
 
-            @Override
-            public void onDrawerClosed(@NonNull View drawerView) {
-                Log.d(TAG, "ドロワーが閉じられました - 画面を終了");
-                // ドロワーが閉じられたら画面を終了して元の画面に戻る
-                finish();
-            }
+                @Override
+                public void onDrawerClosed(@NonNull View drawerView) {
+                    Log.d(TAG, "ドロワーが閉じられました - 画面を終了");
+                    // ドロワーが閉じられたら画面を終了して元の画面に戻る
+                    finish();
+                }
 
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                // 何もしない
-            }
-        });
+                @Override
+                public void onDrawerStateChanged(int newState) {
+                    // 何もしない
+                }
+            });
+            
+            Log.d(TAG, "View初期化完了");
+            
+        } catch (Exception e) {
+            Log.e(TAG, "View初期化エラー", e);
+            throw e;
+        }
     }
     
     /**
      * ハイライトメモデータを読み込み
      */
     private void loadHighlightMemos() {
-        if (uid == null || volumeId == null) {
-            Log.e(TAG, "UID または VolumeID が null です");
-            return;
-        }
+        Log.d(TAG, "ハイライトメモ読み込み開始");
         
         executor.execute(() -> {
             try {
+                Log.d(TAG, "データベースクエリ実行 - UID: " + uid + ", VolumeID: " + volumeId);
+                
                 List<HighlightMemoEntity> entities = highlightMemoDao.getByUserAndVolume(uid, volumeId);
+                
+                Log.d(TAG, "クエリ結果: " + entities.size() + "件");
+                
                 List<HighlightMemoData> dataList = new ArrayList<>();
                 
                 for (HighlightMemoEntity entity : entities) {
@@ -138,17 +181,31 @@ public class DisplayHighlightMemo extends AppCompatActivity {
                             entity.memo
                     );
                     dataList.add(data);
+                    Log.d(TAG, "メモ追加 - Page: " + entity.page + ", Line: " + entity.line + ", Memo: " + entity.memo);
                 }
                 
                 runOnUiThread(() -> {
-                    adapter.setItems(dataList);
-                    Log.d(TAG, "ハイライトメモ " + dataList.size() + " 件を表示");
+                    if (adapter != null) {
+                        adapter.setItems(dataList);
+                        Log.d(TAG, "ハイライトメモ " + dataList.size() + " 件を表示");
+                        
+                        if (dataList.isEmpty()) {
+                            Toast.makeText(this, "この書籍にはハイライトメモがありません", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, dataList.size() + "件のメモを表示中", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.e(TAG, "Adapter が null です");
+                    }
                 });
                 
             } catch (Exception e) {
                 Log.e(TAG, "ハイライトメモ読み込みエラー", e);
                 runOnUiThread(() -> {
-                    adapter.setItems(new ArrayList<>());
+                    if (adapter != null) {
+                        adapter.setItems(new ArrayList<>());
+                    }
+                    Toast.makeText(this, "データの読み込みに失敗しました", Toast.LENGTH_SHORT).show();
                 });
             }
         });
@@ -158,8 +215,15 @@ public class DisplayHighlightMemo extends AppCompatActivity {
      * ドロワーを開く
      */
     private void openDrawer() {
-        if (drawerLayout != null) {
-            drawerLayout.openDrawer(GravityCompat.END);
+        try {
+            if (drawerLayout != null) {
+                Log.d(TAG, "ドロワーを開きます");
+                drawerLayout.openDrawer(GravityCompat.END);
+            } else {
+                Log.e(TAG, "DrawerLayout が null のためドロワーを開けません");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "ドロワーを開く際にエラー", e);
         }
     }
     
@@ -180,5 +244,6 @@ public class DisplayHighlightMemo extends AppCompatActivity {
         if (executor != null && !executor.isShutdown()) {
             executor.shutdown();
         }
+        Log.d(TAG, "DisplayHighlightMemo onDestroy完了");
     }
 }

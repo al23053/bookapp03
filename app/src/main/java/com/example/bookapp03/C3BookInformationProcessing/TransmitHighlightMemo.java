@@ -1,6 +1,7 @@
 package com.example.bookapp03.C3BookInformationProcessing;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 import com.example.bookapp03.C6BookInformationManaging.RegisterHighlightMemo;
@@ -15,6 +16,8 @@ import com.example.bookapp03.C6BookInformationManaging.RegisterHighlightMemo;
  */
 public class TransmitHighlightMemo {
 
+    private static final String TAG = "TransmitHighlightMemo";
+    
     private Context context;
     private String uid;
     private String volumeId;
@@ -40,18 +43,31 @@ public class TransmitHighlightMemo {
      */
     public boolean transmitHighlightMemo(HighlightMemoData data) {
         try {
+            Log.d(TAG, "=== ハイライトメモ送信開始 ===");
+            Log.d(TAG, "UID: " + uid);
+            Log.d(TAG, "VolumeID: " + volumeId);
+            Log.d(TAG, "Page: " + data.getPage());
+            Log.d(TAG, "Line: " + data.getLine());
+            Log.d(TAG, "Memo: " + data.getMemo());
+            
             RegisterHighlightMemo register = new RegisterHighlightMemo(context);
 
-            // UI層のデータを管理層のデータ型に変換
-            HighlightMemoData modelData =
-                    new HighlightMemoData(
-                            data.getPage(),
-                            data.getLine(),
-                            data.getMemo()
-                    );
+            // ❌ 修正前: 不要なデータ変換
+            // HighlightMemoData modelData = new HighlightMemoData(
+            //         data.getPage(),
+            //         data.getLine(),
+            //         data.getMemo()
+            // );
 
-            return register.registerHighlightMemo(uid, volumeId, modelData);
+            // ✅ 修正後: 受け取ったデータをそのまま使用
+            boolean result = register.registerHighlightMemo(uid, volumeId, data);
+            
+            Log.d(TAG, "送信結果: " + result);
+            return result;
+            
         } catch (Exception e) {
+            Log.e(TAG, "ハイライトメモ送信エラー", e);
+            e.printStackTrace();
             return false;
         }
     }
