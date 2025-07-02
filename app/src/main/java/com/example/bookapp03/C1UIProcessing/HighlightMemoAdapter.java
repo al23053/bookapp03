@@ -52,9 +52,10 @@ public class HighlightMemoAdapter
             @NonNull ViewGroup parent,
             int viewType
     ) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.highlightmemodisplay, parent, false);
-        return new HighlightMemoViewHolder(view);
+        View v = LayoutInflater.from(parent.getContext())
+                // ↓ 正しい行アイテムレイアウトを inflate
+                .inflate(R.layout.item_highlight_memo, parent, false);
+        return new HighlightMemoViewHolder(v);
     }
 
     /**
