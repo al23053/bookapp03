@@ -1,72 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-**************************************************************
-* 作成者: 横山葉
-* 作成日: 2025/06/09
-* 概要: 本詳細画面のレイアウト
-* 履歴:
-*   2025/06/09 横山葉 新規作成
-**************************************************************
--->
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    tools:context=".C1UIProcessing.BookDetailActivity"> <androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:padding="16dp"> <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/no_book_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="本の情報がありません"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="8dp"/>
+
+    <ImageView
+        android:id="@+id/book_cover"
+        android:layout_width="200dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:contentDescription="本の表紙"/>
+
+    <TextView
+        android:id="@+id/book_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="タイトル"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:paddingTop="16dp"/>
+
+    <TextView
+        android:id="@+id/book_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="公開ステータス"
+        android:textSize="14sp"
+        android:paddingTop="8dp"/>
+
+    <TextView
+        android:id="@+id/book_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="本の概要"
+        android:paddingTop="12dp"
+        android:textSize="16sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="150dp" />
+
+</LinearLayout>
+</androidx.core.widget.NestedScrollView>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/bottom_sheet_memo_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_hideable="false"  app:behavior_peekHeight="120dp" android:layout_gravity="bottom">
 
-        <!-- 本がないとき -->
-        <TextView
-            android:id="@+id/no_book_message"
+        <include layout="@layout/bottom_sheet_highlight_memo" />
+
+        <Button
+            android:id="@+id/add_memo_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="本の情報がありません"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:visibility="gone"
-            android:padding="8dp"/>
-
-        <!-- 表紙 -->
-        <ImageView
-            android:id="@+id/book_cover"
-            android:layout_width="200dp"
-            android:layout_height="300dp"
-            android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            android:contentDescription="本の表紙"/>
-
-        <!-- タイトル -->
-        <TextView
-            android:id="@+id/book_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="タイトル"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:paddingTop="16dp"/>
-
-        <!-- ステータス -->
-        <TextView
-            android:id="@+id/book_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="公開ステータス"
-            android:textSize="14sp"
-            android:paddingTop="8dp"/>
-
-        <!-- 概要 -->
-        <TextView
-            android:id="@+id/book_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="本の概要"
-            android:paddingTop="12dp"
-            android:textSize="16sp"/>
+            android:text="メモを追加"
+            android:layout_margin="16dp"/>
 
     </LinearLayout>
-</ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

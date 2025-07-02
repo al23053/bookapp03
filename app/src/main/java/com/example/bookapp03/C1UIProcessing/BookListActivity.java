@@ -4,7 +4,7 @@
  * 作成日: 2025/06/09
  * 概要: 書籍一覧を表示するActivity。初期データを生成し、RecyclerViewに表示する。
  * 履歴:
- *   2025/06/09 横山葉 新規作成
+ * 2025/06/09 横山葉 新規作成
  */
 
 package com.example.bookapp03.C1UIProcessing;
@@ -17,9 +17,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookapp03.R;
-// import com.example.bookapp03.C6BookInformationManaging.BookRepositoryImpl; // ViewModelFactoryで処理するので不要
+import com.example.bookapp03.C6BookInformationManaging.BookRepositoryImpl; // ViewModelFactoryで処理するので不要
 import com.example.bookapp03.C3BookInformationProcessing.BookListViewModel; // ViewModelのパッケージ
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.bookapp03.C5UserInformationManaging.UserAuthManager; // UserAuthManagerをインポート
 
 public class BookListActivity extends AppCompatActivity {
 
@@ -69,10 +70,16 @@ public class BookListActivity extends AppCompatActivity {
         });
 
         // Activityが作成されたらViewModelにデータのロードを指示
-        // TODO: 実際のユーザーUIDを取得するロジックをここに実装
-        String currentUserId = "user123"; // 仮のユーザーID
-        viewModel.loadBooks(currentUserId);
-
-
+        // ユーザーUIDを取得するロジックをここに実装
+        String currentUserId = UserAuthManager.getCurrentUid(); // UserAuthManagerからUIDを取得
+        if (currentUserId != null) {
+            viewModel.loadBooks(currentUserId);
+        } else {
+            // UIDが取得できない場合のハンドリング（例: ログイン画面への遷移、エラーメッセージ表示など）
+            // 現時点ではログ出力のみ
+            android.util.Log.e("BookListActivity", "User not logged in or UID not available.");
+            // 必要に応じて、空のリストを表示するか、ログインを促すUIを表示
+            controller.displayBookList(recyclerView, new java.util.ArrayList<>(), toggleHandler, true);
+        }
     }
 }
