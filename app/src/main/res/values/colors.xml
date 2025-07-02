@@ -10,5 +10,10 @@
     <!-- ダークモード設定画面用背景色 -->
     <color name="background_light">#FFFFFF</color>
     <color name="background_dark">#121212</color>
+
+    <!-- 区切り線用の色 -->
+    <color name="divider_gray">#E0E0E0</color>
+    <color name="light_gray">#F5F5F5</color>
+    <color name="medium_gray">#BDBDBD</color>
 </resources>
 

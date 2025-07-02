@@ -4,7 +4,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ViewGroup;
+import android.view.View;                     // for drawer listener callback
+import android.view.ViewGroup;               // for LayoutParams
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -14,17 +15,24 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;            // ← 必須
+import androidx.recyclerview.widget.LinearLayoutManager;   // ← 必須
+import androidx.recyclerview.widget.RecyclerView;          // ← 必須
 
+import com.example.bookapp03.C5UserInformationManaging.UserAuthManager;
+import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
+import com.example.bookapp03.C6BookInformationManaging.database.SummaryDao;
+import com.example.bookapp03.R;
+import com.example.bookapp03.C1UIProcessing.HighlightMemoAdapter;
+import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
+import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
+import com.example.bookapp03.model.Book;
+import com.example.bookapp03.service.GoogleBooksApiService;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import com.example.bookapp03.C5UserInformationManaging.UserAuthManager;
-import com.example.bookapp03.C6BookInformationManaging.database.SummaryDao;
-import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
-import com.example.bookapp03.model.Book;
-import com.example.bookapp03.service.GoogleBooksApiService;
-import com.example.bookapp03.R;
 
 /**
  * モジュール名: 全体まとめ登録画面表示
@@ -108,6 +116,9 @@ public class DisplaySummary extends AppCompatActivity {
 
             // 各コントローラ生成・バインド
             setupControllers();
+            
+            // RecyclerView セクションの初期化
+            initializeRecyclerView();
             
             Log.d(TAG, "DisplaySummary 初期化完了");
             
@@ -247,23 +258,65 @@ public class DisplaySummary extends AppCompatActivity {
     private void setupControllers() {
         Log.d(TAG, "コントローラ設定開始 - VolumeID: " + currentVolumeId);
         
+        // ① DrawerLayout を取得
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        // ② ハンバーガーアイコン取得
+        ImageButton btnMenu = findViewById(R.id.btnMenu);
+
         ctrlBack = new ControlBackToHomeButton(this);
         ctrlBack.bind(btnBack);
 
-        ctrlMenu = new ControlHamburgerBar(this, currentUid, currentVolumeId);
+        // ← ここを修正：必ず DrawerLayout を渡す
+        ctrlMenu = new ControlHamburgerBar(
+            this,           // AppCompatActivity
+            drawer,         // DrawerLayout
+            currentUid,     // String uid
+            currentVolumeId // String volumeId
+        );
         ctrlMenu.bind(btnMenu);
 
         ctrlSwitch = new ControlPublicPrivateSwitch(
-                this, summaryDao, currentUid, currentVolumeId, executor
+            this, summaryDao, currentUid, currentVolumeId, executor
         );
         ctrlSwitch.bind(switchPublic);
 
         ctrlRegister = new ControlSummaryRegistrationButton(
-                this, summaryDao, currentUid, currentVolumeId, executor
+            this, summaryDao, currentUid, currentVolumeId, executor
         );
         ctrlRegister.bind(btnRegisterSummary, summaryInput, switchPublic);
         
         Log.d(TAG, "コントローラ設定完了");
+    }
+    
+    /**
+     * RecyclerView セクションの初期化
+     */
+    private void initializeRecyclerView() {
+        RecyclerView recycler = findViewById(R.id.recyclerHighlight);
+        HighlightMemoAdapter adapter = new HighlightMemoAdapter();
+        recycler.setLayoutManager(new LinearLayoutManager(this));
+        recycler.setAdapter(adapter);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    List<HighlightMemoEntity> list =
+                        BookInformationDatabase.getDatabase(DisplaySummary.this)
+                            .highlightMemoDao()
+                            .getByUserAndVolume(currentUid, currentVolumeId);
+
+                    List<HighlightMemoData> data = new ArrayList<>();
+                    for (HighlightMemoEntity e : list) {
+                        data.add(new HighlightMemoData(e.page, e.line, e.memo));
+                    }
+                    runOnUiThread(() -> adapter.setItems(data));
+                });
+            }
+        });
+        
+        Log.d(TAG, "RecyclerView セクションの初期化完了");
     }
     
     @Override
