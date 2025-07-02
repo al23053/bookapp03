@@ -6,6 +6,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+
+import java.util.Collections;
 import java.util.List;
 import java.lang.StringBuilder;
 import android.util.Log;
@@ -56,28 +58,31 @@ public class BookDetailActivity extends AppCompatActivity {
         LinearLayout bottomSheet = rootView.findViewById(R.id.bottom_sheet_memo_container);
         if (bottomSheet != null) {
             bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-            // XMLで app:behavior_peekHeight="120dp" と app:behavior_hideable="false" を設定しているので、
-            // ボトムシートは初期状態で常に表示されます。
-            // したがって、以下のような明示的なsetVisibility(View.VISIBLE)は不要です。
-            // bottomSheet.setVisibility(View.VISIBLE); // これも不要
 
-            // 必要であれば、ボトムシートの状態変化を監視することもできます
+            // 明示的にpeekHeightを設定
+            bottomSheet.post(() -> {
+                bottomSheetBehavior.setPeekHeight(120, true);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                Log.d("BottomSheet", "post後の状態設定: " + bottomSheetBehavior.getState());
+            });
+
             bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
                 @Override
                 public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                    // ここで状態変化に応じた処理を記述できます (例: EXPANDED, COLLAPSED, DRAGGINGなど)
                     Log.d("BottomSheet", "State changed: " + newState);
                 }
 
                 @Override
                 public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                    // スライド中の処理
+                    // スライド中の処理（必要ならログ入れてもいい）
                 }
             });
+
             Log.d("BookDetailActivity", "Highlight memo bottom sheet container successfully initialized with Behavior.");
         } else {
             Log.e("BookDetailActivity", "R.id.bottom_sheet_memo_container が見つかりません。XMLを確認してください。");
         }
+
 
 
         // インテントからvolumeIdを取得
@@ -106,32 +111,11 @@ public class BookDetailActivity extends AppCompatActivity {
         // ハイライトメモが更新されたら、その内容をボトムシートのTextViewに表示します。
         viewModel.highlightMemos.observe(this, memos -> {
             if (memos != null && !memos.isEmpty()) {
-                StringBuilder combinedMemos = new StringBuilder();
-                for (HighlightMemoData memo : memos) {
-                    combinedMemos.append("ページ: ").append(memo.getPage())
-                            .append(", 行: ").append(memo.getLine())
-                            .append("\nメモ: ").append(memo.getMemo())
-                            .append("\n\n");
-                }
-                // ハイライトメモのテキストを更新
-                highlightMemoBottomSheetController.displayMemo(rootView, combinedMemos.toString().trim());
-                // もし必要なら、ここでボトムシートを展開状態にする
-                // bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                highlightMemoBottomSheetController.displayMemo(rootView, memos);
             } else {
-                // メモがない場合はその旨を表示
-                highlightMemoBottomSheetController.displayMemo(rootView, "ハイライトメモはありません。");
-                // メモがない場合でも、ボトムシートはpeekHeightで表示され続けます
+                highlightMemoBottomSheetController.displayMemo(rootView, Collections.emptyList());
             }
         });
-
-        // ★削除: ここでボトムシートの可視性を制御する必要はありません。XMLとBottomSheetBehaviorが自動的に管理します。★
-        // View memoContainer = rootView.findViewById(R.id.highlight_memo_text);
-        // if (memoContainer != null) {
-        //     memoContainer.setVisibility(View.VISIBLE);
-        //     Log.d("BookDetailActivity", "Highlight memo bottom sheet container made visible.");
-        // } else {
-        //     Log.e("BookDetailActivity", "bottom_sheet_memo_container (仮のボトムシートコンテナ) が見つかりません。");
-        // }
 
 
         // Activityが作成されたらViewModelにデータのロードを指示
