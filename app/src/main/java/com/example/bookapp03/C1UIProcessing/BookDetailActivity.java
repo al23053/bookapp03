@@ -1,44 +1,53 @@
+/**
+ * モジュール名: 本の詳細表示
+ * 作成者: 横山葉
+ * 作成日: 2025/06/20
+ * 概要: 書籍の詳細情報を表示し、ハイライトメモの管理を行うアクティビティ。
+ * 履歴:
+ * 2025/06/20 横山葉 新規作成
+ */
 package com.example.bookapp03.C1UIProcessing;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
-import java.util.Collections;
-import java.util.List;
-import java.lang.StringBuilder;
-import android.util.Log;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import com.example.bookapp03.R;
 import com.example.bookapp03.C3BookInformationProcessing.BookDetailViewModel;
 import com.example.bookapp03.C5UserInformationManaging.UserAuthManager;
-import com.example.bookapp03.C1UIProcessing.BookDetailViewController;
-import com.example.bookapp03.C1UIProcessing.ViewModelFactory;
-import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
-import com.example.bookapp03.C1UIProcessing.HighlightMemoBottomSheetController;
 
-import android.widget.LinearLayout;
-
-
+import java.util.Collections;
 
 /**
  * 書籍詳細画面を表示するアクティビティ
  */
 public class BookDetailActivity extends AppCompatActivity {
 
+    /** 書籍詳細画面のUI操作を管理するコントローラー */
     private BookDetailViewController controller;
+    /** 書籍詳細データとハイライトメモデータを管理するViewModel */
     private BookDetailViewModel viewModel;
+    /** ハイライトメモ表示用ボトムシートのUI操作を管理するコントローラー */
     private HighlightMemoBottomSheetController highlightMemoBottomSheetController;
-    private String currentVolumeId; // 現在表示している書籍のvolumeIdを保持
-
-    // ★追加: BottomSheetBehaviorのインスタンス★
+    /** 現在表示している書籍のGoogle Books APIのvolumeIdを保持 */
+    private String currentVolumeId;
+    /** ハイライトメモ表示用ボトムシートの挙動を制御するBehavior */
     private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
 
+    /**
+     * アクティビティが最初に作成されたときに呼び出される。
+     * UIの初期設定、ViewModelの初期化、データ監視、イベントハンドラの設定を行う。
+     *
+     * @param savedInstanceState アクティビティの以前の保存状態を含むBundleオブジェクト。
+     * アクティビティが以前に存在し、最後に終了していなかった場合に非nullとなる。
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,27 +63,38 @@ public class BookDetailActivity extends AppCompatActivity {
         // HighlightMemoBottomSheetControllerを初期化
         highlightMemoBottomSheetController = new HighlightMemoBottomSheetController();
 
-        // ★修正点1: ボトムシートのコンテナビューを取得し、BottomSheetBehaviorを設定★
+        // ボトムシートのコンテナビューを取得し、BottomSheetBehaviorを設定
         LinearLayout bottomSheet = rootView.findViewById(R.id.bottom_sheet_memo_container);
         if (bottomSheet != null) {
             bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
-            // 明示的にpeekHeightを設定
+            // 明示的にpeekHeightを設定し、COLLAPSED状態にする
             bottomSheet.post(() -> {
                 bottomSheetBehavior.setPeekHeight(120, true);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 Log.d("BottomSheet", "post後の状態設定: " + bottomSheetBehavior.getState());
             });
 
+            // ボトムシートの状態変更コールバックを設定
             bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                /**
+                 * ボトムシートの状態が変更されたときに呼び出される。
+                 * @param bottomSheet 状態が変更されたボトムシートビュー
+                 * @param newState 新しい状態（STATE_COLLAPSED, STATE_EXPANDEDなど）
+                 */
                 @Override
                 public void onStateChanged(@NonNull View bottomSheet, int newState) {
                     Log.d("BottomSheet", "State changed: " + newState);
                 }
 
+                /**
+                 * ボトムシートがスライドしているときに呼び出される。
+                 * @param bottomSheet スライドしているボトムシートビュー
+                 * @param slideOffset スライドオフセット（0から1の範囲）
+                 */
                 @Override
                 public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                    // スライド中の処理（必要ならログ入れてもいい）
+                    // スライド中の処理（必要ならここに記述）
                 }
             });
 
@@ -82,8 +102,6 @@ public class BookDetailActivity extends AppCompatActivity {
         } else {
             Log.e("BookDetailActivity", "R.id.bottom_sheet_memo_container が見つかりません。XMLを確認してください。");
         }
-
-
 
         // インテントからvolumeIdを取得
         currentVolumeId = getIntent().getStringExtra("volumeId");
