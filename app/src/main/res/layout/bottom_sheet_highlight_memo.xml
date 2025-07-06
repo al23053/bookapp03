@@ -15,17 +15,34 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <TableLayout
+        android:id="@+id/highlight_memo_table"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:shrinkColumns="*">
 
-        <TextView
-            android:id="@+id/highlight_memo_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="メモがここに表示されます"
-            android:textSize="16sp"
-            android:padding="8dp"/>
-    </LinearLayout>
+        <!-- ヘッダー行 -->
+        <TableRow
+            android:background="#DDDDDD"
+            android:padding="8dp">
+
+            <TextView
+                android:text="ページ"
+                android:textStyle="bold"
+                android:padding="4dp" />
+
+            <TextView
+                android:text="行"
+                android:textStyle="bold"
+                android:padding="4dp" />
+
+            <TextView
+                android:text="メモ"
+                android:textStyle="bold"
+                android:padding="4dp" />
+        </TableRow>
+
+
+    </TableLayout>
 </ScrollView>

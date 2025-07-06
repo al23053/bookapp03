@@ -1,10 +1,12 @@
 package com.example.bookapp03.C1UIProcessing;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ViewGroup;
+import android.view.View;                     // for drawer listener callback
+import android.view.ViewGroup;               // for LayoutParams
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -13,18 +15,28 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;            // ← 必須
+import androidx.recyclerview.widget.LinearLayoutManager;   // ← 必須
+import androidx.recyclerview.widget.RecyclerView;          // ← 必須
 
+import com.example.bookapp03.C3BookInformationProcessing.TransmitSummary;
+import com.example.bookapp03.C5UserInformationManaging.UserAuthManager;
+import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
+import com.example.bookapp03.C6BookInformationManaging.database.SummaryDao;
+import com.example.bookapp03.R;
+import com.example.bookapp03.C1UIProcessing.HighlightMemoAdapter;
+import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
+import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
+import com.example.bookapp03.model.Book;
+import com.example.bookapp03.service.GoogleBooksApiService;
+import com.example.bookapp03.C6BookInformationManaging.database.SummaryEntity;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import com.example.bookapp03.C5UserInformationManaging.UserAuthManager;
-import com.example.bookapp03.C6BookInformationManaging.database.SummaryDao;
-import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
-import com.example.bookapp03.model.Book;
-import com.example.bookapp03.service.GoogleBooksApiService;
-import com.example.bookapp03.R;
 
 /**
  * モジュール名: 全体まとめ登録画面表示
@@ -34,6 +46,7 @@ import com.example.bookapp03.R;
  * 履歴:
  * 2025/06/15 鶴田凌 新規作成
  * 2025/07/01 鶴田凌 本の名前引き継ぎと自動補完機能を追加
+ * 2025/07/05 鶴田凌 既存まとめの読み込み機能を追加
  */
 public class DisplaySummary extends AppCompatActivity {
     
@@ -108,6 +121,10 @@ public class DisplaySummary extends AppCompatActivity {
 
             // 各コントローラ生成・バインド
             setupControllers();
+            initializeRecyclerView();
+
+            // 追加: 画面遷移直後に既存まとめを読み込む
+            loadExistingSummary();
             
             Log.d(TAG, "DisplaySummary 初期化完了");
             
@@ -132,6 +149,32 @@ public class DisplaySummary extends AppCompatActivity {
     }
 
     /**
+     * 現在の volumeId に紐づく SummaryEntity を読み込み、UI に反映する
+     */
+    private void loadExistingSummary() {
+        if (currentVolumeId == null || currentVolumeId.isEmpty()) {
+            // 未取得なら何もしない
+            return;
+        }
+        executor.execute(() -> {
+            SummaryEntity entity = summaryDao.getSummary(currentUid, currentVolumeId);
+            runOnUiThread(() -> {
+                if (entity != null) {
+                    // 既存のまとめをセット
+                    if (entity.overallSummary != null) {
+                        summaryInput.setText(entity.overallSummary);
+                    }
+                    switchPublic.setChecked(entity.isPublic);
+                } else {
+                    // 新規登録時はクリア状態
+                    summaryInput.setText("");
+                    switchPublic.setChecked(false);
+                }
+            });
+        });
+    }
+
+    /**
      * 本のタイトル自動補完機能を設定
      */
     private void setupBookTitleAutoComplete() {
@@ -139,7 +182,7 @@ public class DisplaySummary extends AppCompatActivity {
         
         // 自動補完の設定をコードで行う
         bookNameInput.setThreshold(2); // 2文字で自動補完開始
-        bookNameInput.setDropDownWidth(ViewGroup.LayoutParams.MATCH_PARENT); // ✅ 修正済み
+        bookNameInput.setDropDownWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         
         bookNameInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -177,9 +220,10 @@ public class DisplaySummary extends AppCompatActivity {
                     
                     // コントローラを再初期化（新しいvolumeIdで）
                     setupControllers();
+                    // 追加: タイトル切替時にまとめを再読込
+                    loadExistingSummary();
                     
-                    Toast.makeText(this, "書籍が変更されました: " + selectedBook.getTitle(), 
-                                   Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "書籍が変更されました: " + selectedBook.getTitle(), Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d(TAG, "同じ書籍が選択されました");
                 }
@@ -246,24 +290,63 @@ public class DisplaySummary extends AppCompatActivity {
      */
     private void setupControllers() {
         Log.d(TAG, "コントローラ設定開始 - VolumeID: " + currentVolumeId);
-        
-        ctrlBack = new ControlBackToHomeButton(this);
-        ctrlBack.bind(btnBack);
 
-        ctrlMenu = new ControlHamburgerBar(this, currentUid, currentVolumeId);
+        // ① DrawerLayout を取得
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        // ② ハンバーガーアイコン取得
+        ImageButton btnMenu = findViewById(R.id.btnMenu);
+        // ③ 戻るボタン取得
+        btnBack = findViewById(R.id.btnBack);
+
+        // 戻る時に保存確認ダイアログ
+        btnBack.setOnClickListener(v -> showSaveConfirmDialog());
+
+        // ハンバーガーメニュー
+        ctrlMenu = new ControlHamburgerBar(this, drawer, currentUid, currentVolumeId);
         ctrlMenu.bind(btnMenu);
 
         ctrlSwitch = new ControlPublicPrivateSwitch(
-                this, summaryDao, currentUid, currentVolumeId, executor
+            this, summaryDao, currentUid, currentVolumeId, executor
         );
         ctrlSwitch.bind(switchPublic);
 
         ctrlRegister = new ControlSummaryRegistrationButton(
-                this, summaryDao, currentUid, currentVolumeId, executor
+            this, summaryDao, currentUid, executor
         );
         ctrlRegister.bind(btnRegisterSummary, summaryInput, switchPublic);
         
         Log.d(TAG, "コントローラ設定完了");
+    }
+    
+    /**
+     * RecyclerView セクションの初期化
+     */
+    private void initializeRecyclerView() {
+        RecyclerView recycler = findViewById(R.id.recyclerHighlight);
+        HighlightMemoAdapter adapter = new HighlightMemoAdapter();
+        recycler.setLayoutManager(new LinearLayoutManager(this));
+        recycler.setAdapter(adapter);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    List<HighlightMemoEntity> list =
+                        BookInformationDatabase.getDatabase(DisplaySummary.this)
+                            .highlightMemoDao()
+                            .getByUserAndVolume(currentUid, currentVolumeId);
+
+                    List<HighlightMemoData> data = new ArrayList<>();
+                    for (HighlightMemoEntity e : list) {
+                        data.add(new HighlightMemoData(e.page, e.line, e.memo));
+                    }
+                    runOnUiThread(() -> adapter.setItems(data));
+                });
+            }
+        });
+        
+        Log.d(TAG, "RecyclerView セクションの初期化完了");
     }
     
     @Override
@@ -276,5 +359,81 @@ public class DisplaySummary extends AppCompatActivity {
             googleBooksApiService.shutdown();
         }
         Log.d(TAG, "DisplaySummary onDestroy完了");
+    }
+
+    /** 外部から本の名前入力欄を参照するためのゲッター */
+    public AutoCompleteTextView getBookNameInput() {
+        return bookNameInput;
+    }
+
+    /**
+     * タイトル文字列に対応する volumeId を返す。
+     * 見つからなければ空文字。
+     */
+    public String findVolumeIdByTitle(String title) {
+        if (searchResults == null) return "";
+        for (Book b : searchResults) {
+            if (b.getTitle().equals(title)) {
+                return b.getId();
+            }
+        }
+        return "";
+    }
+
+    /**
+     * モジュール名: 編集内容保存確認ダイアログ
+     * 概要: 戻るボタン押下時に保存確認を行い、「はい」で保存→ホーム遷移、
+     *       「いいえ」で即ホーム遷移する。
+     */
+    private void showSaveConfirmDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("確認")
+            .setMessage("編集内容を保存しますか？")
+            .setPositiveButton("はい", (d, w) -> saveAndReturnHome())
+            .setNegativeButton("いいえ", (d, w) -> returnHome())
+            .show();
+    }
+
+    /**
+     * 入力値を検証したうえで全体まとめを保存し、ホーム画面へ戻る。
+     */
+    private void saveAndReturnHome() {
+        String title = bookNameInput.getText().toString().trim();
+        String volumeId = findVolumeIdByTitle(title);
+        if (volumeId.isEmpty()) {
+            Toast.makeText(this, "本の名前を正しく入力してください", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String overall = summaryInput.getText().toString();
+        if (overall.length() > 500) {
+            Toast.makeText(this, "全体まとめは500文字以内で入力してください", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            boolean ok = new TransmitSummary(this)
+                .transmitSummary(currentUid, volumeId, overall, false);
+            runOnUiThread(() -> {
+                Toast.makeText(this,
+                    ok ? "保存成功" : "保存失敗",
+                    Toast.LENGTH_SHORT
+                ).show();
+                returnHome();
+            });
+        });
+    }
+
+    /**
+     * ホーム画面へ戻る（Activity を finish する）。
+     */
+    private void returnHome() {
+        Intent i = new Intent(this, DisplayHome.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(i);
+        finish();
+    }
+
+    public String getCurrentVolumeId() {
+        return currentVolumeId;
     }
 }

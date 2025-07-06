@@ -10,5 +10,19 @@
     <!-- ダークモード設定画面用背景色 -->
     <color name="background_light">#FFFFFF</color>
     <color name="background_dark">#121212</color>
+
+    <!-- 区切り線用の色 -->
+    <color name="divider_gray">#E0E0E0</color>
+    <color name="light_gray">#F5F5F5</color>
+    <color name="medium_gray">#BDBDBD</color>
+
+    <!-- 通常モードでアイコン／ボタン文字を黒に -->
+    <color name="iconTintColor">?android:attr/textColorPrimary</color>
+    <color name="buttonTextColor">?android:attr/textColorPrimary</color>
+
+    <!-- EditText 背景 塗りつぶし色 -->
+    <color name="summary_input_fill">#FFFFFFFF</color>
+    <!-- 枠線色（テーマのテキストセカンダリ色を参照すると昼夜で自動切替） -->
+    <color name="summary_input_stroke">?android:attr/textColorSecondary</color>
 </resources>
 

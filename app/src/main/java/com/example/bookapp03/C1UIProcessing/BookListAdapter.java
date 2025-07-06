@@ -1,10 +1,10 @@
 /**
- * モジュール名: BookListAdapter
+ * モジュール名: 本一覧アダプター
  * 作成者: 横山葉
  * 作成日: 2025/06/09
- * 概要: 書籍一覧をRecyclerViewで表示するためのアダプタークラス
+ * 概要: 書籍一覧をRecyclerViewで表示するためのアダプタークラス。
  * 履歴:
- * 2025/06/09 横山葉 新規作成
+ *   2025/06/09 横山葉 新規作成
  */
 
 package com.example.bookapp03.C1UIProcessing;
@@ -17,39 +17,54 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-import com.example.bookapp03.C3BookInformationProcessing.BookSummaryData; // パッケージ変更
+import com.example.bookapp03.C3BookInformationProcessing.BookSummaryData;
 import com.example.bookapp03.R;
 
 import java.util.List;
 
 /**
- * 書籍一覧の表示を担当するRecyclerViewアダプター
+ * 書籍データをRecyclerViewに表示するアダプター
  */
 public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookViewHolder> {
 
+    /**
+     * 書籍サマリのリスト
+     */
     private List<BookSummaryData> bookList;
-    private final PublicPrivateToggleHandler toggleHandler; // ViewModelではなくHandlerを受け取る
 
-    public BookListAdapter(List<BookSummaryData> bookList, PublicPrivateToggleHandler toggleHandler) {
+    /**
+     * ユーザーID（公開切り替え時に使用）
+     */
+    private final String uid;
+
+    /**
+     * 公開・非公開切り替え操作のハンドラ
+     */
+    private final PublicPrivateToggleHandler toggleHandler;
+
+    /**
+     * コンストラクタ
+     * @param bookList 書籍リスト
+     * @param uid ユーザーID
+     * @param toggleHandler 公開・非公開切り替えハンドラ
+     */
+    public BookListAdapter(List<BookSummaryData> bookList, String uid, PublicPrivateToggleHandler toggleHandler) {
         this.bookList = bookList;
+        this.uid = uid;
         this.toggleHandler = toggleHandler;
     }
 
     /**
-     * データセットを更新するメソッド
-     * ViewModelのLiveDataを監視してこのメソッドを呼ぶことで、RecyclerViewを更新できます。
-     * @param newBookList 新しい書籍リスト
+     * 書籍リストを更新
+     * @param newBookList 新しいリスト
      */
     public void updateBookList(List<BookSummaryData> newBookList) {
         this.bookList = newBookList;
-        notifyDataSetChanged(); // データが変更されたことをアダプターに通知
+        notifyDataSetChanged();
     }
-
 
     @NonNull
     @Override
@@ -61,28 +76,19 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
     @Override
     public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
         BookSummaryData book = bookList.get(position);
-
-        // タイトルを設定
         holder.titleView.setText(book.getTitle());
 
-        // カバー画像を設定（Glideを使用）
         Glide.with(holder.coverView.getContext())
                 .load(book.getImageUrl())
                 .into(holder.coverView);
 
-        // 公開・非公開スイッチ状態設定
         holder.publicSwitch.setChecked(book.isPublic());
 
-        // スイッチの変更リスナー
         holder.publicSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // BookSummaryDataの公開状態も更新
             book.setPublic(isChecked);
-            // Handlerを介してViewModelに公開状態の更新を伝える
-            // TODO: ここでユーザーUIDを渡す必要がある (Firebase Authなどから取得)
-            toggleHandler.handleToggle("current_user_id", book.getVolumeId(), isChecked);
+            toggleHandler.handleToggle(uid, book.getVolumeId(), isChecked);
         });
 
-        // 表紙タップで詳細画面へ
         holder.coverView.setOnClickListener(v -> {
             Context context = v.getContext();
             Intent intent = new Intent(context, BookDetailActivity.class);
@@ -96,6 +102,9 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
         return bookList.size();
     }
 
+    /**
+     * 各書籍アイテムを保持するViewHolder
+     */
     static class BookViewHolder extends RecyclerView.ViewHolder {
         TextView titleView;
         ImageView coverView;

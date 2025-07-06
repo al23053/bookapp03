@@ -219,6 +219,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="ユーザ設定へ"
         android:src="@drawable/ic_user_settings"
+        android:tint="?android:attr/textColorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

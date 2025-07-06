@@ -3,43 +3,79 @@
 **************************************************************************
 * 作成者: 鶴田凌
 * 作成日: 2025/06/15
-* 概要: ハイライトメモを表示する画面のレイアウト
+* 概要: ハイライトメモを表示する画面のレイアウト（通常画面版）
 * 履歴:
 * 2025/06/15 鶴田凌　新規作成
+* 2025/07/02 鶴田凌　通常画面として修正
 **************************************************************************
 -->
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
 
-    <!-- メインコンテンツは空でも可 -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- 右側ドロワー -->
+    <!-- ヘッダー -->
     <LinearLayout
-        android:id="@+id/highlightDrawer"
-        android:layout_width="280dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        android:padding="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="16dp">
 
-        <TextView
+        <!-- 戻るボタン -->
+        <ImageButton
+            android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ハイライトメモ"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="戻る"
+            android:src="@android:drawable/ic_menu_revert"
+            android:padding="8dp" />
+
+        <!-- タイトル -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ハイライト・メモ"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:gravity="center"
+            android:layout_marginHorizontal="16dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerHighlight"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <!-- スペーサー（バランス調整用） -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
     </LinearLayout>
-</androidx.drawerlayout.widget.DrawerLayout>
+
+    <!-- 区切り線 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginBottom="16dp" />
+
+    <!-- メモがない場合のメッセージ -->
+    <TextView
+        android:id="@+id/txtNoMemos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="この書籍にはハイライトメモがありません"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone"
+        android:textColor="@android:color/darker_gray" />
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerHighlight"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
+
+</LinearLayout>
