@@ -1,9 +1,8 @@
-package com.example.bookapp03.adapter; // あなたのパッケージ名に合わせてください
+package com.example.bookapp03.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RatingBar; // RatingBarのインポートを追加
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,8 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.example.bookapp03.R; // あなたのRクラスのパスに合わせてください
-import com.example.bookapp03.model.Review; // あなたのReviewモデルのパスに合わせてください
+import com.example.bookapp03.R;
+import com.example.bookapp03.model.Review;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * Firebase Firestoreから取得したレビューデータをRecyclerViewに表示するためのアダプターです。
@@ -20,6 +20,7 @@ import com.example.bookapp03.model.Review; // あなたのReviewモデルのパ�
  */
 public class YourFirestoreRecyclerAdapter extends FirestoreRecyclerAdapter<Review, YourFirestoreRecyclerAdapter.ReviewViewHolder> {
 
+    private FirebaseFirestore db;
     /**
      * リスト内のアイテムがクリックされたときに通知されるリスナー。
      */
@@ -65,9 +66,45 @@ public class YourFirestoreRecyclerAdapter extends FirestoreRecyclerAdapter<Revie
      */
     @Override
     protected void onBindViewHolder(@NonNull ReviewViewHolder holder, int position, @NonNull Review model) {
-        holder.commentTextView.setText(model.getComment());
-        holder.reviewRatingBar.setRating(model.getRating());
-        holder.usernameTextView.setText(model.getUsername());
+        String comment = model.getOverallSummary(); // Reviewモデルのフィールド名に合わせて getOverallSummary() を使用
+        if (comment == null || comment.trim().isEmpty()) {
+            holder.commentTextView.setText("（本文なし）"); // または「レビューがまだ書かれていません」など
+            holder.commentTextView.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.darker_gray)); // 任意の色付け
+        } else {
+            holder.commentTextView.setText(comment);
+            holder.commentTextView.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.black)); // 元の色に戻す
+        }
+
+        String uid = model.getUid(); // Reviewモデルからuidを取得
+        if (uid != null && !uid.isEmpty()) {
+            db.collection("users").document(uid).get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String nickname = documentSnapshot.getString("nickname");
+                            if (nickname != null && !nickname.trim().isEmpty()) {
+                                holder.usernameTextView.setText(nickname);
+                                holder.usernameTextView.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.black));
+                            } else {
+                                holder.usernameTextView.setText("匿名ユーザー (ニックネーム未設定)");
+                                holder.usernameTextView.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.darker_gray));
+                            }
+                        } else {
+                            // ユーザーIDに対応するドキュメントが存在しない場合
+                            holder.usernameTextView.setText("不明なユーザー");
+                            holder.usernameTextView.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.darker_gray));
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        // ニックネーム取得中にエラーが発生した場合
+                        holder.usernameTextView.setText("ニックネーム取得エラー");
+                        holder.usernameTextView.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.holo_red_dark));
+                    });
+        } else {
+            // UIDがnullまたは空の場合
+            holder.usernameTextView.setText("不明なユーザー (UIDなし)");
+            holder.usernameTextView.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.darker_gray));
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(model); // クリックされたReviewオブジェクトを渡す
@@ -99,10 +136,6 @@ public class YourFirestoreRecyclerAdapter extends FirestoreRecyclerAdapter<Revie
          */
         private final TextView usernameTextView;
         /**
-         * レビューの評価を表示するRatingBar。
-         */
-        private final RatingBar reviewRatingBar;
-        /**
          * レビューのコメント本文を表示するTextView。
          */
         private final TextView commentTextView;
@@ -115,7 +148,6 @@ public class YourFirestoreRecyclerAdapter extends FirestoreRecyclerAdapter<Revie
         ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
-            reviewRatingBar = itemView.findViewById(R.id.reviewRatingBar);
             commentTextView = itemView.findViewById(R.id.commentTextView);
         }
     }

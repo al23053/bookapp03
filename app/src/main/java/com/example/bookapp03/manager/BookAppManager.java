@@ -118,7 +118,7 @@ public class BookAppManager {
     }
 
     /**
-     * 楽天Kobo APIから話題の書籍（ランキング）を取得します。
+     * 楽天市場 APIから話題の書籍（ランキング）を取得します。
      *
      * @param callback 結果を返すコールバック
      */

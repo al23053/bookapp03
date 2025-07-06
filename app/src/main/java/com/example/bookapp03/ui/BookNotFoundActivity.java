@@ -7,6 +7,7 @@ import android.widget.TextView;
 import android.widget.Button;
 
 import com.example.bookapp03.R;
+import com.example.bookapp03.C1UIProcessing.ControlBackButton;
 
 /**
  * 書籍情報がデータベースに見つからなかった場合に表示されるActivityです。
@@ -40,8 +41,8 @@ public class BookNotFoundActivity extends AppCompatActivity {
             messageTextView.setText("この本の情報はデータベースに登録されていません。");
         }
 
-        // 「戻る」ボタンのクリックリスナーを設定
+        // 「戻る」ボタン
         // このActivityを終了して前の画面に戻ります。
-        backButton.setOnClickListener(v -> finish());
+        ControlBackButton.setupBackButton(backButton, this);
     }
 }

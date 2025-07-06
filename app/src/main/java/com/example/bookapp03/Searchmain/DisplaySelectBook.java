@@ -1,6 +1,5 @@
 package com.example.bookapp03.Searchmain;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -10,10 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.bookapp03.C1UIProcessing.ControlBackButton;
+import com.example.bookapp03.C1UIProcessing.ControlPushBookImage;
 import com.example.bookapp03.R;
 import com.example.bookapp03.adapter.BookCardAdapter;
 import com.example.bookapp03.model.Book;
-import com.example.bookapp03.ui.BookSelectionActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -26,7 +26,7 @@ import java.util.List;
  * 検索クエリに基づいてGoogle Books APIから取得した書籍リストを表示し、
  * 各書籍カードのクリックイベントを処理します。
  */
-public class SearchResultActivity extends AppCompatActivity implements BookCardAdapter.OnBookClickListener {
+public class DisplaySelectBook extends AppCompatActivity implements BookCardAdapter.OnBookClickListener {
 
     private static final String TAG = "SearchResultActivity";
     /**
@@ -53,6 +53,7 @@ public class SearchResultActivity extends AppCompatActivity implements BookCardA
      * 現在表示されている検索結果の書籍リスト。
      */
     private List<Book> searchResults;
+    private ControlPushBookImage controlPushBookImage;
 
     /**
      * Activityが最初に作成されるときに呼び出されます。
@@ -73,10 +74,8 @@ public class SearchResultActivity extends AppCompatActivity implements BookCardA
         bookCardAdapter = new BookCardAdapter(searchResults, this);
         searchResultsRecyclerView.setAdapter(bookCardAdapter);
         loadSearchResultsFromIntent();
-        backToSearchButton.setOnClickListener(v -> {
-            Log.d(TAG, "「検索画面に戻る」ボタンがクリックされました。");
-            finish();
-        });
+        controlPushBookImage = new ControlPushBookImage(this);
+        ControlBackButton.setupBackButton(backToSearchButton, this);
     }
 
     /**
@@ -119,10 +118,6 @@ public class SearchResultActivity extends AppCompatActivity implements BookCardA
      */
     @Override
     public void onBookClick(Book book) {
-        Log.d(TAG, "「" + book.getTitle() + "」がクリックされました。BookSelectionActivityへ遷移します。");
-        Intent intent = new Intent(SearchResultActivity.this, BookSelectionActivity.class);
-        intent.putExtra("bookId", book.getId());
-        intent.putExtra("bookTitle", book.getTitle());
-        startActivity(intent);
+        controlPushBookImage.handleBookClick(book);
     }
 }

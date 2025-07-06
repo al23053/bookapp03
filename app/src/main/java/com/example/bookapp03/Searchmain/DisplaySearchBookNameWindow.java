@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * アプリケーションのメインアクティビティです。
@@ -51,7 +53,7 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
      * 楽天サービス内でGoogle Books APIの二次検索に使用されるAPIキーです。
      * 本番環境ではBuildConfigなどでの管理が推奨されます。
      */
-    private static final String GOOGLE_BOOKS_API_KEY_FOR_RAKUTEN_SECONDARY_SEARCH = "AIzaSyBgulCNwWRSj95lHveqv67KfC39RMNINyM";
+    private static final String GOOGLE_BOOKS_API_KEY_FOR_RAKUTEN_SECONDARY_SEARCH = "AIzaSyBQbSbuydQV6QRpNf5smhVp742WpnZ84mY";
 
     /**
      * 楽天Kobo APIにアクセスするためのアプリケーションIDです。
@@ -151,8 +153,7 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
      * 本の情報に関するビジネスロジックを処理する本の情報処理部インスタンス。
      */
     private BookFeatureProcessor bookFeatureProcessor;
-
-
+    private FirebaseAuth mAuth;
     /**
      * Activityが最初に作成されるときに呼び出されます。
      * レイアウトの設定、UI要素の初期化、サービス/マネージャーの初期化、
@@ -186,6 +187,8 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
 
         mainHandler = new Handler(Looper.getMainLooper());
 
+        mAuth = FirebaseAuth.getInstance();
+
         // 管理部を初期化し、必要な依存関係を注入 (DI)
         bookAppManager = new BookAppManager(httpClient, gson, RAKUTEN_APPLICATION_ID, GOOGLE_BOOKS_API_KEY_FOR_RAKUTEN_SECONDARY_SEARCH);
         // 各種処理部を初期化し、管理部を注入
@@ -205,8 +208,8 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
                 mainHandler.post(() -> {
                     if (!searchResults.isEmpty()) {
                         String jsonSearchResults = gson.toJson(searchResults);
-                        Intent intent = new Intent(DisplaySearchBookNameWindow.this, SearchResultActivity.class);
-                        intent.putExtra(SearchResultActivity.EXTRA_SEARCH_RESULTS, jsonSearchResults);
+                        Intent intent = new Intent(DisplaySearchBookNameWindow.this, DisplaySelectBook.class);
+                        intent.putExtra(DisplaySelectBook.EXTRA_SEARCH_RESULTS, jsonSearchResults);
                         startActivity(intent);
                     } else {
                         Toast.makeText(DisplaySearchBookNameWindow.this, "検索結果が見つかりませんでした。", Toast.LENGTH_LONG).show();
@@ -228,9 +231,21 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
 
         setupRecommendedBooksRecyclerViews();
 
-        String currentUserId = "testUser1";
-
-        fetchUserFavoriteGenres(currentUserId);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String currentUserId = currentUser.getUid();
+            fetchUserFavoriteGenres(currentUserId);
+        } else {
+            // ユーザーがログインしていない場合
+            // 必要に応じてログイン画面へのリダイレクトや、デフォルトの動作を定義
+            Log.w("DisplaySearchBookNameWindow", "No user is currently logged in. Cannot fetch favorite genres.");
+            Toast.makeText(this, "ログインしていません。おすすめ本を表示できません。", Toast.LENGTH_LONG).show();
+            // 例: デフォルトのおすすめを表示するか、何も表示しないか
+            // matchingBooksAdapter.setBookList(new ArrayList<>());
+            // nonMatchingBooksAdapter.setBookList(new ArrayList<>());
+            // noMatchingBooksMessage.setText("ログインしておすすめ本を表示しましょう！");
+            // noMatchingBooksMessage.setVisibility(View.VISIBLE);
+        }
 
         fetchRakutenRankingBooks();
 

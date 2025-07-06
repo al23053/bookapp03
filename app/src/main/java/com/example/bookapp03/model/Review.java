@@ -1,8 +1,5 @@
 package com.example.bookapp03.model; // あなたのパッケージ名に合わせる
 
-import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.ServerTimestamp; // タイムスタンプ自動生成用
-
 /**
  * 書籍レビューの情報を表現するモデルクラスです。
  * ユーザーID、ユーザー名、評価、コメント、およびレビュー作成日時を格納します。
@@ -10,32 +7,29 @@ import com.google.firebase.firestore.ServerTimestamp; // タイムスタンプ�
  */
 public class Review {
     /**
-     * レビューを投稿したユーザーの一意なID。
+     * レビューのコメント本文または要約。Firestoreの 'overallSummary' フィールドに対応。
      */
-    private String userId;
+    private String overallSummary;
+    /**
+     * レビューを投稿したユーザーの一意なID。Firestoreの 'uid' フィールドに対応。
+     * このIDを使用して 'users' コレクションからユーザー名を取得します。
+     */
+    private String uid;
+    /**
+     * レビューが関連付けられている書籍のID。Firestoreの 'volumeId' フィールドに対応。
+     */
+    private String volumeId;
 
     /**
-     * レビューを投稿したユーザーの表示名。
+     * レビューが公開されているかどうかを示すフラグ。Firestoreの 'isPublic' フィールドに対応。
      */
-    private String username;
-
-    /**
-     * 書籍に対する評価。通常、1.0fから5.0fの範囲の浮動小数点数です。
-     */
-    private float rating; // 1.0f から 5.0f
-
-    /**
-     * レビューのコメント本文。
-     */
-    private String comment;
+    private boolean isPublic;
 
     /**
      * レビューがFirestoreサーバーに保存された際のタイムスタンプ。
      *
      * @ServerTimestamp アノテーションにより、Firestoreが自動的にこのフィールドにサーバーのタイムスタンプを設定・更新します。
      */
-    @ServerTimestamp // Firestoreが自動的にタイムスタンプを生成・更新
-    private Timestamp timestamp;
 
     /**
      * FirebaseFirestoreがオブジェクトを自動的に変換するために必須となる、引数なしのデフォルトコンストラクタです。
@@ -46,101 +40,97 @@ public class Review {
 
     /**
      * 新しいレビューを作成するためのコンストラクタです。
-     * タイムスタンプはFirestoreによって自動的に設定されます。
+     * Firestoreの 'summaries' コレクションのフィールドに合わせます。
      *
-     * @param userId   レビューを投稿するユーザーのID
-     * @param username レビューを投稿するユーザーの表示名
-     * @param rating   書籍に対する評価（1.0f〜5.0f）
-     * @param comment  レビューのコメント本文
+     * @param overallSummary レビューのコメント本文または要約
+     * @param uid            レビューを投稿するユーザーのID
+     * @param volumeId       レビューが関連付けられている書籍のID
+     * @param isPublic       レビューが公開されているかどうかのフラグ
      */
-    public Review(String userId, String username, float rating, String comment) {
-        this.userId = userId;
-        this.username = username;
-        this.rating = rating;
-        this.comment = comment;
-        // timestampは@ServerTimestampで自動設定されるため、ここでは設定しない
+    public Review(String overallSummary, String uid, String volumeId, boolean isPublic) {
+        this.overallSummary = overallSummary;
+        this.uid = uid;
+        this.volumeId = volumeId;
+        this.isPublic = isPublic;
     }
 
     // GetterとSetter (必須)
 
     /**
+     * レビューのコメント本文または要約を取得します。
+     *
+     * @return コメント本文または要約
+     */
+    public String getOverallSummary() {
+        return overallSummary;
+    }
+
+    /**
+     * レビューのコメント本文または要約を設定します。
+     *
+     * @param overallSummary 設定するコメント本文または要約
+     */
+    public void setOverallSummary(String overallSummary) {
+        this.overallSummary = overallSummary;
+    }
+
+    /**
      * レビューを投稿したユーザーのIDを取得します。
      *
-     * @return ユーザーID
+     * @return ユーザーID (uid)
      */
-    public String getUserId() {
-        return userId;
+    public String getUid() {
+        return uid;
     }
 
     /**
      * レビューを投稿したユーザーのIDを設定します。
      *
-     * @param userId 設定するユーザーID
+     * @param uid 設定するユーザーID
      */
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     /**
-     * レビューを投稿したユーザーの表示名を取得します。
+     * レビューが関連付けられている書籍のIDを取得します。
      *
-     * @return ユーザー名
+     * @return 書籍ID (volumeId)
      */
-    public String getUsername() {
-        return username;
+    public String getVolumeId() {
+        return volumeId;
     }
 
     /**
-     * レビューを投稿したユーザーの表示名を設定します。
+     * レビューが関連付けられている書籍のIDを設定します。
      *
-     * @param username 設定するユーザー名
+     * @param volumeId 設定する書籍ID
      */
-    public void setUsername(String username) {
-        this.username = username;
+    public void setVolumeId(String volumeId) {
+        this.volumeId = volumeId;
     }
 
     /**
-     * 書籍に対する評価を取得します。
+     * レビューが公開されているかどうかを示すフラグを取得します。
      *
-     * @return 評価（float型）
+     * @return trueなら公開、falseなら非公開
      */
-    public float getRating() {
-        return rating;
+    public boolean isPublic() {
+        return isPublic;
     }
 
     /**
-     * 書籍に対する評価を設定します。
+     * レビューが公開されているかどうかを示すフラグを設定します。
      *
-     * @param rating 設定する評価（1.0f〜5.0f）
+     * @param aPublic 設定する公開フラグ
      */
-    public void setRating(float rating) {
-        this.rating = rating;
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
-    /**
-     * レビューのコメント本文を取得します。
-     *
-     * @return コメント本文
-     */
+    // 既存のUserReviewListActivityで使用されているメソッド名に合わせるためのエイリアス
+    // (UIロジックの修正を最小限にするため)
     public String getComment() {
-        return comment;
-    }
-
-    /**
-     * レビューのコメント本文を設定します。
-     *
-     * @param comment 設定するコメント本文
-     */
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    /**
-     * レビューがFirestoreに保存された際のタイムスタンプを取得します。
-     *
-     * @return レビューのタイムスタンプ
-     */
-    public Timestamp getTimestamp() {
-        return timestamp;
+        return overallSummary;
     }
 }
