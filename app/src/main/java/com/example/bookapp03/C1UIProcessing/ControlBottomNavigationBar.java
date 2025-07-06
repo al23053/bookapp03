@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.example.bookapp03.R;
+import com.example.bookapp03.Searchmain.DisplaySearchBookNameWindow;
+import com.example.bookapp03.ui.BookSelectionActivity;
 
 
 /**
@@ -26,9 +28,9 @@ public class ControlBottomNavigationBar {
         Intent intent = null;
         if (itemId == R.id.nav_home) {
             intent = new Intent(context, DisplayHome.class);
-        } /*else if (itemId == R.id.nav_search) {
-            intent = new Intent(context, DisplaySearchBooknamewindow.class);
-        }*/ else if (itemId == R.id.nav_book) {
+        } else if (itemId == R.id.nav_search) {
+            intent = new Intent(context, DisplaySearchBookNameWindow.class);
+        } else if (itemId == R.id.nav_book) {
             intent = new Intent(context, BookListActivity.class);
         }
         // 他のメニューは必要に応じて追加

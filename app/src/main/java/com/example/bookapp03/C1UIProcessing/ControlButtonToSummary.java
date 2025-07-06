@@ -1,7 +1,7 @@
 package com.example.bookapp03.C1UIProcessing;
 
-import android.content.Context;
 import android.content.Intent;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * モジュール名: 全体まとめ登録画面への遷移ボタン制御
@@ -12,14 +12,32 @@ import android.content.Intent;
  * 　2025/06/15 鶴田凌 新規作成
  */
 public class ControlButtonToSummary {
-
+    
     /**
-     * 全体まとめ登録画面への遷移を実行する。
-     *
-     * @param context ボタン押下時のコンテキスト（Activity 等）
+     * 全体まとめ画面に遷移（volumeIdと本の名前を渡す）
      */
-    public void setToSummary(Context context) {
-        Intent intent = new Intent(context, DisplaySummary.class);
-        context.startActivity(intent);
+    public void setToSummary(AppCompatActivity activity, String volumeId, String bookTitle) {
+        Intent intent = new Intent(activity, DisplaySummary.class);
+        intent.putExtra("volumeId", volumeId);
+        intent.putExtra("bookTitle", bookTitle);
+        activity.startActivity(intent);
+    }
+    
+    /**
+     * 全体まとめ画面に遷移（volumeIdのみ）
+     */
+    public void setToSummary(AppCompatActivity activity, String volumeId) {
+        Intent intent = new Intent(activity, DisplaySummary.class);
+        intent.putExtra("volumeId", volumeId);
+        activity.startActivity(intent);
+    }
+    
+    /**
+     * 既存メソッドとの互換性のため（非推奨）
+     */
+    @Deprecated
+    public void setToSummary(AppCompatActivity activity) {
+        Intent intent = new Intent(activity, DisplaySummary.class);
+        activity.startActivity(intent);
     }
 }
