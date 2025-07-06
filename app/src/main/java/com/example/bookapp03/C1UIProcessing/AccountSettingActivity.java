@@ -99,6 +99,17 @@ public class AccountSettingActivity extends Activity {
     private void saveUserData() {
         String nickname = editTextNickname.getText().toString().trim();
 
+        // 入力チェックを追加
+        if (nickname.isEmpty()) {
+            Toast.makeText(this, "ニックネームを入力してください", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (selectedImageUri == null) {
+            Toast.makeText(this, "アイコン画像を選択してください", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Toast.makeText(this, "ユーザーがログインしていません", Toast.LENGTH_SHORT).show();
@@ -106,32 +117,28 @@ public class AccountSettingActivity extends Activity {
         }
 
         String uid = user.getUid();
-        String iconUriStr = (selectedImageUri != null) ? selectedImageUri.toString() : "";
+        String iconUriStr = selectedImageUri.toString();
 
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("nickname", nickname);
         userMap.put("iconUri", iconUriStr);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users").document(uid).update(userMap)
-                .addOnSuccessListener(unused -> {
-                    if (isFirstTime) {
-                        // 初回 → ジャンル選択画面へ
-                        Intent intent = new Intent(this, GenreSelectionActivity.class);
-                        intent.putExtra("nickname", nickname);
-                        intent.putExtra("iconUri", iconUriStr);
-                        intent.putExtra("isFirstTime", true); // 次も初回判定を渡す
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        // 設定変更 → 呼び出し元に戻る
-                        setResult(Activity.RESULT_OK);
-                        finish();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "保存に失敗しました", Toast.LENGTH_SHORT).show();
-                });
-
+        db.collection("users").document(uid).update(userMap).addOnSuccessListener(unused -> {
+            if (isFirstTime) {
+                Intent intent = new Intent(this, GenreSelectionActivity.class);
+                intent.putExtra("nickname", nickname);
+                intent.putExtra("iconUri", iconUriStr);
+                intent.putExtra("isFirstTime", true);
+                startActivity(intent);
+                finish();
+            } else {
+                setResult(Activity.RESULT_OK);
+                finish();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "保存に失敗しました", Toast.LENGTH_SHORT).show();
+        });
     }
+
 }

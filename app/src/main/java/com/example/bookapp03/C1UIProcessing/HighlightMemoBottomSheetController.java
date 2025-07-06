@@ -6,6 +6,7 @@
  * 履歴:
  * 2025/06/09 横山葉 新規作成
  */
+
 package com.example.bookapp03.C1UIProcessing;
 
 import android.view.View;
