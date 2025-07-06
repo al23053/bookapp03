@@ -24,7 +24,7 @@
 
         <!-- ヘッダー行 -->
         <TableRow
-            android:background="#DDDDDD"
+            android:background="@color/bottom_nav_color_state"
             android:padding="8dp">
 
             <TextView
