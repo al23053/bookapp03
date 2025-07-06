@@ -36,10 +36,14 @@ public class ControlHighlightMemo {
      * @throws IllegalArgumentException 入力範囲外または文字数超過時
      */
     public HighlightMemoData getHighlightMemo(int page, int line, String memo) {
-        if (page <= 0 || page > 1000 ||
-                line <= 0 || line > 50 ||
-                memo.length() > 200) {
-            throw new IllegalArgumentException("E2-E4: 入力が不正です。");
+        if (page <= 0 || page > 1000 ) {
+            throw new IllegalArgumentException("本のページ数が範囲を超えています");
+        }
+        if (line <= 0 || line > 50){
+            throw new IllegalArgumentException("本の行数が範囲を超えています");
+        }
+        if (memo.length() > 200){
+            throw new IllegalArgumentException("メモは200文字以内で入力してください。");
         }
         return new HighlightMemoData(page, line, memo);
     }

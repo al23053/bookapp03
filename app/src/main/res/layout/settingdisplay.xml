@@ -1,16 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
 **************************************************************************
 * 作成者: 鶴田凌
 * 作成日: 2025/06/15
 * 概要: ユーザ設定画面のレイアウト
 * 履歴:
-* 2025/06/15 鶴田凌　新規作成
+*  2025/06/15 鶴田凌 新規作成
 **************************************************************************
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_light"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
     android:padding="24dp">
 
@@ -25,9 +26,10 @@
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+                android:src="@drawable/ic_back"
+            android:tint="?android:attr/textColorPrimary"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="戻る"
-            android:src="@drawable/ic_back" />
+            android:contentDescription="戻る" />
 
         <TextView
             android:id="@+id/txtTitle"
@@ -36,6 +38,7 @@
             android:layout_marginStart="16dp"
             android:text="ユーザ設定"
             android:textSize="34sp"
+            android:textColor="?android:attr/textColorPrimary"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -48,7 +51,8 @@
         android:foreground="?attr/selectableItemBackground"
         android:paddingVertical="16dp"
         android:text="ニックネーム・アイコン"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:textColor="?android:attr/textColorPrimary" />
 
     <TextView
         android:id="@+id/btnGenre"
@@ -58,7 +62,8 @@
         android:foreground="?attr/selectableItemBackground"
         android:paddingVertical="16dp"
         android:text="好きな本のジャンル"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:textColor="?android:attr/textColorPrimary" />
 
     <TextView
         android:id="@+id/btnDarkMode"
@@ -68,7 +73,8 @@
         android:foreground="?attr/selectableItemBackground"
         android:paddingVertical="16dp"
         android:text="ダークモード切替"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:textColor="?android:attr/textColorPrimary" />
 
     <TextView
         android:id="@+id/btnAccountSwitch"
@@ -78,7 +84,8 @@
         android:foreground="?attr/selectableItemBackground"
         android:paddingVertical="16dp"
         android:text="アカウント切替"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:textColor="?android:attr/textColorPrimary" />
 
     <TextView
         android:id="@+id/btnLogout"
@@ -88,5 +95,6 @@
         android:foreground="?attr/selectableItemBackground"
         android:paddingVertical="16dp"
         android:text="ログアウト"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:textColor="?android:attr/textColorPrimary" />
 </LinearLayout>

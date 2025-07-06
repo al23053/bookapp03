@@ -31,13 +31,4 @@ public class ControlButtonToSummary {
         intent.putExtra("volumeId", volumeId);
         activity.startActivity(intent);
     }
-    
-    /**
-     * 既存メソッドとの互換性のため（非推奨）
-     */
-    @Deprecated
-    public void setToSummary(AppCompatActivity activity) {
-        Intent intent = new Intent(activity, DisplaySummary.class);
-        activity.startActivity(intent);
-    }
 }

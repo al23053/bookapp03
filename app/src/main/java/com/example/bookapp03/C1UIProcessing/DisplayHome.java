@@ -1,10 +1,21 @@
+/**
+ * モジュール名: ホーム画面表示
+ * 作成者: 鶴田凌
+ * 作成日: 2025/06/20
+ * 概要: 本のタイトル入力欄およびハイライトメモ登録欄を表示・操作する Activity
+ * 履歴:
+ *   2025/06/20 鶴田凌 新規作成
+ *   2025/07/05 鶴田凌 入力値の永続化対応
+ */
 package com.example.bookapp03.C1UIProcessing;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -12,22 +23,31 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bookapp03.R;
-import com.example.bookapp03.model.Book;
-import com.example.bookapp03.service.GoogleBooksApiService;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.bookapp03.C5UserInformationManaging.UserAuthManager;
 import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoDao;
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
+import com.example.bookapp03.R;
+import com.example.bookapp03.model.Book;
+import com.example.bookapp03.service.GoogleBooksApiService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DisplayHome extends AppCompatActivity {
+    // SharedPreferences 用キー
+    private static final String PREFS_NAME      = "DisplayHomePrefs";
+    private static final String KEY_BOOK_NAME   = "key_book_name";
+    private static final String KEY_PAGE        = "key_page";
+    private static final String KEY_LINE        = "key_line";
+    private static final String KEY_MEMO        = "key_memo";
 
     private static final String TAG = "DisplayHome";
     
@@ -131,15 +151,25 @@ public class DisplayHome extends AppCompatActivity {
         // 4) 本のタイトル自動補完設定
         setupBookTitleAutoComplete();
 
-        // 5) ページ数・行数増減ボタンの処理
-        setupPageControls();
-        setupLineControls();
-
-        // 6) ハイライト・メモ登録処理
+        // 5) ハイライト・メモ登録処理
         setupHighlightMemoRegistration();
 
-        // 7) その他のボタン設定
+        // 6) その他のボタン設定
         setupOtherButtons();
+
+        // 追加：前回入力内容を復元
+        loadSavedInputs();
+
+        // ページ数・行数の増減ボタン設定
+        setupPageControls();
+        setupLineControls();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 追加：アプリがバックグラウンドに行く前に保存
+        saveInputs();
     }
 
     /**
@@ -179,26 +209,19 @@ public class DisplayHome extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                // 何もしない
+                // 入力が変わったら、以前選択されたvolumeIdは無効化したい場合はcurrentVolumeId=""など
             }
         });
 
         // 項目が選択されたときの処理
         bookNameInput.setOnItemClickListener((parent, view, position, id) -> {
-            if (searchResults != null && position < searchResults.size()) {
-                Book selectedBook = searchResults.get(position);
-                currentVolumeId = selectedBook.getId();
-                
-                Log.d(TAG, "書籍が選択されました: " + selectedBook.getTitle());
-                Log.d(TAG, "VolumeID: " + currentVolumeId);
-                
-                // コントローラのvolumeIdを更新
-                String uid = UserAuthManager.getCurrentUid();
-                controlHighlightMemo = new ControlHighlightMemo(this, uid, currentVolumeId);
-                
-                Toast.makeText(this, "書籍が選択されました: " + selectedBook.getTitle(), 
-                               Toast.LENGTH_SHORT).show();
-            }
+            // タップされた候補タイトルで入力欄だけ更新
+            Book selected = searchResults.get(position);
+            bookNameInput.setText(selected.getTitle());
+            bookNameInput.setSelection(selected.getTitle().length());
+            Toast.makeText(this, "書籍が選択されました: " + selected.getTitle(), Toast.LENGTH_SHORT).show();
+
+            // ※※ここではvolumeIdを設定しない※※
         });
     }
 
@@ -253,58 +276,59 @@ public class DisplayHome extends AppCompatActivity {
      */
     private void setupHighlightMemoRegistration() {
         btnHighlightSubmit.setOnClickListener(v -> {
-            try {
-                // 1. 書籍が選択されているかチェック
-                if (currentVolumeId.isEmpty()) {
-                    Toast.makeText(this, "書籍を選択してください", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            String title = bookNameInput.getText().toString().trim();
+            // 登録時に初めてvolumeIdを決定
+            String volumeId = findVolumeIdByTitle(title);
+            if (volumeId.isEmpty()) {
+                Toast.makeText(this, "本の名前を正しく入力してください", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                // 2. 入力値の取得と検証
-                String pageText = editPage.getText().toString().trim();
-                String lineText = editLine.getText().toString().trim();
-                String memo = editMemo.getText().toString().trim();
-                
-                Log.d(TAG, "=== ハイライトメモ登録開始 ===");
-                Log.d(TAG, "VolumeID: " + currentVolumeId);
-                Log.d(TAG, "入力値 - Page: '" + pageText + "', Line: '" + lineText + "', Memo: '" + memo + "'");
-                
-                if (pageText.isEmpty() || lineText.isEmpty()) {
-                    Toast.makeText(this, "ページ数と行数を入力してください", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                
+            String uid = UserAuthManager.getCurrentUid();
+            controlHighlightMemo = new ControlHighlightMemo(this, uid, volumeId);
+
+            // 以下は従来の処理
+            String pageText = editPage.getText().toString().trim();
+            String lineText = editLine.getText().toString().trim();
+            String memo = editMemo.getText().toString().trim();
+            if (pageText.isEmpty() ) {
+                Toast.makeText(this, "ページ数を入力してください", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (lineText.isEmpty()) {
+                Toast.makeText(this, "行数を入力してください", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
                 int page = Integer.parseInt(pageText);
                 int line = Integer.parseInt(lineText);
-                
-                // 3. データ作成と登録
                 HighlightMemoData data = controlHighlightMemo.getHighlightMemo(page, line, memo);
                 boolean ok = controlHighlightMemo.sendData(data);
-                
-                Log.d(TAG, "登録結果: " + ok);
                 Toast.makeText(this, ok ? "登録成功" : "登録失敗", Toast.LENGTH_SHORT).show();
-                
                 if (ok) {
-                    // 登録成功時は入力欄をクリア
-                    editPage.setText("");
-                    editLine.setText("");
+                    // 登録成功時はメモ入力欄をクリア
                     editMemo.setText("");
-                    
-                    // データベース内容を確認
                     verifyDataInDatabase();
                 }
-                
-            } catch (NumberFormatException e) {
-                Log.e(TAG, "数値変換エラー", e);
-                Toast.makeText(this, "ページ・行数は数字で入力してください", Toast.LENGTH_SHORT).show();
             } catch (IllegalArgumentException e) {
-                Log.e(TAG, "バリデーションエラー", e);
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Log.e(TAG, "予期しないエラー", e);
-                Toast.makeText(this, "エラーが発生しました: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * タイトル文字列から検索結果リストをたどり volumeId を返す
+     */
+    private String findVolumeIdByTitle(String title) {
+        if (searchResults == null) return "";
+        for (Book b : searchResults) {
+            if (Objects.equals(b.getTitle(), title)) {
+                return b.getId();
+            }
+        }
+        return "";
     }
 
     /**
@@ -349,21 +373,15 @@ public class DisplayHome extends AppCompatActivity {
      * その他のボタン設定
      */
     private void setupOtherButtons() {
-        // 全体まとめ画面へ遷移（volumeIdと本の名前を渡す）
+        // 全体まとめ画面へ遷移
         btnSummary.setOnClickListener(v -> {
-            if (currentVolumeId.isEmpty()) {
-                Toast.makeText(this, "書籍を選択してください", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            
-            String selectedBookTitle = bookNameInput.getText().toString().trim();
-            Log.d(TAG, "全体まとめ画面へ遷移 - VolumeID: " + currentVolumeId + ", BookTitle: " + selectedBookTitle);
-            
-            // Intentに本の名前も追加
-            Intent intent = new Intent(this, DisplaySummary.class);
-            intent.putExtra("volumeId", currentVolumeId);
-            intent.putExtra("bookTitle", selectedBookTitle);
-            startActivity(intent);
+            // ① 入力中タイトルを取得
+            String bookTitle = bookNameInput.getText().toString().trim();
+            // ② タイトルから volumeId を検索（見つからなければ ""）
+            String volumeId = findVolumeIdByTitle(bookTitle);
+            Log.d(TAG, "Summary遷移 - Title: " + bookTitle + ", VolumeID: " + volumeId);
+            // ③ 画面遷移（volumeId が空でも OK）
+            controlButtonToSummary.setToSummary(this, volumeId, bookTitle);
         });
 
         // ユーザ設定画面へ遷移
@@ -465,6 +483,29 @@ public class DisplayHome extends AppCompatActivity {
             editLine.setText("1");
             return 1;
         }
+    }
+
+    /**
+     * SharedPreferences から前回の入力値を読み込んで View にセット
+     */
+    private void loadSavedInputs() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        bookNameInput.setText(prefs.getString(KEY_BOOK_NAME, ""));
+        editPage     .setText(prefs.getString(KEY_PAGE,    ""));
+        editLine     .setText(prefs.getString(KEY_LINE,    ""));
+        editMemo     .setText(prefs.getString(KEY_MEMO,    ""));
+    }
+
+    /**
+     * SharedPreferences に現在の入力値を保存
+     */
+    private void saveInputs() {
+        SharedPreferences.Editor ed = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+        ed.putString(KEY_BOOK_NAME, bookNameInput.getText().toString());
+        ed.putString(KEY_PAGE,      editPage.getText().toString());
+        ed.putString(KEY_LINE,      editLine.getText().toString());
+        ed.putString(KEY_MEMO,      editMemo.getText().toString());
+        ed.apply();
     }
 
     @Override

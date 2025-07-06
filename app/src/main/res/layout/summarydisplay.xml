@@ -8,22 +8,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
 
     <!-- メインコンテンツ -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="?android:attr/colorBackground">
 
         <!-- 戻るボタン（左上） -->
         <ImageButton
-            android:id="@+id/btnBack"   
+            android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="戻る"
             android:src="@drawable/ic_back"
+            android:tint="?android:attr/textColorPrimary"
+            android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,9 +34,10 @@
             android:id="@+id/btnMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_highlight"
+            android:tint="?android:attr/textColorPrimary"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="ハイライトメモ"
-            android:src="@drawable/ic_highlight"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -56,12 +59,12 @@
             android:id="@+id/summaryInput"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@android:drawable/editbox_background"
+            android:background="?android:attr/editTextBackground"   
             android:gravity="top"
             android:hint="全体まとめを入力（最大500文字）"
             android:inputType="textMultiLine"
-            android:maxLength="500"
             android:minLines="10"
+            android:textColor="?android:attr/textColorPrimary"
             app:layout_constraintBottom_toTopOf="@id/footerLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -92,10 +95,9 @@
                 android:id="@+id/btnRegisterSummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="登録"
-                android:src="@drawable/ic_send" />
+                android:src="@drawable/ic_send"
+                android:tint="?android:attr/textColorPrimary"
+                android:background="?attr/selectableItemBackgroundBorderless" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
