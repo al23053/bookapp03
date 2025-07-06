@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Button;
 
+import com.example.bookapp03.C1UIProcessing.ControlBackButton;
 import com.example.bookapp03.R; // あなたのRクラスのパス
 
 /**
@@ -41,6 +42,6 @@ public class NoReviewsActivity extends AppCompatActivity {
 
         // 「戻る」ボタンのクリックリスナーを設定
         // このActivityを終了して前の画面に戻ります。
-        backButton.setOnClickListener(v -> finish());
+        ControlBackButton.setupBackButton(backButton, this);
     }
 }

@@ -13,19 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.RatingBar;
 import android.widget.Toast;
 
+import com.example.bookapp03.C1UIProcessing.ControlBackButton;
 import com.example.bookapp03.R;
 import com.example.bookapp03.model.Review;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -101,10 +100,7 @@ public class UserReviewListActivity extends AppCompatActivity {
 
         setupRecyclerView();
 
-        backToSearchButton.setOnClickListener(v -> {
-            Log.d(TAG, "「検索結果に戻る」ボタンがクリックされました。");
-            finish();
-        });
+        ControlBackButton.setupBackButton(backToSearchButton, this);
     }
 
     /**
@@ -112,10 +108,8 @@ public class UserReviewListActivity extends AppCompatActivity {
      * Firestoreのクエリを構築し、FirestoreRecyclerAdapterを初期化・設定します。
      */
     private void setupRecyclerView() {
-        Query query = db.collection("books")
-                .document(bookId)
-                .collection("reviews")
-                .orderBy("timestamp", Query.Direction.DESCENDING);
+        Query query = db.collection("summaries")
+                .whereEqualTo("volumeId", bookId);
         FirestoreRecyclerOptions<Review> options = new FirestoreRecyclerOptions.Builder<Review>()
                 .setQuery(query, Review.class)
                 .build();
@@ -143,16 +137,42 @@ public class UserReviewListActivity extends AppCompatActivity {
              */
             @Override
             protected void onBindViewHolder(@NonNull ReviewViewHolder holder, int position, @NonNull Review model) {
-                holder.bind(model);
+                String userId = model.getUid(); // Reviewモデルからuidを取得
+                if (userId != null && !userId.isEmpty()) {
+                    db.collection("users").document(userId).get()
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot userDocument = task.getResult();
+                                    if (userDocument.exists()) {
+                                        String nickname = userDocument.getString("nickname");
+                                        if (nickname != null) {
+                                            holder.usernameTextView.setText(nickname);
+                                        } else {
+                                            holder.usernameTextView.setText("名無しユーザー"); // nicknameがない場合
+                                        }
+                                    } else {
+                                        holder.usernameTextView.setText("不明なユーザー"); // ユーザーが削除された場合など
+                                    }
+                                } else {
+                                    Log.e(TAG, "Error getting user document: ", task.getException());
+                                    holder.usernameTextView.setText("ユーザー名取得エラー");
+                                }
+                            });
+                } else {
+                    holder.usernameTextView.setText("ゲストユーザー"); // UIDがない場合
+                }
+
+                String comment = model.getComment();
+                if (comment != null && comment.length() > 50) {
+                    holder.commentTextView.setText(comment.substring(0, 50) + "...");
+                } else {
+                    holder.commentTextView.setText(comment);
+                }
 
                 holder.itemView.setOnClickListener(v -> {
-                    long timestampMillis = model.getTimestamp() != null ? model.getTimestamp().toDate().getTime() : 0L;
-
                     ReviewDetailBottomSheetFragment bottomSheet = ReviewDetailBottomSheetFragment.newInstance(
-                            model.getComment(),      // レビュー全文
-                            model.getRating(),       // 評価
-                            model.getUsername(),     // 投稿者名
-                            timestampMillis          // タイムスタンプ (long型)
+                            model.getOverallSummary(),          // レビュー全文 (overallSummary)
+                            holder.usernameTextView.getText().toString() // 既に取得済みのユーザー名
                     );
                     bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
                 });
@@ -199,18 +219,11 @@ public class UserReviewListActivity extends AppCompatActivity {
          * レビュー投稿者のユーザー名を表示するTextView。
          */
         private final TextView usernameTextView;
-        /**
-         * レビューの評価を表示するRatingBar。
-         */
-        private final RatingBar reviewRatingBar;
+
         /**
          * レビューのコメント本文の概要を表示するTextView。
          */
         private final TextView commentTextView;
-        /**
-         * レビューの投稿日時を表示するTextView。
-         */
-        private final TextView timestampTextView;
 
         /**
          * ReviewViewHolderのコンストラクタです。
@@ -220,9 +233,7 @@ public class UserReviewListActivity extends AppCompatActivity {
         public ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
-            reviewRatingBar = itemView.findViewById(R.id.reviewRatingBar);
             commentTextView = itemView.findViewById(R.id.commentTextView);
-            timestampTextView = itemView.findViewById(R.id.timestampTextView);
         }
 
         /**
@@ -232,21 +243,11 @@ public class UserReviewListActivity extends AppCompatActivity {
          * @param review バインドするReviewオブジェクト
          */
         public void bind(@NonNull Review review) {
-            usernameTextView.setText(review.getUsername());
-            reviewRatingBar.setRating(review.getRating());
-            String comment = review.getComment();
+            String comment = review.getOverallSummary();
             if (comment != null && comment.length() > 50) {
                 commentTextView.setText(comment.substring(0, 50) + "...");
             } else {
                 commentTextView.setText(comment);
-            }
-
-            if (review.getTimestamp() != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.JAPAN);
-                String formattedDate = sdf.format(new Date(review.getTimestamp().toDate().getTime()));
-                timestampTextView.setText(formattedDate);
-            } else {
-                timestampTextView.setText("");
             }
         }
     }

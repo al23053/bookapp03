@@ -1,17 +1,19 @@
 package com.example.bookapp03.ui;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.example.bookapp03.R;
 import com.example.bookapp03.model.Review;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -25,35 +27,23 @@ public class ReviewDetailBottomSheetFragment extends BottomSheetDialogFragment {
      */
     private static final String ARG_REVIEW_TEXT = "reviewText";
     /**
-     * 評価をBundleに渡す際のキー。
-     */
-    private static final String ARG_RATING = "rating";
-    /**
      * ユーザー名をBundleに渡す際のキー。
      */
     private static final String ARG_USER_NAME = "userName";
-    /**
-     * タイムスタンプをBundleに渡す際のキー。
-     */
-    private static final String ARG_TIMESTAMP = "timestamp";
 
     /**
      * ReviewDetailBottomSheetFragmentの新しいインスタンスを生成するファクトリーメソッドです。
      * 必要なレビュー詳細情報をBundleに格納して返します。
      *
      * @param reviewText レビューの全文
-     * @param rating     レビューの評価
      * @param userName   レビュー投稿者のユーザー名
-     * @param timestamp  レビューのタイムスタンプ（ミリ秒単位のlong型）
      * @return 新しいReviewDetailBottomSheetFragmentのインスタンス
      */
-    public static ReviewDetailBottomSheetFragment newInstance(String reviewText, double rating, String userName, long timestamp) {
+    public static ReviewDetailBottomSheetFragment newInstance(String reviewText, String userName) {
         ReviewDetailBottomSheetFragment fragment = new ReviewDetailBottomSheetFragment();
         Bundle args = new Bundle();
         args.putString(ARG_REVIEW_TEXT, reviewText);
-        args.putDouble(ARG_RATING, rating);
         args.putString(ARG_USER_NAME, userName);
-        args.putLong(ARG_TIMESTAMP, timestamp);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,25 +63,51 @@ public class ReviewDetailBottomSheetFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.bottom_sheet_review_detail, container, false);
 
         TextView reviewTextView = view.findViewById(R.id.bottom_sheet_review_text);
-        TextView ratingTextView = view.findViewById(R.id.bottom_sheet_rating);
         TextView userNameTextView = view.findViewById(R.id.bottom_sheet_user_name);
-        TextView timestampTextView = view.findViewById(R.id.bottom_sheet_timestamp);
 
         if (getArguments() != null) {
             String reviewText = getArguments().getString(ARG_REVIEW_TEXT);
-            double rating = getArguments().getDouble(ARG_RATING);
             String userName = getArguments().getString(ARG_USER_NAME);
-            long timestamp = getArguments().getLong(ARG_TIMESTAMP);
 
             reviewTextView.setText(reviewText);
-            ratingTextView.setText("評価: " + String.format("%.1f", rating));
             userNameTextView.setText("投稿者: " + userName);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.JAPAN);
-            String formattedDate = sdf.format(new Date(timestamp));
-            timestampTextView.setText("投稿日時: " + formattedDate);
         }
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog(); // DialogFragmentが管理するDialogを取得
+
+        if (dialog instanceof BottomSheetDialog) {
+            BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialog;
+            // BottomSheetDialogのレイアウトを取得
+            FrameLayout bottomSheet = bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+
+            if (bottomSheet != null) {
+                // BottomSheetBehaviorを取得
+                BottomSheetBehavior<FrameLayout> behavior = BottomSheetBehavior.from(bottomSheet);
+
+                // 画面の高さを取得
+                int screenHeight = getResources().getDisplayMetrics().heightPixels;
+                // ボトムシートの最大高さを画面の約90%に設定
+                int desiredHeight = (int) (screenHeight * 0.9); // 例: 画面の90%
+
+                // peekHeight（初期表示の高さ）も desiredHeight に設定すると、常にこの高さで表示される
+                behavior.setPeekHeight(desiredHeight);
+                // 完全に展開された状態 (Expanded) にする
+                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                // layoutParams を設定して、BottomSheetの高さ自体も固定する
+                ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
+                if (layoutParams != null) {
+                    layoutParams.height = desiredHeight;
+                    bottomSheet.setLayoutParams(layoutParams);
+                }
+            }
+        }
     }
 }

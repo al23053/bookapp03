@@ -66,6 +66,12 @@ public class Book implements Serializable {
     private String rakutenLargeImageUrl;
 
     /**
+     * 書籍の国際標準図書番号（ISBN）。
+     * ISBN-10またはISBN-13の形式で格納されます。
+     */
+    private String isbn; // ★ここが追加されました！
+
+    /**
      * Firestoreから直接オブジェクトをマッピングするために必要となる、引数なしのデフォルトコンストラクタです。
      */
     public Book() {
@@ -81,18 +87,23 @@ public class Book implements Serializable {
      * @param description  書籍の概要
      * @param thumbnailUrl 書籍のサムネイル画像のURL
      * @param categories   書籍のカテゴリ（ジャンル）のリスト
+     *
+     * (注意: このコンストラクタにはpublishedDate, infoLink, rakutenItemUrl, rakutenLargeImageUrl, isbn は含まれていません。
+     * これらを初期化したい場合は引数に追加するか、setterを使用してください。)
      */
     public Book(String id, String title, String author, String description, String thumbnailUrl, List<String> categories) {
         this.id = id;
         this.title = title;
         this.author = author;
-        // 注意: このコンストラクタでは publishedDate, infoLink は初期化されていません。
-        // 必要であれば引数に追加するか、setterを使用してください。
         this.description = description;
         this.thumbnailUrl = thumbnailUrl;
         this.categories = categories;
-        // this.publishedDate = publishedDate; // 引数にないためコメントアウトまたは追加
-        // this.infoLink = infoLink; // 引数にないためコメントアウトまたは追加
+        // 以下は、このコンストラクタの引数に含まれていないため、ここでは初期化されません。
+        // this.publishedDate = null;
+        // this.infoLink = null;
+        // this.rakutenItemUrl = null;
+        // this.rakutenLargeImageUrl = null;
+        // this.isbn = null;
     }
 
     /**
@@ -240,6 +251,24 @@ public class Book implements Serializable {
     }
 
     /**
+     * 書籍のISBN（国際標準図書番号）を取得します。
+     *
+     * @return ISBN文字列
+     */
+    public String getIsbn() { // ★ここが追加されました！
+        return isbn;
+    }
+
+    /**
+     * 書籍のISBN（国際標準図書番号）を設定します。
+     *
+     * @param isbn 設定するISBN文字列
+     */
+    public void setIsbn(String isbn) { // ★ここが追加されました！
+        this.isbn = isbn;
+    }
+
+    /**
      * オブジェクトの等価性を判断します。書籍ID (id) に基づいて一意性を判断します。
      *
      * @param o 比較対象のオブジェクト
@@ -261,5 +290,27 @@ public class Book implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    /**
+     * オブジェクトの文字列表現を返します。デバッグ用途に便利です。
+     *
+     * @return オブジェクトの文字列表現
+     */
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", publishedDate='" + publishedDate + '\'' +
+                ", description='" + description + '\'' +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", categories=" + categories +
+                ", infoLink='" + infoLink + '\'' +
+                ", rakutenItemUrl='" + rakutenItemUrl + '\'' +
+                ", rakutenLargeImageUrl='" + rakutenLargeImageUrl + '\'' +
+                ", isbn='" + isbn + '\'' + // ★ここが追加されました！
+                '}';
     }
 }
