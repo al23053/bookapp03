@@ -2,10 +2,12 @@
  * モジュール名: GenreSelectionActivity
  * 作成者: 増田学斗
  * 作成日: 2025/06/15
- * 概要: 本のジャンル選択処理
+ * 概要: 本のジャンル選択処理（選択状態の復元を追加）
  * 履歴:
  * 2025/06/15 増田学斗 新規作成
+ * 2025/07/07 増田学斗 Firestoreから既存ジャンル情報を読み込みチェック状態を復元
  */
+
 package com.example.bookapp03.C1UIProcessing;
 
 import android.app.Activity;
@@ -19,22 +21,24 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bookapp03.R;
-import com.example.bookapp03.C1UIProcessing.CompleteActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class GenreSelectionActivity extends AppCompatActivity {
+
     /**
-     * 初回設定とその他の設定を判断
+     * 初回設定かどうかの判定
      */
     private boolean isFirstTime = true;
 
     /**
-     * ジャンル選択用のチェックボックスをまとめるリスト
+     * ジャンル選択用チェックボックス一覧
      */
     private ArrayList<CheckBox> genreCheckboxes = new ArrayList<>();
 
@@ -44,22 +48,21 @@ public class GenreSelectionActivity extends AppCompatActivity {
     private String nickname;
 
     /**
-     * 前画面から受け取るアイコン画像URI文字列
+     * 前画面から受け取るBase64形式のアイコン画像
      */
-    private String iconUri;
+    private String iconBase64;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("GenreSelection", "onCreate called");
         setContentView(R.layout.activity_genre_selection);
 
-        // Intentから受け取るデータ（ニックネームとアイコンURI）
+        // 前画面からのIntentを取得
         nickname = getIntent().getStringExtra("nickname");
-        iconUri = getIntent().getStringExtra("iconUri");
-        isFirstTime = getIntent().getBooleanExtra("isFirstTime", true); // 初回登録判定
+        iconBase64 = getIntent().getStringExtra("iconBase64");
+        isFirstTime = getIntent().getBooleanExtra("isFirstTime", true);
 
-        // 各ジャンルのチェックボックスをリストに追加
+        // チェックボックスの初期化
         genreCheckboxes.add(findViewById(R.id.checkbox_mystery));
         genreCheckboxes.add(findViewById(R.id.checkbox_horror));
         genreCheckboxes.add(findViewById(R.id.checkbox_biography));
@@ -71,7 +74,10 @@ public class GenreSelectionActivity extends AppCompatActivity {
         genreCheckboxes.add(findViewById(R.id.checkbox_fantasy));
         genreCheckboxes.add(findViewById(R.id.checkbox_technology));
 
-        // 「次へ」ボタン押下時の処理
+        // 既存ジャンル情報の読み込み
+        loadExistingGenres();
+
+        // 「次へ」ボタンの処理
         Button buttonNext = findViewById(R.id.buttonNextToComplete);
         buttonNext.setOnClickListener(v -> {
             ArrayList<String> selectedGenres = new ArrayList<>();
@@ -87,11 +93,12 @@ public class GenreSelectionActivity extends AppCompatActivity {
                 return;
             }
 
+            // Firestoreに保存
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             HashMap<String, Object> userData = new HashMap<>();
             userData.put("nickname", nickname);
             userData.put("genre", selectedGenres);
-            userData.put("iconUri", iconUri);
+            userData.put("iconBase64", iconBase64); // Base64画像を保存
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("users").document(uid).set(userData, SetOptions.merge()).addOnSuccessListener(unused -> {
@@ -107,12 +114,33 @@ public class GenreSelectionActivity extends AppCompatActivity {
                     setResult(Activity.RESULT_OK);
                     finish();
                 }
-
             }).addOnFailureListener(e -> {
                 Log.e("GenreSelection", "ユーザ情報の保存に失敗", e);
                 Toast.makeText(this, "登録失敗", Toast.LENGTH_SHORT).show();
             });
+        });
+    }
 
+    /**
+     * Firestoreから既存のジャンル情報を取得し、チェック状態に反映
+     */
+    private void loadExistingGenres() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users").document(uid).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                List<String> savedGenres = (List<String>) documentSnapshot.get("genre");
+                if (savedGenres != null) {
+                    for (CheckBox cb : genreCheckboxes) {
+                        if (savedGenres.contains(cb.getText().toString())) {
+                            cb.setChecked(true);
+                        }
+                    }
+                }
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("GenreSelection", "ジャンル読み込み失敗", e);
         });
     }
 }
