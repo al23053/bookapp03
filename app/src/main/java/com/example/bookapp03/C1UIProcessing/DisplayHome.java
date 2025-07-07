@@ -6,9 +6,11 @@
  * 履歴:
  *   2025/06/20 鶴田凌 新規作成
  *   2025/07/05 鶴田凌 入力値の永続化対応
+ *   2025/07/07 鶴田凌 ダークモード設定の復元機能追加
  */
 package com.example.bookapp03.C1UIProcessing;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate; // ← 追加
 
 import com.example.bookapp03.C5UserInformationManaging.UserAuthManager;
 import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
@@ -48,6 +51,10 @@ public class DisplayHome extends AppCompatActivity {
     private static final String KEY_PAGE        = "key_page";
     private static final String KEY_LINE        = "key_line";
     private static final String KEY_MEMO        = "key_memo";
+    
+    // ダークモード設定用キー（追加）
+    private static final String DARK_MODE_PREFS = "app_prefs";
+    private static final String KEY_DARK        = "dark_mode";
 
     private static final String TAG = "DisplayHome";
     
@@ -128,6 +135,9 @@ public class DisplayHome extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // ダークモード設定を復元（super.onCreate前に実行）
+        restoreDarkModeSettings();
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homedisplay);
 
@@ -163,6 +173,13 @@ public class DisplayHome extends AppCompatActivity {
         // ページ数・行数の増減ボタン設定
         setupPageControls();
         setupLineControls();
+
+        // BottomNavigationView の設定
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        ControlBottomNavigationBar navController = new ControlBottomNavigationBar();
+        
+        // 現在の画面（ホーム）を選択状態にする
+        navController.setCurrentItem(this, bottomNav);
     }
 
     @Override
@@ -506,6 +523,21 @@ public class DisplayHome extends AppCompatActivity {
         ed.putString(KEY_LINE,      editLine.getText().toString());
         ed.putString(KEY_MEMO,      editMemo.getText().toString());
         ed.apply();
+    }
+
+    /**
+     * SharedPreferences からダークモード設定を読み込み、適用する
+     */
+    private void restoreDarkModeSettings() {
+        SharedPreferences prefs = getSharedPreferences(DARK_MODE_PREFS, Context.MODE_PRIVATE);
+        boolean isDark = prefs.getBoolean(KEY_DARK, false);
+        
+        Log.d(TAG, "ダークモード設定復元: " + (isDark ? "ダークモード" : "ライトモード"));
+        
+        AppCompatDelegate.setDefaultNightMode(
+            isDark ? AppCompatDelegate.MODE_NIGHT_YES 
+                   : AppCompatDelegate.MODE_NIGHT_NO
+        );
     }
 
     @Override

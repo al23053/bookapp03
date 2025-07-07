@@ -15,9 +15,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
-import android.util.Log;
-
-import com.example.bookapp03.C1UIProcessing.AccountSettingActivity;
+import com.example.bookapp03.C2UserInformationProcessing.LocalAccountStore; // ← 追加
+import com.example.bookapp03.C5UserInformationManaging.UserAuthManager;
 import com.example.bookapp03.R;
 
 
@@ -32,7 +31,6 @@ public class RegistrationDoneActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("AccountSettingDebug", "onCreate called");
         setContentView(R.layout.activity_registration_done);
 
         // 完了メッセージをTextViewに設定
@@ -42,6 +40,10 @@ public class RegistrationDoneActivity extends Activity {
         // 「次へ」ボタンを取得してクリック処理を設定
         Button nextButton = findViewById(R.id.next_button);
         nextButton.setOnClickListener(view -> {
+            // ★ ここで“今ログイン中の UID”をローカルリストに保存
+            String uid = UserAuthManager.getCurrentUid();
+            LocalAccountStore.addUid(this, uid);
+
             // アカウント設定画面へ遷移
             Intent intent = new Intent(RegistrationDoneActivity.this, AccountSettingActivity.class);
             startActivity(intent);

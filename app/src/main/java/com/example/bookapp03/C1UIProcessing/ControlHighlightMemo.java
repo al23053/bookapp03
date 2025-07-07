@@ -43,7 +43,7 @@ public class ControlHighlightMemo {
             throw new IllegalArgumentException("本の行数が範囲を超えています");
         }
         if (memo.length() > 200){
-            throw new IllegalArgumentException("メモは200文字以内で入力してください。");
+            throw new IllegalArgumentException("メモは200文字以内で入力してください");
         }
         return new HighlightMemoData(page, line, memo);
     }
