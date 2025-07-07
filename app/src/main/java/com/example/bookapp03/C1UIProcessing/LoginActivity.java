@@ -1,4 +1,3 @@
-
 /**
  * モジュール名: LoginActivity
  * 作成者: 増田学斗
@@ -6,6 +5,7 @@
  * 概要: ログイン処理（Firestore対応）
  * 履歴:
  *   2025/06/15 増田学斗 新規作成
+ *   2025/07/06 鶴田凌　UIDを端末に保存する処理を追加
  */
 package com.example.bookapp03.C1UIProcessing;
 
@@ -27,6 +27,7 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bookapp03.R;
+import com.example.bookapp03.C2UserInformationProcessing.LocalAccountStore;  // ← 追加
 
 import java.util.HashMap;
 import java.util.Map;
@@ -105,31 +106,38 @@ public class LoginActivity extends AppCompatActivity {
         String uid = user.getUid();
 
         db.collection("users").document(uid).get()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.e("LoginDebug", "Firestore読み込み失敗", task.getException());
-                    } else if (task.getResult().exists()) {
-                        Log.d("LoginDebug", "ユーザーは登録済み");
-                        startActivity(new Intent(this, DisplayHome.class));
-                    } else {
-                        Log.d("LoginDebug", "初回ログイン。ユーザー情報を登録中...");
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.e("LoginDebug", "Firestore読み込み失敗", task.getException());
+                } else if (task.getResult().exists()) {
+                    Log.d("LoginDebug", "ユーザーは登録済み");
+                    // 端末にこのUIDを保存
+                    LocalAccountStore.addUid(this, uid);
+                    // ホーム画面へ
+                    startActivity(new Intent(this, DisplayHome.class));
+                    finish();
+                } else {
+                    Log.d("LoginDebug", "初回ログイン。ユーザー情報を登録中...");
+                    Map<String, Object> userMap = new HashMap<>();
+                    userMap.put("email", user.getEmail());
+                    userMap.put("displayName", user.getDisplayName());
 
-                        Map<String, Object> userMap = new HashMap<>();
-                        userMap.put("email", user.getEmail());
-                        userMap.put("displayName", user.getDisplayName());
-
-                        db.collection("users").document(uid)
-                                .set(userMap)
-                                .addOnSuccessListener(unused -> {
-                                    Log.d("LoginDebug", "ユーザー情報を登録 → 登録完了画面へ");
-                                    Intent intent = new Intent(this, RegistrationDoneActivity.class);
-                                    intent.putExtra("next", "AccountSettingActivity");
-                                    startActivity(intent);
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e("LoginDebug", "登録に失敗", e);
-                                });
-                    }
-                });
+                    db.collection("users").document(uid)
+                        .set(userMap)
+                        .addOnSuccessListener(unused -> {
+                            // 新規登録成功 → 端末にこのUIDを保存
+                            LocalAccountStore.addUid(this, uid);
+                            Log.d("LoginDebug", "ユーザー情報を登録 → 登録完了画面へ");
+                            Intent intent = new Intent(this, RegistrationDoneActivity.class);
+                            intent.putExtra("next", "AccountSettingActivity");
+                            startActivity(intent);
+                            finish();
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("LoginDebug", "登録に失敗", e);
+                            Toast.makeText(this, "ユーザー登録に失敗しました", Toast.LENGTH_SHORT).show();
+                        });
+                }
+            });
     }
 }
