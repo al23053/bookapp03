@@ -10,7 +10,6 @@
 
 package com.example.bookapp03.C1UIProcessing;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -27,6 +26,7 @@ import com.google.firebase.firestore.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * メインアクティビティ（ログインとFirestoreへのユーザー情報登録を行う）
@@ -58,10 +58,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Firebase認証とGoogleサインインクライアントの初期化
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
 
         googleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
@@ -122,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Firebase認証失敗", Toast.LENGTH_SHORT).show();
             }
+
         });
     }
 
@@ -143,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 // 新規ユーザー → Firestoreに最低限の情報を保存して登録完了画面へ
                 Map<String, Object> userMap = new HashMap<>();
                 userMap.put("email", user.getEmail());
-                userMap.put("displayName", user.getDisplayName());
+                userMap.put("uid", user.getUid());
                 userMap.put("nickname", ""); // 後で設定
                 userMap.put("iconUri", "");  // 後で設定
 

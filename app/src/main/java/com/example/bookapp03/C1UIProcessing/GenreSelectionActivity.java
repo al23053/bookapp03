@@ -22,6 +22,7 @@ import com.example.bookapp03.R;
 import com.example.bookapp03.C1UIProcessing.CompleteActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,7 +94,7 @@ public class GenreSelectionActivity extends AppCompatActivity {
             userData.put("iconUri", iconUri);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("users").document(uid).set(userData).addOnSuccessListener(unused -> {
+            db.collection("users").document(uid).set(userData, SetOptions.merge()).addOnSuccessListener(unused -> {
                 Log.d("GenreSelection", "ユーザ情報の保存に成功");
 
                 if (isFirstTime) {
