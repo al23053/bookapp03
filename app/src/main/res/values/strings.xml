@@ -1,3 +1,4 @@
+
 <resources>
 
     <string name="app_name">bookapp03</string>
@@ -5,5 +6,6 @@
     <string name="search">検索</string>
     <string name="book">My 全体まとめ</string>
     <string name="error">エラー</string>
+    <string name="widget_description">前回使用した本にハイライトメモを素早く登録できるウィジェット</string>
 
 </resources>
