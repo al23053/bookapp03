@@ -178,7 +178,7 @@ public class DisplayHome extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         ControlBottomNavigationBar navController = new ControlBottomNavigationBar();
         
-        // 現在の画面（ホーム）を選択状態にする
+        // 現在の画面を選択状態にする
         navController.setCurrentItem(this, bottomNav);
     }
 
