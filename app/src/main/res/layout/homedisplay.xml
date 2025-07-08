@@ -88,6 +88,7 @@
                             android:layout_weight="1"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="ページを増やす"
+                            android:tint="?android:attr/textColorPrimary"
                             android:src="@drawable/ic_arrow_up" />
 
                         <ImageButton
@@ -97,6 +98,7 @@
                             android:layout_weight="1"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="ページを減らす"
+                            android:tint="?android:attr/textColorPrimary"
                             android:src="@drawable/ic_arrow_down" />
                     </LinearLayout>
                 </LinearLayout>
@@ -139,6 +141,7 @@
                             android:layout_weight="1"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="行を増やす"
+                            android:tint="?android:attr/textColorPrimary"
                             android:src="@drawable/ic_arrow_up" />
 
                         <ImageButton
@@ -148,6 +151,7 @@
                             android:layout_weight="1"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="行を減らす"
+                            android:tint="?android:attr/textColorPrimary"
                             android:src="@drawable/ic_arrow_down" />
                     </LinearLayout>
                 </LinearLayout>
@@ -178,6 +182,7 @@
                 android:layout_height="115dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="登録"
+                android:tint="?android:attr/textColorPrimary"
                 android:src="@drawable/ic_add" />
         </LinearLayout>
     </LinearLayout>
