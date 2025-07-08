@@ -3,7 +3,6 @@ package com.example.bookapp03.service;
 import android.util.Log;
 
 import com.example.bookapp03.model.Book;
-import com.example.bookapp03.model.BooksApiResponse; // このクラスは使われていないようですが、残しておきます
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -18,8 +17,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors; // Stream APIのために追加
-
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -33,40 +30,15 @@ import okhttp3.Response;
 public class RakutenBooksApiService {
 
     private static final String TAG = "RakutenBooksApiService";
-    // 楽天市場ランキングAPIのエンドポイントに変更
     private static final String RAKUTEN_ICHIBA_RANKING_API_URL = "https://app.rakuten.co.jp/services/api/IchibaItem/Ranking/20170628";
     private static final String GOOGLE_BOOKS_API_BASE_URL = "https://www.googleapis.com/books/v1/volumes";
 
-    /**
-     * 楽天市場APIにアクセスするためのアプリケーションID。
-     */
     private final String rakutenApplicationId;
-    /**
-     * 楽天APIで取得した書籍情報を補完するために使用するGoogle Books APIのキー。
-     */
     private final String googleBooksApiKey;
-    /**
-     * HTTPリクエストを実行するためのOkHttpClientインスタンス。
-     */
     private final OkHttpClient httpClient;
-    /**
-     * JSONデータのシリアライズ/デシリアライズを行うためのGsonインスタンス。
-     */
     private final Gson gson;
-    /**
-     * 非同期処理を実行するためのExecutorService。
-     */
     private final ExecutorService executorService;
 
-    /**
-     * RakutenBooksApiServiceのコンストラクタです。
-     * HTTPクライアント、Gson、および各APIキーを注入してサービスを初期化します。
-     *
-     * @param httpClient           共有のOkHttpClientインスタンス
-     * @param gson                 共有のGsonインスタンス
-     * @param rakutenApplicationId 楽天APIのアプリケーションID
-     * @param googleBooksApiKey    楽天サービス内のGoogle Books API二次検索用キー
-     */
     public RakutenBooksApiService(OkHttpClient httpClient, Gson gson, String rakutenApplicationId, String googleBooksApiKey) {
         this.httpClient = httpClient;
         this.gson = gson;
@@ -75,42 +47,19 @@ public class RakutenBooksApiService {
         this.executorService = Executors.newFixedThreadPool(2);
     }
 
-    /**
-     * 楽天ブックスAPIからのランキング取得結果を通知するためのコールバックインターフェースです。
-     */
     public interface RakutenBooksApiCallback {
-        /**
-         * 話題の書籍リストが正常に受信されたときに呼び出されます。
-         *
-         * @param hotBooks 話題の書籍（ランキング）のリスト
-         */
         void onSuccess(List<Book> hotBooks);
-
-        /**
-         * 話題の書籍の取得中にエラーが発生したときに呼び出されます。
-         *
-         * @param errorMessage エラーメッセージ
-         */
         void onFailure(String errorMessage);
     }
 
-
-    /**
-     * 楽天市場ランキングAPIから売れ筋の書籍（ランキング）を取得し、可能であればGoogle Books APIで情報を補完します。
-     * この処理はバックグラウンドスレッドで実行されます。
-     *
-     * @param callback 結果を返すRakutenBooksApiCallback
-     */
     public void fetchRankingBooks(RakutenBooksApiCallback callback) {
         executorService.execute(() -> {
             try {
-                // 楽天市場ランキングAPIのリクエストURLを構築
                 HttpUrl.Builder urlBuilder = HttpUrl.parse(RAKUTEN_ICHIBA_RANKING_API_URL).newBuilder();
                 urlBuilder.addQueryParameter("applicationId", rakutenApplicationId);
-                urlBuilder.addQueryParameter("genreId", "200162"); // 楽天市場の「本・雑誌・コミック」ジャンルIDの例
+                urlBuilder.addQueryParameter("genreId", "200162"); // 「本・雑誌・コミック」ジャンルID
                 urlBuilder.addQueryParameter("hits", "10"); // 取得する書籍数を10件に制限
-                urlBuilder.addQueryParameter("elements", "itemName,artistName,itemUrl,mediumImageUrl,affiliateUrl"); // 取得する要素を指定 (楽天市場ランキングAPIの要素名)
-
+                urlBuilder.addQueryParameter("elements", "itemName,artistName,itemUrl,mediumImageUrl,isbn"); // ISBNも取得
 
                 String url = urlBuilder.build().toString();
                 Log.d(TAG, "Rakuten Ranking API URL: " + url);
@@ -124,23 +73,19 @@ public class RakutenBooksApiService {
                     String responseBody = response.body().string();
                     Log.d(TAG, "Rakuten Ichiba Ranking API Response: " + responseBody);
 
-                    // JSONレスポンスをパース
                     JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
-                    JsonArray itemsArray = jsonObject.getAsJsonArray("Items"); // "Items"キーの下に配列がある
+                    JsonArray itemsArray = jsonObject.getAsJsonArray("Items");
 
                     List<Book> hotBooks = new ArrayList<>();
                     if (itemsArray != null) {
                         for (JsonElement itemElement : itemsArray) {
-                            JsonObject itemObject = itemElement.getAsJsonObject().getAsJsonObject("Item"); // 各要素が "Item" オブジェクトの中にネストされている
+                            JsonObject itemObject = itemElement.getAsJsonObject().getAsJsonObject("Item");
                             if (itemObject != null) {
-                                // 楽天市場ランキングAPIから書籍情報を抽出 (要素名に注意)
                                 String rakutenTitle = itemObject.has("itemName") ? itemObject.get("itemName").getAsString() : "タイトル不明";
-                                String rakutenAuthor = itemObject.has("artistName") ? itemObject.get("artistName").getAsString() : "著者不明"; // artistName が著者名として使われることが多い
+                                String rakutenAuthor = itemObject.has("artistName") ? itemObject.get("artistName").getAsString() : "著者不明";
                                 String rakutenItemUrl = itemObject.has("itemUrl") ? itemObject.get("itemUrl").getAsString() : null;
-                                // 楽天市場ランキングAPIでは largeImageUrl ではなく mediumImageUrl が提供されることが多い
                                 String rakutenMediumImageUrl = itemObject.has("mediumImageUrl") ? itemObject.get("mediumImageUrl").getAsString() : null;
-                                String rakutenIsbn = itemObject.has("isbn") ? itemObject.get("isbn").getAsString() : null; // ★ISBN取得
-
+                                String rakutenIsbn = itemObject.has("isbn") ? itemObject.get("isbn").getAsString() : null;
 
                                 Book book = new Book();
                                 book.setTitle(rakutenTitle);
@@ -148,23 +93,30 @@ public class RakutenBooksApiService {
                                 book.setRakutenItemUrl(rakutenItemUrl);
                                 book.setRakutenLargeImageUrl(rakutenMediumImageUrl);
                                 book.setThumbnailUrl(rakutenMediumImageUrl); // 最初は楽天の画像URLを設定
-                                book.setIsbn(rakutenIsbn); // ★ISBNをBookオブジェクトにセット
+                                book.setIsbn(rakutenIsbn);
 
-                                Log.d(TAG, "Processing Rakuten Book: Title=" + rakutenTitle + ", Author=" + rakutenAuthor + ", RakutenImage=" + rakutenMediumImageUrl + ", ISBN=" + rakutenIsbn); // ★追加ログ
-                                fetchGoogleBooksDataForRakutenBook(book, rakutenTitle, rakutenAuthor,rakutenIsbn);
+                                Log.d(TAG, "Processing Rakuten Book (Before Google Search): Title=" + rakutenTitle + ", ISBN=" + rakutenIsbn);
 
-                                hotBooks.add(book);
+                                // Google Books APIのデータ取得を同期的に行う
+                                // fetchGoogleBooksDataForRakuenBookSync 内で book.setId(googleId) が呼び出される
+                                fetchGoogleBooksDataForRakuenBookSync(book, rakutenTitle, rakutenAuthor, rakutenIsbn);
+
+                                // Google Books APIのIDがセットされたことを確認してから追加
+                                if (book.getId() != null && !book.getId().isEmpty()) {
+                                    hotBooks.add(book);
+                                    Log.d(TAG, "Added Hot Book with Google ID: " + book.getId() + ", Title: " + book.getTitle());
+                                } else {
+                                    Log.w(TAG, "Skipping book with no Google ID after secondary search: " + book.getTitle() + " (ISBN: " + rakutenIsbn + ")");
+                                }
                             }
                         }
                     }
                     callback.onSuccess(hotBooks);
                 }
             } catch (IOException e) {
-                // ネットワーク関連のエラーハンドリング
                 Log.e(TAG, "楽天市場ランキングAPI呼び出しエラー: " + e.getMessage(), e);
                 callback.onFailure("話題の本の取得に失敗しました: " + e.getMessage());
             } catch (Exception e) {
-                // JSONパースなど、その他のエラーハンドリング
                 Log.e(TAG, "楽天市場ランキングデータ処理エラー: " + e.getMessage(), e);
                 callback.onFailure("話題の本の処理に失敗しました: " + e.getMessage());
             }
@@ -178,11 +130,12 @@ public class RakutenBooksApiService {
      * @param book   更新対象のBookオブジェクト
      * @param title  楽天から取得した本のタイトル（Google Books APIの検索クエリ用）
      * @param author 楽天から取得した本の著者名（Google Books APIの検索クエリ用）
+     * @param isbn   楽天から取得した本のISBN（Google Books APIの検索クエリ用、優先）
      */
-    private void fetchGoogleBooksDataForRakutenBook(Book book, String title, String author, String isbn) {
+    private void fetchGoogleBooksDataForRakuenBookSync(Book book, String title, String author, String isbn) {
         try {
             String googleQuery;
-            if (isbn != null && !isbn.isEmpty() && !isbn.equals("null")) { // ISBNが有効な値かチェック
+            if (isbn != null && !isbn.isEmpty() && !isbn.equals("null")) {
                 googleQuery = "isbn:" + isbn;
                 Log.d(TAG, "Google Books API: Searching by ISBN: " + isbn);
             } else {
@@ -196,13 +149,13 @@ public class RakutenBooksApiService {
             googleUrlBuilder.addQueryParameter("maxResults", "1"); // 検索結果を1件に絞る
 
             String googleBooksApiUrl = googleUrlBuilder.build().toString();
-            Log.d(TAG, "Google Books API URL: " + googleBooksApiUrl); // ★追加ログ
+            Log.d(TAG, "Google Books API URL: " + googleBooksApiUrl);
             Request googleRequest = new Request.Builder().url(googleBooksApiUrl).build();
 
-            try (Response googleResponse = httpClient.newCall(googleRequest).execute()) {
+            try (Response googleResponse = httpClient.newCall(googleRequest).execute()) { // .execute() で同期的に呼び出す
                 if (googleResponse.isSuccessful() && googleResponse.body() != null) {
                     String googleResponseBody = googleResponse.body().string();
-                    Log.d(TAG, "Google Books API Raw Response for '" + title + "': " + googleResponseBody); // ★追加ログ
+                    Log.d(TAG, "Google Books API Raw Response for '" + title + "': " + googleResponseBody);
 
                     JsonObject googleJson = JsonParser.parseString(googleResponseBody).getAsJsonObject();
                     JsonArray googleItems = googleJson.getAsJsonArray("items");
@@ -213,10 +166,9 @@ public class RakutenBooksApiService {
 
                         String googleId = firstItem.has("id") ? firstItem.get("id").getAsString() : null;
                         String infoLink = volumeInfo.has("infoLink") ? volumeInfo.get("infoLink").getAsString() : null;
-                        String googleThumbnailUrl = null; // Google Books APIから取得する画像URLを区別するため変数名を変更
+                        String googleThumbnailUrl = null;
                         if (volumeInfo.has("imageLinks")) {
                             JsonObject imageLinks = volumeInfo.getAsJsonObject("imageLinks");
-                            // より高解像度の画像があればそちらを優先する
                             if (imageLinks.has("extraLarge")) {
                                 googleThumbnailUrl = imageLinks.get("extraLarge").getAsString();
                             } else if (imageLinks.has("large")) {
@@ -230,15 +182,16 @@ public class RakutenBooksApiService {
                             }
                         }
 
-                        book.setId(googleId);
+                        // ここで book の ID とサムネイルURLを更新する
+                        book.setId(googleId); // ここでGoogle Books APIのIDをセット
                         book.setInfoLink(infoLink);
-                        // Google Books APIから画像が取得できた場合のみ、楽天の画像を上書きする
                         if (googleThumbnailUrl != null) {
                             book.setThumbnailUrl(googleThumbnailUrl);
                             Log.d(TAG, "Google Books API: Using Image for '" + title + "': " + googleThumbnailUrl);
                         } else {
                             Log.d(TAG, "Google Books API: No suitable image found for '" + title + "'. Keeping Rakuten image if any.");
                         }
+                        Log.d(TAG, "Google Books API: Successfully updated Book ID to " + googleId + " for Title: " + title);
                     } else {
                         Log.d(TAG, "Google Books API: No items found for query: " + googleQuery + " (Title: " + title + ")");
                     }
@@ -255,22 +208,15 @@ public class RakutenBooksApiService {
         }
     }
 
-
-    /**
-     * このサービスで使用されているExecutorServiceをシャットダウンします。
-     * アプリケーションが終了する際に呼び出す必要があります。
-     * これにより、バックグラウンドスレッドが適切に終了し、リソースリークを防ぎます。
-     */
     public void shutdown() {
         executorService.shutdown();
         try {
             if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                executorService.shutdownNow(); // タイムアウト後も終了しない場合、即時シャットダウンを試みる
+                executorService.shutdownNow();
             }
         } catch (InterruptedException e) {
-            // 待機中に現在のスレッドが割り込まれた場合
-            executorService.shutdownNow(); // 即時シャットダウンを試みる
-            Thread.currentThread().interrupt(); // 現在のスレッドの割り込み状態を再設定（ベストプラクティス）
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
         }
         Log.d(TAG, "RakutenBooksApiService ExecutorService shut down.");
     }

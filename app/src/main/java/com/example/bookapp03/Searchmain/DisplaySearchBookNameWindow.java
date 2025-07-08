@@ -53,7 +53,7 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
      * 楽天サービス内でGoogle Books APIの二次検索に使用されるAPIキーです。
      * 本番環境ではBuildConfigなどでの管理が推奨されます。
      */
-    private static final String GOOGLE_BOOKS_API_KEY_FOR_RAKUTEN_SECONDARY_SEARCH = "AIzaSyBQbSbuydQV6QRpNf5smhVp742WpnZ84mY";
+    private static final String GOOGLE_BOOKS_API_KEY_FOR_RAKUTEN_SECONDARY_SEARCH = "AIzaSyA-s5GGsog_X0cSOWUz4CuMtZ7M5ug7lTI";
 
     /**
      * 楽天Kobo APIにアクセスするためのアプリケーションIDです。
@@ -458,6 +458,7 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
     @Override
     public void onBookClick(Book book) {
         Toast.makeText(this, "「" + book.getTitle() + "」の全体まとめを表示", Toast.LENGTH_SHORT).show();
+        Log.d("BookClickDebug", "Clicked Book ID (from Book object): " + book.getId()); // ★ 追加
         navigateToReviewActivity(book);
     }
 

@@ -28,7 +28,7 @@ public class GoogleBooksApiService {
 
     private static final String TAG = "GoogleBooksApiService";
     private static final String API_BASE_URL = "https://www.googleapis.com/books/v1/";
-    private static final String API_KEY = "AIzaSyBgulCNwWRSj95lHveqv67KfC39RMNINyM";
+    private static final String API_KEY = "AIzaSyA-s5GGsog_X0cSOWUz4CuMtZ7M5ug7lTI";
     private final OkHttpClient okHttpClient;
     private final Gson gson;
     private final ExecutorService executorService;
