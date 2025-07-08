@@ -35,7 +35,6 @@ public class RegisterAccountSwitching {
             ed.putString("current_nickname", info.nickname);
             ed.putString("current_email", info.email);
             ed.apply();
-            // ToDo Firestore 側でデバイス紐付けなどをする必要があればここで実装（今のところ考え中）
             return true;
         } catch (Exception e) {
             e.printStackTrace();
