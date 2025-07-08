@@ -129,6 +129,8 @@ public class DisplayHome extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        new TutorialManager(this).showTutorialIfNeeded(this, () -> {
+        });
         setContentView(R.layout.homedisplay);
 
         Log.d(TAG, "DisplayHome onCreate開始");

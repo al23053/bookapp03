@@ -94,6 +94,8 @@
             android:name=".Searchmain.DisplaySearchBookNameWindow"
             android:exported="true"/>
 
+        <activity android:name=".C1UIProcessing.TutorialActivity" />
+
     </application>
 
 </manifest>
