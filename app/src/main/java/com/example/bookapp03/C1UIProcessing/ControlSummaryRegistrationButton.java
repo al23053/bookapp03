@@ -76,13 +76,17 @@ public class ControlSummaryRegistrationButton {
                 return;
             }
 
-            // DisplayHomeのハイライトメモ登録と同様に、登録時に初めてvolumeIdを決定
+            // DisplaySummaryから現在入力されているタイトルを取得
             DisplaySummary ds = (DisplaySummary) activity;
             String title = ds.getBookNameInput()
                              .getText()
                              .toString()
                              .trim();
+            
+            // 入力されたタイトルに対応するvolumeIdを取得
+            // この時点で、タイトルが変更されていれば新しいvolumeIdが返される
             String volumeId = ds.findVolumeIdByTitle(title);
+            
             if (volumeId.isEmpty()) {
                 Toast.makeText(
                     activity,
@@ -92,9 +96,14 @@ public class ControlSummaryRegistrationButton {
                 return;
             }
 
+            // final変数として新しい変数に代入
+            final String finalVolumeId = volumeId;
+            final String finalOverall = overall;
+            final boolean isPublic = switchPublic.isChecked();
+
             executor.execute(() -> {
                 boolean ok = new TransmitSummary(activity)
-                        .transmitSummary(uid, volumeId, overall, switchPublic.isChecked());
+                        .transmitSummary(uid, finalVolumeId, finalOverall, isPublic);
                 activity.runOnUiThread(() -> {
                     Toast.makeText(
                         activity,

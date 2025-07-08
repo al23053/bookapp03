@@ -93,6 +93,10 @@
         <activity
             android:name=".Searchmain.DisplaySearchBookNameWindow"
             android:exported="true"/>
+        <activity
+            android:name=".C1UIProcessing.DisplayWidget"
+            android:exported="true"
+            android:theme="@style/Theme.Bookapp03" />
 
         <activity android:name=".C1UIProcessing.TutorialActivity" />
 

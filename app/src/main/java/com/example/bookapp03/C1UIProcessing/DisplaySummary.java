@@ -47,6 +47,7 @@ import java.util.concurrent.Executors;
  * 2025/06/15 鶴田凌 新規作成
  * 2025/07/01 鶴田凌 本の名前引き継ぎと自動補完機能を追加
  * 2025/07/05 鶴田凌 既存まとめの読み込み機能を追加
+ * 2025/07/07 鶴田凌 volumeId引き継ぎ問題を修正
  */
 public class DisplaySummary extends AppCompatActivity {
     
@@ -54,6 +55,7 @@ public class DisplaySummary extends AppCompatActivity {
     
     private String currentUid;
     private String currentVolumeId;
+    private String currentBookTitle; // 追加
 
     /**
      * 本の名前入力欄（自動補完機能付き）
@@ -105,15 +107,15 @@ public class DisplaySummary extends AppCompatActivity {
             // Intent からデータ取得
             currentUid = UserAuthManager.getCurrentUid();
             currentVolumeId = getIntent().getStringExtra("volumeId");
-            String bookTitle = getIntent().getStringExtra("bookTitle");
+            currentBookTitle = getIntent().getStringExtra("bookTitle");
             
-            Log.d(TAG, "Intent データ - UID: " + currentUid + ", VolumeID: " + currentVolumeId + ", BookTitle: " + bookTitle);
+            Log.d(TAG, "Intent データ - UID: " + currentUid + ", VolumeID: " + currentVolumeId + ", BookTitle: " + currentBookTitle);
 
             // ホーム画面から渡された本の名前を設定
-            if (bookTitle != null && !bookTitle.isEmpty()) {
-                bookNameInput.setText(bookTitle);
-                Log.d(TAG, "本の名前を設定: " + bookTitle);
-                Toast.makeText(this, "選択された書籍: " + bookTitle, Toast.LENGTH_SHORT).show();
+            if (currentBookTitle != null && !currentBookTitle.isEmpty()) {
+                bookNameInput.setText(currentBookTitle);
+                Log.d(TAG, "本の名前を設定: " + currentBookTitle);
+                Toast.makeText(this, "選択された書籍: " + currentBookTitle, Toast.LENGTH_SHORT).show();
             }
 
             // 本のタイトル自動補完設定
@@ -197,6 +199,13 @@ public class DisplaySummary extends AppCompatActivity {
                     Log.d(TAG, "自動補完検索開始: " + query);
                     searchBookSuggestions(query);
                 }
+                
+                // 重要：テキストが変更されたら、ホーム画面からのvolumeIdをクリア
+                if (currentBookTitle != null && !query.equals(currentBookTitle)) {
+                    Log.d(TAG, "本のタイトルが変更されました。volumeIdをクリア");
+                    currentVolumeId = "";
+                    currentBookTitle = "";
+                }
             }
 
             @Override
@@ -210,23 +219,21 @@ public class DisplaySummary extends AppCompatActivity {
             if (searchResults != null && position < searchResults.size()) {
                 Book selectedBook = searchResults.get(position);
                 String newVolumeId = selectedBook.getId();
+                String newTitle = selectedBook.getTitle();
                 
-                Log.d(TAG, "書籍が選択されました: " + selectedBook.getTitle());
+                Log.d(TAG, "書籍が選択されました: " + newTitle);
                 Log.d(TAG, "旧VolumeID: " + currentVolumeId + " → 新VolumeID: " + newVolumeId);
                 
-                // VolumeIDが変更された場合は更新
-                if (!newVolumeId.equals(currentVolumeId)) {
-                    currentVolumeId = newVolumeId;
-                    
-                    // コントローラを再初期化（新しいvolumeIdで）
-                    setupControllers();
-                    // 追加: タイトル切替時にまとめを再読込
-                    loadExistingSummary();
-                    
-                    Toast.makeText(this, "書籍が変更されました: " + selectedBook.getTitle(), Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.d(TAG, "同じ書籍が選択されました");
-                }
+                // 新しい書籍情報を設定
+                currentVolumeId = newVolumeId;
+                currentBookTitle = newTitle;
+                
+                // コントローラを再初期化（新しいvolumeIdで）
+                setupControllers();
+                // 新しい書籍のまとめを読み込み
+                loadExistingSummary();
+                
+                Toast.makeText(this, "書籍が選択されました: " + newTitle, Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -368,15 +375,34 @@ public class DisplaySummary extends AppCompatActivity {
 
     /**
      * タイトル文字列に対応する volumeId を返す。
-     * 見つからなければ空文字。
+     * 1. 現在のvolumeIdが設定済みで、入力タイトルが現在のタイトルと一致する場合は、現在のvolumeIdを返す
+     * 2. そうでなければ、検索結果から該当するvolumeIdを探す
+     * 3. 見つからなければ空文字を返す
      */
     public String findVolumeIdByTitle(String title) {
-        if (searchResults == null) return "";
-        for (Book b : searchResults) {
-            if (b.getTitle().equals(title)) {
-                return b.getId();
+        Log.d(TAG, "volumeId検索開始 - 入力タイトル: " + title);
+        Log.d(TAG, "現在のvolumeId: " + currentVolumeId + ", 現在のタイトル: " + currentBookTitle);
+        
+        // 現在のvolumeIdが設定済みで、タイトルが一致する場合
+        if (currentVolumeId != null && 
+            !currentVolumeId.isEmpty() && 
+            currentBookTitle != null && 
+            title.equals(currentBookTitle)) {
+            Log.d(TAG, "現在のvolumeIdを使用: " + currentVolumeId);
+            return currentVolumeId;
+        }
+        
+        // 検索結果から該当するvolumeIdを探す
+        if (searchResults != null) {
+            for (Book b : searchResults) {
+                if (b.getTitle().equals(title)) {
+                    Log.d(TAG, "検索結果からvolumeIdを取得: " + b.getId());
+                    return b.getId();
+                }
             }
         }
+        
+        Log.d(TAG, "volumeIdが見つかりません: " + title);
         return "";
     }
 
