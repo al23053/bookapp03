@@ -64,7 +64,7 @@ public class UserGenreService {
                         if (document.exists()) {
                             // Firestoreドキュメントから'favoriteGenres'フィールドを取得
                             // フィールド名が 'favoriteGenres' で List<String> 型であると仮定しています。
-                            List<String> genres = (List<String>) document.get("genres");
+                            List<String> genres = (List<String>) document.get("genre");
                             if (genres == null) {
                                 genres = new ArrayList<>(); // フィールドが存在しない、またはnullの場合は空のリストを返す
                             }

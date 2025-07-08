@@ -89,6 +89,7 @@ public class UserReviewListActivity extends AppCompatActivity {
         bookId = getIntent().getStringExtra("bookId");
         bookTitle = getIntent().getStringExtra("bookTitle"); // ここでフィールドに代入
 
+        Log.d("ReviewListDebug", "Received bookId in UserReviewListActivity: " + bookId); // ★ 追加
         // 本のIDが取得できない場合の処理
         if (bookId == null || bookId.isEmpty()) {
             Toast.makeText(this, "本の情報がありません。", Toast.LENGTH_SHORT).show();
