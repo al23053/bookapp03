@@ -52,14 +52,6 @@ public class TransmitHighlightMemo {
             
             RegisterHighlightMemo register = new RegisterHighlightMemo(context);
 
-            // ❌ 修正前: 不要なデータ変換
-            // HighlightMemoData modelData = new HighlightMemoData(
-            //         data.getPage(),
-            //         data.getLine(),
-            //         data.getMemo()
-            // );
-
-            // ✅ 修正後: 受け取ったデータをそのまま使用
             boolean result = register.registerHighlightMemo(uid, volumeId, data);
             
             Log.d(TAG, "送信結果: " + result);

@@ -4,9 +4,9 @@
  * 作成日: 2025/06/20
  * 概要: 本のタイトル入力欄およびハイライトメモ登録欄を表示・操作する Activity
  * 履歴:
- *   2025/06/20 鶴田凌 新規作成
- *   2025/07/05 鶴田凌 入力値の永続化対応
- *   2025/07/07 鶴田凌 ダークモード設定の復元機能追加
+ * 2025/06/20 鶴田凌 新規作成
+ * 2025/07/05 鶴田凌 入力値の永続化対応
+ * 2025/07/07 鶴田凌 ダークモード設定の復元機能追加
  */
 package com.example.bookapp03.C1UIProcessing;
 
@@ -46,18 +46,18 @@ import java.util.concurrent.Executors;
 
 public class DisplayHome extends AppCompatActivity {
     // SharedPreferences 用キー
-    private static final String PREFS_NAME      = "DisplayHomePrefs";
-    private static final String KEY_BOOK_NAME   = "key_book_name";
-    private static final String KEY_PAGE        = "key_page";
-    private static final String KEY_LINE        = "key_line";
-    private static final String KEY_MEMO        = "key_memo";
-    
+    private static final String PREFS_NAME = "DisplayHomePrefs";
+    private static final String KEY_BOOK_NAME = "key_book_name";
+    private static final String KEY_PAGE = "key_page";
+    private static final String KEY_LINE = "key_line";
+    private static final String KEY_MEMO = "key_memo";
+
     // ダークモード設定用キー（追加）
     private static final String DARK_MODE_PREFS = "app_prefs";
-    private static final String KEY_DARK        = "dark_mode";
+    private static final String KEY_DARK = "dark_mode";
 
     private static final String TAG = "DisplayHome";
-    
+
     /**
      * 本の名前入力欄（自動補完機能付き）
      */
@@ -137,7 +137,7 @@ public class DisplayHome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         // ダークモード設定を復元（super.onCreate前に実行）
         restoreDarkModeSettings();
-        
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homedisplay);
 
@@ -152,7 +152,7 @@ public class DisplayHome extends AppCompatActivity {
         // 3) UID取得とコントローラ初期化
         String uid = UserAuthManager.getCurrentUid();
         Log.d(TAG, "取得したUID: " + uid);
-        
+
         // 初期状態ではvolumeIdは空
         controlHighlightMemo = new ControlHighlightMemo(this, uid, currentVolumeId);
         controlButtonToSummary = new ControlButtonToSummary();
@@ -177,7 +177,7 @@ public class DisplayHome extends AppCompatActivity {
         // BottomNavigationView の設定
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         ControlBottomNavigationBar navController = new ControlBottomNavigationBar();
-        
+
         // 現在の画面を選択状態にする
         navController.setCurrentItem(this, bottomNav);
     }
@@ -247,7 +247,7 @@ public class DisplayHome extends AppCompatActivity {
      */
     private void searchBookSuggestions(String query) {
         Log.d(TAG, "書籍検索開始: " + query);
-        
+
         googleBooksApiService.searchBooks(query, new GoogleBooksApiService.SearchCallback() {
             @Override
             public void onSearchResultsReceived(List<Book> books) {
@@ -262,8 +262,8 @@ public class DisplayHome extends AppCompatActivity {
             public void onFailure(String errorMessage) {
                 runOnUiThread(() -> {
                     Log.e(TAG, "書籍検索エラー: " + errorMessage);
-                    Toast.makeText(DisplayHome.this, "書籍検索に失敗しました", 
-                                   Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DisplayHome.this, "書籍検索に失敗しました",
+                            Toast.LENGTH_SHORT).show();
                 });
             }
         });
@@ -277,13 +277,13 @@ public class DisplayHome extends AppCompatActivity {
         for (int i = 0; i < books.size(); i++) {
             bookTitles[i] = books.get(i).getTitle();
         }
-        
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-            this,
-            android.R.layout.simple_dropdown_item_1line,
-            bookTitles
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                bookTitles
         );
-        
+
         bookNameInput.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
@@ -308,7 +308,7 @@ public class DisplayHome extends AppCompatActivity {
             String pageText = editPage.getText().toString().trim();
             String lineText = editLine.getText().toString().trim();
             String memo = editMemo.getText().toString().trim();
-            if (pageText.isEmpty() ) {
+            if (pageText.isEmpty()) {
                 Toast.makeText(this, "ページ数を入力してください", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -327,6 +327,7 @@ public class DisplayHome extends AppCompatActivity {
                 if (ok) {
                     // 登録成功時はメモ入力欄をクリア
                     editMemo.setText("");
+                    
                     verifyDataInDatabase();
                 }
             } catch (IllegalArgumentException e) {
@@ -353,31 +354,31 @@ public class DisplayHome extends AppCompatActivity {
      */
     private void verifyDataInDatabase() {
         String uid = UserAuthManager.getCurrentUid();
-        
+
         Log.d(TAG, "データベース確認開始 - UID: " + uid + ", VolumeID: " + currentVolumeId);
-        
+
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             try {
                 HighlightMemoDao dao = BookInformationDatabase
                         .getDatabase(this)
                         .highlightMemoDao();
-                
+
                 List<HighlightMemoEntity> entities = dao.getByUserAndVolume(uid, currentVolumeId);
-                
+
                 runOnUiThread(() -> {
                     Log.d(TAG, "=== データベース内容確認 ===");
                     Log.d(TAG, "総メモ数: " + entities.size());
-                    
+
                     for (int i = 0; i < entities.size(); i++) {
                         HighlightMemoEntity entity = entities.get(i);
-                        Log.d(TAG, "メモ" + (i + 1) + " - Page: " + entity.page + 
-                                   ", Line: " + entity.line + 
-                                   ", Memo: '" + entity.memo + "'");
+                        Log.d(TAG, "メモ" + (i + 1) + " - Page: " + entity.page +
+                                ", Line: " + entity.line +
+                                ", Memo: '" + entity.memo + "'");
                     }
                     Log.d(TAG, "=== 確認終了 ===");
                 });
-                
+
             } catch (Exception e) {
                 Log.e(TAG, "データベース確認エラー", e);
             } finally {
@@ -508,9 +509,9 @@ public class DisplayHome extends AppCompatActivity {
     private void loadSavedInputs() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         bookNameInput.setText(prefs.getString(KEY_BOOK_NAME, ""));
-        editPage     .setText(prefs.getString(KEY_PAGE,    ""));
-        editLine     .setText(prefs.getString(KEY_LINE,    ""));
-        editMemo     .setText(prefs.getString(KEY_MEMO,    ""));
+        editPage.setText(prefs.getString(KEY_PAGE, ""));
+        editLine.setText(prefs.getString(KEY_LINE, ""));
+        editMemo.setText(prefs.getString(KEY_MEMO, ""));
     }
 
     /**
@@ -519,9 +520,9 @@ public class DisplayHome extends AppCompatActivity {
     private void saveInputs() {
         SharedPreferences.Editor ed = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
         ed.putString(KEY_BOOK_NAME, bookNameInput.getText().toString());
-        ed.putString(KEY_PAGE,      editPage.getText().toString());
-        ed.putString(KEY_LINE,      editLine.getText().toString());
-        ed.putString(KEY_MEMO,      editMemo.getText().toString());
+        ed.putString(KEY_PAGE, editPage.getText().toString());
+        ed.putString(KEY_LINE, editLine.getText().toString());
+        ed.putString(KEY_MEMO, editMemo.getText().toString());
         ed.apply();
     }
 
@@ -531,12 +532,12 @@ public class DisplayHome extends AppCompatActivity {
     private void restoreDarkModeSettings() {
         SharedPreferences prefs = getSharedPreferences(DARK_MODE_PREFS, Context.MODE_PRIVATE);
         boolean isDark = prefs.getBoolean(KEY_DARK, false);
-        
+
         Log.d(TAG, "ダークモード設定復元: " + (isDark ? "ダークモード" : "ライトモード"));
-        
+
         AppCompatDelegate.setDefaultNightMode(
-            isDark ? AppCompatDelegate.MODE_NIGHT_YES 
-                   : AppCompatDelegate.MODE_NIGHT_NO
+                isDark ? AppCompatDelegate.MODE_NIGHT_YES
+                        : AppCompatDelegate.MODE_NIGHT_NO
         );
     }
 
