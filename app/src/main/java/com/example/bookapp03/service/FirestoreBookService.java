@@ -14,10 +14,10 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashSet; // 追加
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+import java.util.Set; // 追加
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -81,56 +81,82 @@ public class FirestoreBookService {
                         return;
                     }
 
-                    final int totalBooksToFetch = queryDocumentSnapshots.size();
-                    final AtomicInteger fetchedBookCount = new AtomicInteger(0);
-                    final List<Book> allFetchedBooks = Collections.synchronizedList(new ArrayList<>());
+                    final int totalDocuments = queryDocumentSnapshots.size(); // Firestoreから取得した全ドキュメント数
+                    final AtomicInteger processedDocumentCount = new AtomicInteger(0); // 処理済みのドキュメント数
+
+                    // ★★★ 修正: 重複排除のためにSetを導入 ★★★
+                    // Google Books APIから取得したユニークなBookオブジェクトを格納
+                    final Set<Book> uniqueBooksFromGoogle = Collections.synchronizedSet(new HashSet<>());
+                    // ★★★ 追加: 既にGoogle Books APIの検索にかけたvolumeIdを記録するSet ★★★
+                    // 同じvolumeIdの重複API呼び出しを防ぐ
+                    final Set<String> fetchingOrFetchedVolumeIds = Collections.synchronizedSet(new HashSet<>());
+
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String volumeId = document.getString("volumeId");
                         String overallSummary = document.getString("overallSummary");
 
                         if (volumeId != null && !volumeId.isEmpty()) {
+                            // ★★★ 修正: 既にこのvolumeIdが処理中または処理済みであればスキップ ★★★
+                            if (fetchingOrFetchedVolumeIds.contains(volumeId)) {
+                                Log.d(TAG, "Skipping duplicate volumeId: " + volumeId + " from Firestore document: " + document.getId() + " (already processing/processed).");
+                                // スキップした場合も全体の完了カウントを進める
+                                if (processedDocumentCount.incrementAndGet() == totalDocuments) {
+                                    // 全てのFirestoreドキュメントの処理が完了したら、ユニークな本を渡す
+                                    processAndReturnBooks(new ArrayList<>(uniqueBooksFromGoogle), lowerCaseFavoriteGenres, callback);
+                                }
+                                continue; // このドキュメントの処理はスキップ
+                            }
+                            fetchingOrFetchedVolumeIds.add(volumeId); // このvolumeIdを処理中としてマーク
+
                             fetchBookDetailsFromGoogleBooksAsync(volumeId, overallSummary, new GoogleBooksApiCallback() {
                                 @Override
                                 public void onSuccess(Book book) {
                                     if (book != null) {
-                                        // ★★★ 重要: この行を削除しました ★★★
-                                        // book.setId(document.getId()); // FirebaseドキュメントIDではなく、Google Books APIのIDを使用
-                                        allFetchedBooks.add(book);
-                                        Log.d(TAG, "Successfully fetched and enriched book: " + book.getTitle() + ", Book ID: " + book.getId());
+                                        // Book.equals() と Book.hashCode() が id に基づいているため、SetはIDで重複を判断する
+                                        if (uniqueBooksFromGoogle.add(book)) { // Setへの追加が成功すればユニーク
+                                            Log.d(TAG, "Successfully fetched and enriched unique book: " + book.getTitle() + ", Book ID: " + book.getId());
+                                        } else {
+                                            Log.d(TAG, "Attempted to add duplicate book to uniqueBooksFromGoogle Set: " + book.getTitle() + ", Book ID: " + book.getId());
+                                        }
                                     } else {
-                                        Log.w(TAG, "Could not fetch Google Books API details for volumeId: " + volumeId);
+                                        Log.w(TAG, "Could not fetch Google Books API details for volumeId: " + volumeId + ". Book is null.");
                                     }
-                                    if (fetchedBookCount.incrementAndGet() == totalBooksToFetch) {
-                                        processAndReturnBooks(allFetchedBooks, lowerCaseFavoriteGenres, callback);
+                                    // このFirestoreドキュメントの処理が完了
+                                    if (processedDocumentCount.incrementAndGet() == totalDocuments) {
+                                        // 全てのFirestoreドキュメントの処理が完了したら、ユニークな本を渡す
+                                        processAndReturnBooks(new ArrayList<>(uniqueBooksFromGoogle), lowerCaseFavoriteGenres, callback);
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(String errorMessage) {
                                     Log.e(TAG, "Error fetching book details for volumeId " + volumeId + ": " + errorMessage);
-                                    if (fetchedBookCount.incrementAndGet() == totalBooksToFetch) {
-                                        processAndReturnBooks(allFetchedBooks, lowerCaseFavoriteGenres, callback);
+                                    // エラーが発生した場合も、このFirestoreドキュメントの処理が完了したと見なす
+                                    if (processedDocumentCount.incrementAndGet() == totalDocuments) {
+                                        // 全てのFirestoreドキュメントの処理が完了したら、ユニークな本を渡す
+                                        processAndReturnBooks(new ArrayList<>(uniqueBooksFromGoogle), lowerCaseFavoriteGenres, callback);
                                     }
                                 }
                             });
                         } else {
-                            Log.w(TAG, "Firestore document " + document.getId() + " has no valid volumeId.");
-                            if (fetchedBookCount.incrementAndGet() == totalBooksToFetch) {
-                                processAndReturnBooks(allFetchedBooks, lowerCaseFavoriteGenres, callback);
+                            Log.w(TAG, "Firestore document " + document.getId() + " has no valid volumeId. Skipping this document.");
+                            // volumeIdがない場合も、このFirestoreドキュメントの処理が完了したと見なす
+                            if (processedDocumentCount.incrementAndGet() == totalDocuments) {
+                                processAndReturnBooks(new ArrayList<>(uniqueBooksFromGoogle), lowerCaseFavoriteGenres, callback);
                             }
                         }
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error fetching books from Firestore: " + e.getMessage(), e);
-                    callback.onFailure("Firestoreからの書籍取得中にエラーが発生しました: " + e.getMessage());
+                    Log.e(TAG, "Error fetching documents from 'summaries' collection in Firestore: " + e.getMessage(), e);
+                    callback.onFailure("Firestoreからの書籍概要取得中にエラーが発生しました: " + e.getMessage());
                 });
     }
 
     private void fetchBookDetailsFromGoogleBooksAsync(String volumeId, String overallSummaryFromFirestore, GoogleBooksApiCallback callback) {
         if (volumeId == null || volumeId.isEmpty()) {
-            Log.w(TAG, "fetchBookDetailsFromGoogleBooksAsync called with empty or null volumeId.");
+            Log.w(TAG, "fetchBookDetailsFromGoogleBooksAsync called with empty or null volumeId. Cannot fetch book details.");
             callback.onSuccess(null);
             return;
         }
@@ -191,6 +217,7 @@ public class FirestoreBookService {
                             if (volumeInfo.has("imageLinks")) {
                                 JsonObject imageLinks = volumeInfo.getAsJsonObject("imageLinks");
                                 String thumbnailUrl = null;
+                                // 可能な限り高解像度の画像を取得
                                 if (imageLinks.has("extraLarge")) {
                                     thumbnailUrl = imageLinks.get("extraLarge").getAsString();
                                 } else if (imageLinks.has("large")) {
@@ -217,19 +244,20 @@ public class FirestoreBookService {
                                     }
                                 }
                             }
+                            // Firestoreから取得したoverallSummaryを設定
                             book.setOverallSummary(overallSummaryFromFirestore);
 
                             callback.onSuccess(book);
                             return;
                         }
                     }
-                    Log.e(TAG, "Google Books API call failed or response malformed for volumeId " + volumeId + ": " + googleResponse.code() + " " + googleResponse.message());
-                    callback.onSuccess(null);
+                    Log.e(TAG, "Google Books API call failed or response malformed for volumeId " + volumeId + ": " + (googleResponse != null ? googleResponse.code() + " " + googleResponse.message() : "null response"));
+                    callback.onSuccess(null); // Bookオブジェクトが生成できなかった場合はnullを返す
                 } catch (Exception e) {
                     Log.e(TAG, "Error parsing Google Books API response for volumeId " + volumeId + ": " + e.getMessage(), e);
                     callback.onFailure("Google Books APIレスポンス解析エラー: " + e.getMessage());
                 } finally {
-                    if (googleResponse.body() != null) {
+                    if (googleResponse != null && googleResponse.body() != null) {
                         googleResponse.body().close();
                     }
                 }
@@ -237,13 +265,14 @@ public class FirestoreBookService {
         });
     }
 
-    private void processAndReturnBooks(List<Book> allFetchedBooks, Set<String> lowerCaseFavoriteGenres, BookRecommendationCallback callback) {
-        Collections.shuffle(allFetchedBooks);
+    private void processAndReturnBooks(List<Book> uniqueFetchedBooks, Set<String> lowerCaseFavoriteGenres, BookRecommendationCallback callback) {
+        // uniqueFetchedBooks は既にユニークなBookオブジェクトのリストになっている
+        Collections.shuffle(uniqueFetchedBooks); // ランダムにシャッフル
 
         List<Book> matchingBooksFull = new ArrayList<>();
         List<Book> nonMatchingBooksFull = new ArrayList<>();
 
-        for (Book book : allFetchedBooks) {
+        for (Book book : uniqueFetchedBooks) { // ユニークな本だけを処理
             if (book.getCategories() != null && !book.getCategories().isEmpty() &&
                     isBookMatchingAnyGenre(book, lowerCaseFavoriteGenres)) {
                 matchingBooksFull.add(book);
@@ -252,6 +281,7 @@ public class FirestoreBookService {
             }
         }
 
+        // 各リストから最大MAX_RECOMMENDATION_COUNT件を選択
         List<Book> finalMatchingBooks = new ArrayList<>();
         for (int i = 0; i < MAX_RECOMMENDATION_COUNT && i < matchingBooksFull.size(); i++) {
             finalMatchingBooks.add(matchingBooksFull.get(i));
