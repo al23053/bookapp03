@@ -3,10 +3,10 @@ package com.example.bookapp03.manager;
 import android.util.Log;
 
 import com.example.bookapp03.model.Book;
-import com.example.bookapp03.service.FirestoreBookService;
-import com.example.bookapp03.service.GoogleBooksApiService;
-import com.example.bookapp03.service.RakutenBooksApiService;
-import com.example.bookapp03.service.UserGenreService;
+import com.example.bookapp03.C6BookInformationManaging.FirestoreBookService;
+import com.example.bookapp03.C7SearchManaging.GoogleBooksApiService;
+import com.example.bookapp03.C6BookInformationManaging.RakutenBooksApiService;
+import com.example.bookapp03.C5UserInformationManaging.UserGenreService;
 import com.google.gson.Gson;
 
 import java.util.List;

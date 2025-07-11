@@ -1,4 +1,4 @@
-package com.example.bookapp03.service;
+package com.example.bookapp03.C5UserInformationManaging;
 
 import android.util.Log;
 
@@ -7,7 +7,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Firebase Firestoreからユーザーのジャンル情報を取得・保存するためのサービスです。

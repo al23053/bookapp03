@@ -103,7 +103,17 @@ public class BooksApiResponse {
         @SerializedName("categories")
         private List<String> categories;
         // 他にも多くのフィールドがありますが、ここでは最低限に絞っています
+        /**
+         * 書籍の業界識別子（ISBNなど）のリスト。
+         */
+        @SerializedName("industryIdentifiers")
+        private List<IndustryIdentifier> industryIdentifiers;
 
+        /**
+         * 書籍のGoogle Books詳細ページへのリンクURL。
+         */
+        @SerializedName("infoLink")
+        private String infoLink;
         /**
          * 書籍のタイトルを取得します。
          *
@@ -157,8 +167,58 @@ public class BooksApiResponse {
         public List<String> getCategories() {
             return categories;
         }
-    }
+        /**
+         * 書籍の業界識別子（ISBNなど）のリストを取得します。
+         *
+         * @return 業界識別子のリスト
+         */
+        public List<IndustryIdentifier> getIndustryIdentifiers() {
+            return industryIdentifiers;
+        }
 
+        /**
+         * 書籍のGoogle Books詳細ページへのリンクURLを取得します。
+         *
+         * @return 詳細ページへのリンクURL
+         */
+        public String getInfoLink() {
+            return infoLink;
+        }
+    }
+    /**
+     * 書籍の業界識別子（ISBNなど）を表現するネストされたクラスです。
+     */
+    public static class IndustryIdentifier {
+        /**
+         * 識別子のタイプ（例: "ISBN_10", "ISBN_13"）。
+         */
+        @SerializedName("type")
+        private String type;
+
+        /**
+         * 識別子の値（例: ISBNの番号）。
+         */
+        @SerializedName("identifier")
+        private String identifier;
+
+        /**
+         * 識別子のタイプを取得します。
+         *
+         * @return 識別子のタイプ
+         */
+        public String getType() {
+            return type;
+        }
+
+        /**
+         * 識別子の値を取得します。
+         *
+         * @return 識別子の値
+         */
+        public String getIdentifier() {
+            return identifier;
+        }
+    }
     /**
      * 書籍のサムネイル画像リンクを表現するネストされたクラスです。
      */

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.example.bookapp03.R;
-import com.example.bookapp03.Searchmain.DisplaySearchBookNameWindow;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**

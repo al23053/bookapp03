@@ -71,7 +71,6 @@ public class Book implements Serializable {
      */
     private String isbn; // ★ここが追加されました！
     private String overallSummary;
-
     /**
      * Firestoreから直接オブジェクトをマッピングするために必要となる、引数なしのデフォルトコンストラクタです。
      */
@@ -116,6 +115,11 @@ public class Book implements Serializable {
         return id;
     }
 
+    public String getPublishedDate() {
+        return publishedDate;
+    }
+
+
     /**
      * 書籍のタイトルを取得します。
      *
@@ -159,6 +163,9 @@ public class Book implements Serializable {
      */
     public List<String> getCategories() {
         return categories;
+    }
+    public String getInfoLink() {
+        return infoLink;
     }
 
     /**

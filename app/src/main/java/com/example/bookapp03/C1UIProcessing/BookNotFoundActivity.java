@@ -1,4 +1,13 @@
-package com.example.bookapp03.ui;
+/**
+ * モジュール名: BookNotFoundActivity
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/15
+ * 概要: 書籍情報がデータベースに見つからなかった場合に表示されるActivityです。
+ * ユーザーにその旨を伝え、前の画面に戻るためのボタンを提供します。
+ * 履歴:
+ * 2025/06/15 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C1UIProcessing;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,12 +16,7 @@ import android.widget.TextView;
 import android.widget.Button;
 
 import com.example.bookapp03.R;
-import com.example.bookapp03.C1UIProcessing.ControlBackButton;
 
-/**
- * 書籍情報がデータベースに見つからなかった場合に表示されるActivityです。
- * ユーザーにその旨を伝え、前の画面に戻るためのボタンを提供します。
- */
 public class BookNotFoundActivity extends AppCompatActivity {
 
     /**

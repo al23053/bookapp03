@@ -1,4 +1,13 @@
-package com.example.bookapp03.ui;
+/**
+ * モジュール名: ReviewDetailBottomSheetFragment
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/15
+ * 概要:* 書籍レビューの詳細を表示するためのボトムシートDialogFragmentです。
+ *  * レビューの全文、投稿者名を表示します。
+ * 履歴:
+ * 2025/06/15 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C1UIProcessing;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -12,14 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.example.bookapp03.R;
-import com.example.bookapp03.model.Review;
 
-import java.util.Locale;
-
-/**
- * 書籍レビューの詳細を表示するためのボトムシートDialogFragmentです。
- * レビューの全文、評価、投稿者名、および投稿日時を表示します。
- */
 public class ReviewDetailBottomSheetFragment extends BottomSheetDialogFragment {
 
     /**

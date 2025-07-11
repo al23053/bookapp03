@@ -1,4 +1,13 @@
-package com.example.bookapp03.ui;
+/**
+ * モジュール名: UserReviewListActivity
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/15
+ * 概要:　特定の書籍に対するユーザの全体まとめ一覧を表示するActivityです。
+ *  * FirestoreRecyclerAdapterを使用してFirestoreからリアルタイムでレビューデータを取得し、表示します。
+ * 履歴:
+ * 2025/06/15 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C1UIProcessing;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,22 +24,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.bookapp03.C1UIProcessing.ControlBackButton;
 import com.example.bookapp03.R;
 import com.example.bookapp03.model.Review;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-import java.util.Locale;
-
-/**
- * 特定の書籍に対するユーザーレビューの一覧を表示するActivityです。
- * FirestoreRecyclerAdapterを使用してFirestoreからリアルタイムでレビューデータを取得し、表示します。
- */
 public class UserReviewListActivity extends AppCompatActivity {
 
     private static final String TAG = "UserReviewListActivity";
