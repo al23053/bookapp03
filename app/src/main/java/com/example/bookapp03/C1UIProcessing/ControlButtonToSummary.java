@@ -23,12 +23,4 @@ public class ControlButtonToSummary {
         activity.startActivity(intent);
     }
     
-    /**
-     * 全体まとめ画面に遷移（volumeIdのみ）
-     */
-    public void setToSummary(AppCompatActivity activity, String volumeId) {
-        Intent intent = new Intent(activity, DisplaySummary.class);
-        intent.putExtra("volumeId", volumeId);
-        activity.startActivity(intent);
-    }
 }
