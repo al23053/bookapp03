@@ -70,6 +70,7 @@ public class Book implements Serializable {
      * ISBN-10またはISBN-13の形式で格納されます。
      */
     private String isbn; // ★ここが追加されました！
+    private String overallSummary;
 
     /**
      * Firestoreから直接オブジェクトをマッピングするために必要となる、引数なしのデフォルトコンストラクタです。
@@ -266,6 +267,18 @@ public class Book implements Serializable {
      */
     public void setIsbn(String isbn) { // ★ここが追加されました！
         this.isbn = isbn;
+    }
+
+    public String getOverallSummary() {
+        return overallSummary;
+    }
+
+    /**
+     * 書籍の総合的な要約（感想）を設定します。
+     * @param overallSummary 設定する総合的な要約文字列
+     */
+    public void setOverallSummary(String overallSummary) {
+        this.overallSummary = overallSummary;
     }
 
     /**

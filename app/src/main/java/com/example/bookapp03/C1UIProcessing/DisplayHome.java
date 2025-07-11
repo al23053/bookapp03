@@ -139,6 +139,8 @@ public class DisplayHome extends AppCompatActivity {
         restoreDarkModeSettings();
 
         super.onCreate(savedInstanceState);
+        new TutorialManager(this).showTutorialIfNeeded(this, () -> {
+        });
         setContentView(R.layout.homedisplay);
 
         Log.d(TAG, "DisplayHome onCreate開始");

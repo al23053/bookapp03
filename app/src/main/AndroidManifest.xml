@@ -98,6 +98,8 @@
             android:exported="true"
             android:theme="@style/Theme.Bookapp03" />
 
+        <activity android:name=".C1UIProcessing.TutorialActivity" />
+
     </application>
 
 </manifest>

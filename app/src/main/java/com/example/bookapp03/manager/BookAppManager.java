@@ -72,7 +72,7 @@ public class BookAppManager {
         // GoogleBooksApiService は内部で OkHttpClient と Gson を初期化するため、引数なしのコンストラクタを使用
         this.googleBooksApiService = new GoogleBooksApiService();
         this.rakutenBooksApiService = new RakutenBooksApiService(httpClient, gson, rakutenApplicationId, googleBooksApiKeyForRakutenSecondarySearch);
-        this.firestoreBookService = new FirestoreBookService();
+        this.firestoreBookService = new FirestoreBookService(httpClient, gson, googleBooksApiKeyForRakutenSecondarySearch); // rakutenSecondarySearch 用のキーを共有
         this.userGenreService = new UserGenreService();
         Log.d(TAG, "BookAppManager initialized.");
     }

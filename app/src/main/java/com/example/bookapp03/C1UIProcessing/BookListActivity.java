@@ -101,5 +101,9 @@ public class BookListActivity extends AppCompatActivity {
             android.util.Log.e("BookListActivity", "User not logged in or UID not available.");
             controller.displayBookList(recyclerView, new ArrayList<>(), "", toggleHandler, true);
         }
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        ControlBottomNavigationBar navController = new ControlBottomNavigationBar();
+        navController.setCurrentItem(this, bottomNav);
     }
 }
