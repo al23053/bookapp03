@@ -187,13 +187,14 @@ public class RakutenBooksApiService {
                 Log.d(TAG, "Google Books API: Searching by ISBN: " + isbn + " for title: " + cleanedRakutenTitle);
             } else {
                 // ★★★ ここを完全にタイトルのみの検索に変更 ★★★
-                googleQuery = URLEncoder.encode(cleanedRakutenTitle, "UTF-8");
+                googleQuery = cleanedRakutenTitle;
                 Log.d(TAG, "Google Books API: Searching by CLEANED TITLE ONLY: '" + cleanedRakutenTitle + "' -> Query: " + googleQuery);
                 // 以前の inauthor: を含むロジックは削除されます
             }
 
             List<Book> googleCandidateBooks = new ArrayList<>();
             final Object lock = new Object();
+            Log.d(TAG, "googleQuery =" + googleQuery);
 
             googleBooksApiService.searchBooks(googleQuery, new GoogleBooksApiService.SearchCallback() {
                 @Override
@@ -356,8 +357,6 @@ public class RakutenBooksApiService {
                 book.setInfoLink(null); // Googleから取れなかった場合は情報リンクをクリア
                 book.setCategories(null); // Googleから取れなかった場合はカテゴリをクリア
             }
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "URL Encoding Error (Google secondary search): " + e.getMessage(), e);
         } catch (Exception e) {
             Log.e(TAG, "Unexpected error (Google secondary search): " + e.getMessage(), e);
         }
