@@ -1,4 +1,4 @@
-package com.example.bookapp03.service;
+package com.example.bookapp03.C6BookInformationManaging;
 
 import android.util.Log;
 
@@ -18,7 +18,6 @@ import java.util.HashSet; // 追加
 import java.util.List;
 import java.util.Locale;
 import java.util.Set; // 追加
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.Call;

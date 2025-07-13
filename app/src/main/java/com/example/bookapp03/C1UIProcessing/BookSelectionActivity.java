@@ -1,25 +1,27 @@
-package com.example.bookapp03.ui;
+/**
+ * モジュール名: BookSelectionActivity
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/15
+ * 概要: 書籍が選択された際に、その書籍のレビューが存在するかどうかを自動的にチェックし、
+ *   適切な次の画面（レビュー一覧、レビューなし、本情報なし）へ遷移させるActivityです。
+ *  通常、ユーザーには直接表示されず、バックグラウンドで処理を行います。
+ * 履歴:
+ * 2025/06/15 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C1UIProcessing;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.bookapp03.R;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-/**
- * 書籍が選択された際に、その書籍のレビューが存在するかどうかを自動的にチェックし、
- * 適切な次の画面（レビュー一覧、レビューなし、本情報なし）へ遷移させるActivityです。
- * 通常、ユーザーには直接表示されず、バックグラウンドで処理を行います。
- */
 public class BookSelectionActivity extends AppCompatActivity {
 
     private static final String TAG = "BookSelectionActivity";

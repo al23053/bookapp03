@@ -79,19 +79,19 @@
             android:name=".C1UIProcessing.DisplayHome"
             android:exported="false" />
         <activity
-            android:name=".Searchmain.DisplaySelectBook" />
+            android:name=".C1UIProcessing.DisplaySelectBook" />
         <activity
-            android:name=".ui.UserReviewListActivity"
+            android:name=".C1UIProcessing.UserReviewListActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.NoReviewsActivity" />
+            android:name=".C1UIProcessing.NoReviewsActivity" />
         <activity
-            android:name=".ui.BookNotFoundActivity" />
+            android:name=".C1UIProcessing.BookNotFoundActivity" />
         <activity
-            android:name=".ui.BookSelectionActivity"
+            android:name=".C1UIProcessing.BookSelectionActivity"
             android:exported="true"/>
         <activity
-            android:name=".Searchmain.DisplaySearchBookNameWindow"
+            android:name=".C1UIProcessing.DisplaySearchBookNameWindow"
             android:exported="true"/>
         <activity
             android:name=".C1UIProcessing.DisplayWidget"

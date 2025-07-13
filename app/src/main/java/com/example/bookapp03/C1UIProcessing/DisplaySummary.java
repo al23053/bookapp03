@@ -26,11 +26,9 @@ import com.example.bookapp03.C5UserInformationManaging.UserAuthManager;
 import com.example.bookapp03.C6BookInformationManaging.database.BookInformationDatabase;
 import com.example.bookapp03.C6BookInformationManaging.database.SummaryDao;
 import com.example.bookapp03.R;
-import com.example.bookapp03.C1UIProcessing.HighlightMemoAdapter;
-import com.example.bookapp03.C1UIProcessing.HighlightMemoData;
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
 import com.example.bookapp03.model.Book;
-import com.example.bookapp03.service.GoogleBooksApiService;
+import com.example.bookapp03.C7SearchManaging.GoogleBooksApiService;
 import com.example.bookapp03.C6BookInformationManaging.database.SummaryEntity;
 
 import java.util.ArrayList;

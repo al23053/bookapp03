@@ -1,4 +1,4 @@
-package com.example.bookapp03.service;
+package com.example.bookapp03.C7SearchManaging;
 
 import android.util.Log;
 
@@ -14,7 +14,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -168,6 +167,7 @@ public class GoogleBooksApiService {
             urlBuilder.addQueryParameter("key", API_KEY);
 
             String url = urlBuilder.build().toString();
+            Log.d(TAG, "Google Books API Request URL: " + url);
             Request request = new Request.Builder().url(url).build();
 
             try (Response response = okHttpClient.newCall(request).execute()) {
@@ -222,6 +222,18 @@ public class GoogleBooksApiService {
                 ? volumeInfo.getImageLinks().getThumbnail()
                 : null;
         List<String> categories = volumeInfo.getCategories();
+        String isbn = null;
+        if (volumeInfo.getIndustryIdentifiers() != null) {
+            for (BooksApiResponse.IndustryIdentifier identifier : volumeInfo.getIndustryIdentifiers()) {
+                if ("ISBN_13".equals(identifier.getType())) {
+                    isbn = identifier.getIdentifier();
+                    break;
+                }
+                if ("ISBN_10".equals(identifier.getType()) && isbn == null) { // ISBN_13がなければISBN_10を使う
+                    isbn = identifier.getIdentifier();
+                }
+            }
+        }
         Book book = new Book(id, title, author, description, thumbnailUrl, categories);
         book.setPublishedDate(volumeInfo.getPublishedDate());
         return book;

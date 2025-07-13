@@ -1,4 +1,13 @@
-package com.example.bookapp03.Searchmain;
+/**
+ * モジュール名: DisplaySelectBook
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/15
+ * 概要: 書籍検索結果を表示するためのActivityです。
+ *  * 検索クエリに基づいてGoogle Books APIから取得した書籍リストを表示します。
+ * 履歴:
+ * 2025/06/15 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C1UIProcessing;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -9,8 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bookapp03.C1UIProcessing.ControlBackButton;
-import com.example.bookapp03.C1UIProcessing.ControlPushBookImage;
 import com.example.bookapp03.R;
 import com.example.bookapp03.adapter.BookCardAdapter;
 import com.example.bookapp03.model.Book;
@@ -21,11 +28,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 書籍検索結果を表示するためのActivityです。
- * 検索クエリに基づいてGoogle Books APIから取得した書籍リストを表示し、
- * 各書籍カードのクリックイベントを処理します。
- */
 public class DisplaySelectBook extends AppCompatActivity implements BookCardAdapter.OnBookClickListener {
 
     private static final String TAG = "SearchResultActivity";

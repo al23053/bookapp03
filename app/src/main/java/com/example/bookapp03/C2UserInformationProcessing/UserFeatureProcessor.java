@@ -1,4 +1,13 @@
-package com.example.bookapp03.processor;
+/**
+ * モジュール名: UserFeatureProcessor
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/15
+ * 概要:　ユーザー情報に関するビジネスロジックを処理する層。
+ * UI層からのリクエストを受け取り、管理部を経由してデータサービスにアクセスします。
+ * 履歴:
+ * 2025/06/15 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C2UserInformationProcessing;
 
 import android.util.Log;
 
@@ -6,10 +15,6 @@ import com.example.bookapp03.manager.BookAppManager;
 
 import java.util.List;
 
-/**
- * ユーザー情報に関するビジネスロジックを処理する層。
- * UI層からのリクエストを受け取り、管理部を経由してデータサービスにアクセスします。
- */
 public class UserFeatureProcessor {
 
     private static final String TAG = "UserFeatureProcessor";

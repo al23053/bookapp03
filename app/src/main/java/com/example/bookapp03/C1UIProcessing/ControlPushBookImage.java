@@ -1,11 +1,18 @@
+/**
+ * モジュール名: ControlPushBookImage
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/15
+ * 概要: 本の画像の押下を処理するActivityです。
+ * 履歴:
+ * 2025/06/15 三浦寛生 新規作成
+ */
 package com.example.bookapp03.C1UIProcessing;
 
-import android.content.Context; // Contextが必要なのでインポート
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import com.example.bookapp03.model.Book;
-import com.example.bookapp03.ui.BookSelectionActivity;
 
 public class ControlPushBookImage {
     private static final String TAG = "ControlPushBookImage";

@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+**************************************************************
+* 作成者: 三浦寛生
+* 作成日: 2025/06/09
+* 概要: 検索結果画面のレイアウト
+* 履歴:
+*   2025/06/29 三浦寛生 新規作成
+**************************************************************
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Searchmain.DisplaySelectBook">
+    tools:context=".C1UIProcessing.DisplaySelectBook">
 
     <TextView
         android:id="@+id/search_results_header"

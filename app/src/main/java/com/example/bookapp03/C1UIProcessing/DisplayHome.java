@@ -11,13 +11,11 @@
 package com.example.bookapp03.C1UIProcessing;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -25,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate; // ← 追加
 
@@ -35,10 +32,9 @@ import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoDao
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
 import com.example.bookapp03.R;
 import com.example.bookapp03.model.Book;
-import com.example.bookapp03.service.GoogleBooksApiService;
+import com.example.bookapp03.C7SearchManaging.GoogleBooksApiService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;

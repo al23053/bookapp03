@@ -1,4 +1,14 @@
-package com.example.bookapp03.Searchmain;
+/**
+ * モジュール名: DisplaySearchBookNameWindow
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/15
+ * 概要: 検索入力画面の処理をするActivityです。
+ * ユーザーインターフェースの表示、ユーザー操作のハンドリング、
+ * そして各処理部（検索、ユーザー情報、本の情報）へのリクエストの委譲を担当します。
+ * 履歴:
+ * 2025/06/15 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C1UIProcessing;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,17 +27,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bookapp03.R;
 import com.example.bookapp03.adapter.BookCardAdapter;
 import com.example.bookapp03.model.Book;
-import com.example.bookapp03.ui.UserReviewListActivity;
 
 // 管理部、各種処理部、カスタムビューをインポート
 import com.example.bookapp03.manager.BookAppManager;
-import com.example.bookapp03.processor.SearchFeatureProcessor;
-import com.example.bookapp03.processor.UserFeatureProcessor;
-import com.example.bookapp03.processor.BookFeatureProcessor;
+import com.example.bookapp03.C4SearchProcessing.SearchFeatureProcessor;
+import com.example.bookapp03.C2UserInformationProcessing.UserFeatureProcessor;
+import com.example.bookapp03.C3BookInformationProcessing.BookFeatureProcessor;
 import com.example.bookapp03.view.SearchInputView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.example.bookapp03.C1UIProcessing.ControlBottomNavigationBar;
 
 import com.google.gson.Gson;
 
@@ -41,12 +49,6 @@ import java.util.stream.Collectors;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-/**
- * アプリケーションのメインアクティビティです。
- * ユーザーインターフェースの表示、ユーザー操作のハンドリング、
- * そして各処理部（検索、ユーザー情報、本の情報）へのリクエストの委譲を担当します。
- * BookCardAdapter.OnBookClickListenerを実装し、書籍カードのクリックイベントを処理します。
- */
 public class DisplaySearchBookNameWindow extends AppCompatActivity implements BookCardAdapter.OnBookClickListener {
 
     /**
