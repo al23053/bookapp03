@@ -296,7 +296,7 @@ public class SearchInputView extends LinearLayout implements SuggestionAdapter.O
      */
     private void performSearch(String query) {
         if (query.trim().isEmpty()) {
-            mainHandler.post(() -> Toast.makeText(getContext(), "検索キーワードを入力してください", Toast.LENGTH_SHORT).show());
+            mainHandler.post(() -> Toast.makeText(getContext(), "検索候補を入力してください", Toast.LENGTH_SHORT).show());
             return;
         }
         mainHandler.post(() -> Toast.makeText(getContext(), "「" + query + "」を検索中...", Toast.LENGTH_SHORT).show());
