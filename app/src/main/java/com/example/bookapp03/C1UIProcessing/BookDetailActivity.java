@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.util.Log;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,6 +53,21 @@ public class BookDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_detail);
+
+        // 戻るボタンの設定
+        ImageButton backButton = findViewById(R.id.back_button);
+        if (backButton != null) {
+            Log.d("BookDetailActivity", "Back button found. Setting OnClickListener.");
+            backButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("BookDetailActivity", "Back button clicked. Calling onBackPressed().");
+                    onBackPressed();
+                }
+            });
+        } else {
+            Log.e("BookDetailActivity", "R.id.back_button が見つかりません。XMLを確認してください。");
+        }
 
         controller = new BookDetailViewController();
         View rootView = findViewById(android.R.id.content); // Activityのルートビューを取得

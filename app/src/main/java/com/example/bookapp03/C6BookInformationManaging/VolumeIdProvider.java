@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 /**
- * モジュール名: Volume ID プロバイダ
+ * モジュール名: VolumeIDプロバイダ
  * 作成者: 鶴田凌
  * 作成日: 2025/06/15
  * 概要: Google Books API を使用し、ISBNまたは検索キーワードから最初のボリュームIDを取得するユーティリティクラス
@@ -21,8 +21,7 @@ public class VolumeIdProvider {
     private static final OkHttpClient client = new OkHttpClient();
 
     /**
-     * 指定されたISBNまたは検索キーワードに基づき、
-     * Google Books APIから最初にヒットしたvolumeIdを取得する。
+     * 指定されたISBNまたは検索キーワードに基づき、Google Books APIから最初にヒットしたvolumeIdを取得する。
      *
      * @param isbn ISBNコードまたは検索キーワード
      * @return 見つかった最初の volumeId。該当なしまたはエラー時は空文字を返す。

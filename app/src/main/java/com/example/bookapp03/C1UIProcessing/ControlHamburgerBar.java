@@ -56,7 +56,6 @@ public class ControlHamburgerBar {
             drawer.closeDrawer(GravityCompat.END);
             Log.d(TAG, "drawer closed");
         } else {
-            // 必要ならここでデータロード (uid, volumeId) を呼ぶ
             drawer.openDrawer(GravityCompat.END);
             Log.d(TAG, "drawer opened");
         }

@@ -23,10 +23,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * モジュール名: ハイライトメモ表示画面
+ * モジュール名: ハイライトメモ表示画面(ハンバーガーバーをタップした時の画面)
  * 作成者: 鶴田凌
  * 作成日: 2025/06/15
- * 概要: ハイライトメモ一覧を表示する画面
+ * 概要: ハイライトメモ一覧を表示する
  * 履歴:
  * 2025/06/15 鶴田凌 新規作成
  * 2025/07/02 鶴田凌 通常画面として修正
@@ -43,6 +43,10 @@ public class DisplayHighlightMemo extends AppCompatActivity {
     private HighlightMemoDao highlightMemoDao;
     private ExecutorService executor;
 
+    /**
+     * アクティビティの初期化
+     * @param savedInstanceState 保存されたインスタンス状態
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +96,9 @@ public class DisplayHighlightMemo extends AppCompatActivity {
         }
     }
     
+    /**
+     * Viewの初期化
+     */
     private void initializeViews() {
         // 戻るボタン
         ImageButton btnBack = findViewById(R.id.btnBack);
@@ -116,6 +123,9 @@ public class DisplayHighlightMemo extends AppCompatActivity {
         Log.d(TAG, "View初期化完了");
     }
     
+    /**
+     * ハイライトメモの読み込み
+     */
     private void loadHighlightMemos() {
         Log.d(TAG, "ハイライトメモ読み込み開始");
         
@@ -150,6 +160,10 @@ public class DisplayHighlightMemo extends AppCompatActivity {
         });
     }
     
+    /**
+     * UIの更新
+     * @param dataList ハイライトメモのデータリスト
+     */
     private void updateUI(List<HighlightMemoData> dataList) {
         try {
             if (adapter != null) {
@@ -178,11 +192,18 @@ public class DisplayHighlightMemo extends AppCompatActivity {
         }
     }
     
+    /**
+     * エラーメッセージを表示して終了
+     * @param message エラーメッセージ
+     */
     private void showErrorAndFinish(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         finish();
     }
     
+    /**
+     * アクティビティの破棄時にリソースを解放
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
