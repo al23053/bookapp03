@@ -1,3 +1,12 @@
+/**
+ * モジュール名: BookAppManager
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/15
+ * 概要:* アプリケーション全体の書籍データおよびユーザーデータアクセスを管理する層です。
+ * 。
+ * 履歴:
+ * 2025/06/15 三浦寛生 新規作成
+ */
 package com.example.bookapp03.C7SearchManaging;
 
 import android.util.Log;
@@ -12,15 +21,9 @@ import java.util.List;
 
 import okhttp3.OkHttpClient;
 
-/**
- * アプリケーション全体の書籍データおよびユーザーデータアクセスを管理する層。
- * 各サービス（Google Books API, Rakuten Books API, Firestore）へのアクセスを仲介します。
- */
 public class BookAppManager {
 
     private static final String TAG = "BookAppManager";
-
-    // 依存する各サービス
     private final GoogleBooksApiService googleBooksApiService;
     private final RakutenBooksApiService rakutenBooksApiService;
     private final FirestoreBookService firestoreBookService;
@@ -68,10 +71,9 @@ public class BookAppManager {
      */
     public BookAppManager(OkHttpClient httpClient, Gson gson,
                           String rakutenApplicationId, String googleBooksApiKeyForRakutenSecondarySearch) {
-        // GoogleBooksApiService は内部で OkHttpClient と Gson を初期化するため、引数なしのコンストラクタを使用
         this.googleBooksApiService = new GoogleBooksApiService();
         this.rakutenBooksApiService = new RakutenBooksApiService(httpClient, gson, rakutenApplicationId, googleBooksApiKeyForRakutenSecondarySearch);
-        this.firestoreBookService = new FirestoreBookService(httpClient, gson, googleBooksApiKeyForRakutenSecondarySearch); // rakutenSecondarySearch 用のキーを共有
+        this.firestoreBookService = new FirestoreBookService(httpClient, gson, googleBooksApiKeyForRakutenSecondarySearch);
         this.userGenreService = new UserGenreService();
         Log.d(TAG, "BookAppManager initialized.");
     }
