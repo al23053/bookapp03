@@ -25,15 +25,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookapp03.R;
-import com.example.bookapp03.adapter.BookCardAdapter;
-import com.example.bookapp03.model.Book;
+import com.example.bookapp03.C4SearchProcessing.Book;
 
 // 管理部、各種処理部、カスタムビューをインポート
-import com.example.bookapp03.manager.BookAppManager;
+import com.example.bookapp03.C7SearchManaging.BookAppManager;
 import com.example.bookapp03.C4SearchProcessing.SearchFeatureProcessor;
 import com.example.bookapp03.C2UserInformationProcessing.UserFeatureProcessor;
 import com.example.bookapp03.C3BookInformationProcessing.BookFeatureProcessor;
-import com.example.bookapp03.view.SearchInputView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -181,9 +179,9 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
         noHotBooksMessage = findViewById(R.id.no_hot_books_message);
 
         httpClient = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS) // 接続タイムアウト
-                .writeTimeout(10, TimeUnit.SECONDS)    // 書き込みタイムアウト
-                .readTimeout(30, TimeUnit.SECONDS)     // 読み込みタイムアウト
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
                 .build();
         gson = new Gson();
 
@@ -191,9 +189,7 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
 
         mAuth = FirebaseAuth.getInstance();
 
-        // 管理部を初期化し、必要な依存関係を注入 (DI)
         bookAppManager = new BookAppManager(httpClient, gson, RAKUTEN_APPLICATION_ID, GOOGLE_BOOKS_API_KEY_FOR_RAKUTEN_SECONDARY_SEARCH);
-        // 各種処理部を初期化し、管理部を注入
         searchFeatureProcessor = new SearchFeatureProcessor(bookAppManager);
         userFeatureProcessor = new UserFeatureProcessor(bookAppManager);
         bookFeatureProcessor = new BookFeatureProcessor(bookAppManager);
@@ -238,15 +234,8 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
             String currentUserId = currentUser.getUid();
             fetchUserFavoriteGenres(currentUserId);
         } else {
-            // ユーザーがログインしていない場合
-            // 必要に応じてログイン画面へのリダイレクトや、デフォルトの動作を定義
             Log.w("DisplaySearchBookNameWindow", "No user is currently logged in. Cannot fetch favorite genres.");
             Toast.makeText(this, "ログインしていません。おすすめ本を表示できません。", Toast.LENGTH_LONG).show();
-            // 例: デフォルトのおすすめを表示するか、何も表示しないか
-            // matchingBooksAdapter.setBookList(new ArrayList<>());
-            // nonMatchingBooksAdapter.setBookList(new ArrayList<>());
-            // noMatchingBooksMessage.setText("ログインしておすすめ本を表示しましょう！");
-            // noMatchingBooksMessage.setVisibility(View.VISIBLE);
         }
 
         fetchRakutenRankingBooks();
@@ -279,22 +268,18 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
      * RecyclerViewsの初期設定を行います。
      */
     private void setupRecommendedBooksRecyclerViews() {
-        // 合う本のRecyclerViewの初期設定
         matchingBooksRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         matchingBooksAdapter = new BookCardAdapter(new ArrayList<>(), this);
         matchingBooksRecyclerView.setAdapter(matchingBooksAdapter);
 
-        // 合わない本のRecyclerViewの初期設定
         nonMatchingBooksRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         nonMatchingBooksAdapter = new BookCardAdapter(new ArrayList<>(), this);
         nonMatchingBooksRecyclerView.setAdapter(nonMatchingBooksAdapter);
 
-        // 話題の本のRecyclerViewの初期設定
         hotBooksRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         hotBooksAdapter = new BookCardAdapter(new ArrayList<>(), this);
         hotBooksRecyclerView.setAdapter(hotBooksAdapter);
 
-        // コンテナやヘッダー設定
         recommendedBooksContainer.setVisibility(View.VISIBLE);
         matchingBooksHeader.setVisibility(View.VISIBLE);
         nonMatchingBooksHeader.setVisibility(View.VISIBLE);
@@ -360,7 +345,6 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
                 Log.d("MainActivity", "Firestoreから取得した合わない本 (" + nonMatchingBooks.size() + "冊): " + nonMatchingBooks.stream().map(Book::getTitle).collect(Collectors.joining(", ")));
 
                 mainHandler.post(() -> {
-                    // ユーザーの好みに合う本の表示更新
                     matchingBooksHeader.setVisibility(View.VISIBLE);
                     matchingBooksRecyclerView.setVisibility(View.VISIBLE);
 
@@ -373,7 +357,6 @@ public class DisplaySearchBookNameWindow extends AppCompatActivity implements Bo
                         noMatchingBooksMessage.setVisibility(View.VISIBLE);
                     }
 
-                    // ユーザーの好みと異なる本の表示更新
                     nonMatchingBooksHeader.setVisibility(View.VISIBLE);
                     nonMatchingBooksRecyclerView.setVisibility(View.VISIBLE);
 

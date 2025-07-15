@@ -1,4 +1,14 @@
-package com.example.bookapp03.view;
+/**
+ * モジュール名: SearchInputView
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/30
+ * 概要:　検索入力フィールド、検索ボタン、検索候補リストをまとめたカスタムビューです。
+ * SearchFeatureProcessorを経由してGoogle Books APIを使った検索候補と書籍検索のロジックをカプセル化します。
+ * このビューはUI層の一部として機能し、ユーザーの検索操作を受け付け、処理部に委譲します。
+ * 履歴:
+ * 2025/06/30 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C1UIProcessing;
 
 import android.content.Context;
 import android.os.Handler;
@@ -20,19 +30,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookapp03.R;
-import com.example.bookapp03.adapter.SuggestionAdapter;
-import com.example.bookapp03.model.Book;
+import com.example.bookapp03.C4SearchProcessing.Book;
 import com.example.bookapp03.C4SearchProcessing.SearchFeatureProcessor;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
 
-/**
- * 検索入力フィールド、検索ボタン、検索候補リストをまとめたカスタムビューです。
- * SearchFeatureProcessorを経由してGoogle Books APIを使った検索候補と書籍検索のロジックをカプセル化します。
- * このビューはUI層の一部として機能し、ユーザーの検索操作を受け付け、処理部に委譲します。
- */
 public class SearchInputView extends LinearLayout implements SuggestionAdapter.OnSuggestionClickListener {
 
     private static final String TAG = "SearchInputView";
@@ -142,23 +146,18 @@ public class SearchInputView extends LinearLayout implements SuggestionAdapter.O
     private void init(Context context, AttributeSet attrs) {
         LayoutInflater.from(context).inflate(R.layout.view_search_input, this, true);
 
-        // UI要素の初期化
         searchInputLayout = findViewById(R.id.search_input_layout_internal);
         searchEditText = findViewById(R.id.search_edit_text_internal);
         searchButton = findViewById(R.id.search_button_internal);
         suggestionsRecyclerView = findViewById(R.id.suggestions_recycler_view_internal);
 
-        // ハンドラーの初期化
         mainHandler = new Handler(Looper.getMainLooper());
         suggestionHandler = new Handler(Looper.getMainLooper());
 
-        // サジェストRecyclerViewのセットアップ
         setupSuggestionsRecyclerView();
 
-        // 検索入力フィールドのリスナー設定
         setupSearchInputListeners();
 
-        // 検索ボタンのリスナー設定
         setupSearchButtonListener();
     }
 
@@ -248,7 +247,6 @@ public class SearchInputView extends LinearLayout implements SuggestionAdapter.O
      * @param query 検索クエリ文字列
      */
     private void fetchSuggestions(String query) {
-        // SearchFeatureProcessorが注入されているかチェック
         if (searchFeatureProcessor == null) {
             Log.e(TAG, "SearchFeatureProcessorが初期化されていません。");
             mainHandler.post(() -> Toast.makeText(getContext(), "検索サービスが利用できません。", Toast.LENGTH_SHORT).show());
@@ -256,7 +254,6 @@ public class SearchInputView extends LinearLayout implements SuggestionAdapter.O
             return;
         }
 
-        // 検索処理部に対して検索候補の取得を依頼
         searchFeatureProcessor.fetchSuggestions(query, new SearchFeatureProcessor.SuggestionsCallback() {
             /**
              * 検索候補が正常に取得されたときに呼び出されます。
@@ -270,8 +267,8 @@ public class SearchInputView extends LinearLayout implements SuggestionAdapter.O
                         suggestionAdapter.setSuggestions(suggestions);
                         suggestionsRecyclerView.setVisibility(View.VISIBLE);
                     } else {
-                        suggestionAdapter.setSuggestions(null); // 候補がなければリストをクリア
-                        suggestionsRecyclerView.setVisibility(View.GONE); // リストを非表示
+                        suggestionAdapter.setSuggestions(null);
+                        suggestionsRecyclerView.setVisibility(View.GONE);
                     }
                 });
             }
@@ -303,9 +300,8 @@ public class SearchInputView extends LinearLayout implements SuggestionAdapter.O
             return;
         }
         mainHandler.post(() -> Toast.makeText(getContext(), "「" + query + "」を検索中...", Toast.LENGTH_SHORT).show());
-        suggestionsRecyclerView.setVisibility(View.GONE); // 検索開始時に候補を非表示にする
+        suggestionsRecyclerView.setVisibility(View.GONE);
 
-        // SearchFeatureProcessorが注入されているかチェック
         if (searchFeatureProcessor == null) {
             Log.e(TAG, "SearchFeatureProcessorが初期化されていません。");
             mainHandler.post(() -> Toast.makeText(getContext(), "検索サービスが利用できません。", Toast.LENGTH_SHORT).show());

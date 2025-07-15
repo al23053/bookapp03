@@ -1,21 +1,25 @@
+/**
+ * モジュール名: SearchFeatureProcessor
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/30
+ * 概要:　検索機能のビジネスロジックを処理するクラス。
+ * UIと管理部の間に位置し、検索に関する特定の振る舞いをカプセル化します。
+ * 履歴:
+ * 2025/06/30 三浦寛生 新規作成
+ */
 package com.example.bookapp03.C4SearchProcessing;
 
 import android.util.Log;
 
-import com.example.bookapp03.manager.BookAppManager; // 管理部をインポート
-import com.example.bookapp03.model.Book;
+import com.example.bookapp03.C7SearchManaging.BookAppManager;
 
 import java.util.List;
 
-/**
- * 検索機能に特化したビジネスロジックを処理するクラス。
- * UIと管理部の間に位置し、検索に関する特定の振る舞いをカプセル化します。
- */
 public class SearchFeatureProcessor {
 
     private static final String TAG = "SearchFeatureProcessor";
 
-    private final BookAppManager bookAppManager; // 検索管理部への参照
+    private final BookAppManager bookAppManager;
 
     public interface SuggestionsCallback {
         void onSuggestionsReceived(List<String> suggestions);
@@ -48,14 +52,13 @@ public class SearchFeatureProcessor {
      */
     public void fetchSuggestions(String query, final SuggestionsCallback callback) {
         if (query == null || query.trim().isEmpty()) {
-            callback.onSuggestionsReceived(List.of()); // Java 9+の場合、Collections.emptyList() でもOK
+            callback.onSuggestionsReceived(List.of());
             return;
         }
 
         bookAppManager.fetchSuggestions(query, new BookAppManager.SuggestionsCallback() {
             @Override
             public void onSuggestionsReceived(List<String> suggestions) {
-                // 必要であれば、ここで検索候補に対する追加の処理
                 callback.onSuggestionsReceived(suggestions);
             }
 

@@ -30,23 +30,17 @@ public class BookNotFoundActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_not_found);
 
-        // UI要素の参照を取得
         TextView messageTextView = findViewById(R.id.bookNotFoundMessage);
         Button backButton = findViewById(R.id.bookNotFoundBackButton);
 
-        // Intentから本のタイトル情報を受け取る
         String bookTitle = getIntent().getStringExtra("bookTitle");
 
-        // 書籍タイトルが存在する場合は、メッセージを表示
         if (bookTitle != null) {
             messageTextView.setText(bookTitle + " の情報はデータベースに登録されていません。");
         } else {
-            // 書籍タイトルが渡されなかった場合のメッセージ
             messageTextView.setText("この本の情報はデータベースに登録されていません。");
         }
 
-        // 「戻る」ボタン
-        // このActivityを終了して前の画面に戻ります。
         ControlBackButton.setupBackButton(backButton, this);
     }
 }

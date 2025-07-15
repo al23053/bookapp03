@@ -12,7 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.bookapp03.model.Book;
+import com.example.bookapp03.C4SearchProcessing.Book;
 
 public class ControlPushBookImage {
     private static final String TAG = "ControlPushBookImage";

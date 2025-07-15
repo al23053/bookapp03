@@ -1,4 +1,4 @@
-package com.example.bookapp03.Searchmain;
+package com.example.bookapp03.C6BookInformationManaging;
 
 import android.app.Application;
 

@@ -82,28 +82,21 @@ public class ReviewDetailBottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        Dialog dialog = getDialog(); // DialogFragmentが管理するDialogを取得
+        Dialog dialog = getDialog();
 
         if (dialog instanceof BottomSheetDialog) {
             BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialog;
-            // BottomSheetDialogのレイアウトを取得
             FrameLayout bottomSheet = bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
 
             if (bottomSheet != null) {
-                // BottomSheetBehaviorを取得
                 BottomSheetBehavior<FrameLayout> behavior = BottomSheetBehavior.from(bottomSheet);
 
-                // 画面の高さを取得
                 int screenHeight = getResources().getDisplayMetrics().heightPixels;
-                // ボトムシートの最大高さを画面の約90%に設定
-                int desiredHeight = (int) (screenHeight * 0.9); // 例: 画面の90%
+                int desiredHeight = (int) (screenHeight * 0.9);
 
-                // peekHeight（初期表示の高さ）も desiredHeight に設定すると、常にこの高さで表示される
                 behavior.setPeekHeight(desiredHeight);
-                // 完全に展開された状態 (Expanded) にする
                 behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-                // layoutParams を設定して、BottomSheetの高さ自体も固定する
                 ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
                 if (layoutParams != null) {
                     layoutParams.height = desiredHeight;

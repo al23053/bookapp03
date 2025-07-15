@@ -1,16 +1,21 @@
-package com.example.bookapp03.model;
+/**
+ * モジュール名: Book
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/30
+ * 概要:　書籍情報を表現するモデルクラスです。
+ * Google Books APIや楽天ブックスAPI、Firestoreから取得した書籍データを格納します。
+ * Intentでオブジェクトを渡すためにSerializableを実装しています。
+ * 履歴:
+ * 2025/06/30 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C4SearchProcessing;
 
-import com.google.gson.annotations.SerializedName; // Gsonを使っている場合に必要
+import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable; // Intentでオブジェクトを渡す場合に必要
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * 書籍情報を表現するモデルクラスです。
- * Google Books APIや楽天ブックスAPI、Firestoreから取得した書籍データを格納します。
- * Intentでオブジェクトを渡すためにSerializableを実装しています。
- */
 public class Book implements Serializable {
 
     /**
@@ -98,12 +103,6 @@ public class Book implements Serializable {
         this.description = description;
         this.thumbnailUrl = thumbnailUrl;
         this.categories = categories;
-        // 以下は、このコンストラクタの引数に含まれていないため、ここでは初期化されません。
-        // this.publishedDate = null;
-        // this.infoLink = null;
-        // this.rakutenItemUrl = null;
-        // this.rakutenLargeImageUrl = null;
-        // this.isbn = null;
     }
 
     /**
@@ -263,7 +262,7 @@ public class Book implements Serializable {
      *
      * @return ISBN文字列
      */
-    public String getIsbn() { // ★ここが追加されました！
+    public String getIsbn() {
         return isbn;
     }
 
@@ -272,7 +271,7 @@ public class Book implements Serializable {
      *
      * @param isbn 設定するISBN文字列
      */
-    public void setIsbn(String isbn) { // ★ここが追加されました！
+    public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
 
@@ -299,7 +298,7 @@ public class Book implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return Objects.equals(id, book.id); // IDで一意性を判断
+        return Objects.equals(id, book.id);
     }
 
     /**
@@ -330,7 +329,7 @@ public class Book implements Serializable {
                 ", infoLink='" + infoLink + '\'' +
                 ", rakutenItemUrl='" + rakutenItemUrl + '\'' +
                 ", rakutenLargeImageUrl='" + rakutenLargeImageUrl + '\'' +
-                ", isbn='" + isbn + '\'' + // ★ここが追加されました！
+                ", isbn='" + isbn + '\'' +
                 '}';
     }
 }

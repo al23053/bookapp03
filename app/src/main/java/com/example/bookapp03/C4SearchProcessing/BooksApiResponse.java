@@ -1,19 +1,24 @@
-package com.example.bookapp03.model;
+/**
+ * モジュール名: BooksApiResponse
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/30
+ * 概要:　Google Books APIからのレスポンス構造を表現するモデルクラスです。
+ * 書籍検索結果のトップレベルのコンテナとなります。
+ * 履歴:
+ * 2025/06/30 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C4SearchProcessing;
 
-import com.google.gson.annotations.SerializedName; // GsonでJSONフィールドをマッピングするために必要
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Google Books APIからのレスポンス構造を表現するモデルクラスです。
- * 書籍検索結果のトップレベルのコンテナとなります。
- */
 public class BooksApiResponse {
     /**
      * 個々の書籍情報アイテムのリストです。
      */
     @SerializedName("items")
-    private List<Item> items; // 各書籍の情報
+    private List<Item> items;
 
     /**
      * 個々の書籍情報アイテムのリストを取得します。
@@ -39,7 +44,7 @@ public class BooksApiResponse {
          * 書籍の詳細情報を含むオブジェクト。
          */
         @SerializedName("volumeInfo")
-        private VolumeInfo volumeInfo; // 書籍の詳細情報
+        private VolumeInfo volumeInfo;
 
 
         /**
@@ -102,7 +107,6 @@ public class BooksApiResponse {
          */
         @SerializedName("categories")
         private List<String> categories;
-        // 他にも多くのフィールドがありますが、ここでは最低限に絞っています
         /**
          * 書籍の業界識別子（ISBNなど）のリスト。
          */
