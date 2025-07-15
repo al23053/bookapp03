@@ -168,7 +168,6 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("email", email);
-        userMap.put("displayName", displayName);
 
         db.collection("users").document(uid)
                 .set(userMap)
