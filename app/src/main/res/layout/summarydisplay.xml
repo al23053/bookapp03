@@ -71,34 +71,48 @@
             app:layout_constraintTop_toBottomOf="@id/bookNameInput" />
 
         <!-- 下部操作エリア -->
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/footerLayout"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
+            <!-- 左側のテキスト -->
             <TextView
+                android:id="@+id/textPublic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="外部に公開" />
+                android:text="外部に公開"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="16dp" />
 
+            <!-- スイッチ -->
             <Switch
                 android:id="@+id/switchPublic"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/textPublic"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="8dp" />
 
+            <!-- 右側のボタン -->
             <ImageButton
                 android:id="@+id/btnRegisterSummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_send"
                 android:tint="?android:attr/textColorPrimary"
-                android:background="?attr/selectableItemBackgroundBorderless" />
-        </LinearLayout>
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="16dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
