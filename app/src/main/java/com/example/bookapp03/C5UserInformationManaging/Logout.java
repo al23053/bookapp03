@@ -29,8 +29,7 @@ public class Logout {
     }
 
     /**
-     * FirebaseAuth でサインアウトし、
-     * ログイン画面へ遷移する。
+     * FirebaseAuth でサインアウトし、ログイン画面へ遷移する。
      *
      * @return true=サインアウト・画面遷移成功、false=例外発生
      */

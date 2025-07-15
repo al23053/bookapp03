@@ -23,6 +23,7 @@ public class RegisterAccountSwitching {
     }
 
     /**
+     * SharedPreferences にユーザ情報を保存する。
      * @param info UserInfo オブジェクト
      * @return true=SharedPreferences への保存成功
      */
