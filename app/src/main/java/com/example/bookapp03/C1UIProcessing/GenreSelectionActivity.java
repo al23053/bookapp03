@@ -2,11 +2,12 @@
  * モジュール名: GenreSelectionActivity
  * 作成者: 増田学斗
  * 作成日: 2025/06/15
- * 概要: ユーザーが本のジャンルを選択する画面。選択内容をFirestoreに保存し、次画面に進む。
- *       Firestoreに保存済みのジャンルがある場合は、そのチェック状態を復元する。
+ * 概要: ユーザーが本のジャンルを選択する画面。選択内容をFirestoreに英語で保存し、
+ * UI上では日本語で表示する。保存済みのジャンルがある場合はチェック状態を復元する。
  * 履歴:
- *   2025/06/15 増田学斗 新規作成
- *   2025/07/07 増田学斗 Firestoreからジャンル情報を読み込みチェック状態を復元する機能を追加
+ * 2025/06/15 増田学斗 新規作成
+ * 2025/07/07 増田学斗 Firestoreからジャンル情報を読み込みチェック状態を復元する機能を追加
+ * 2025/07/15 増田学斗 ジャンルを英語保存・日本語表示するマッピング機能を追加
  */
 package com.example.bookapp03.C1UIProcessing;
 
@@ -32,31 +33,77 @@ import java.util.List;
 public class GenreSelectionActivity extends AppCompatActivity {
 
     private static final String TAG = "GenreSelectionActivity";
+    private boolean isFirstTime = true; // 初回設定かどうかのフラグ
+    private ArrayList<CheckBox> genreCheckboxes = new ArrayList<>(); // チェックボックス一覧
+    private String nickname; // 受け取ったニックネーム
+    private String iconBase64; // 受け取ったBase64形式のアイコン
+    private Button buttonNext; // 「次へ」ボタン
 
     /**
-     * 初回設定かどうかを判定するフラグ
+     * 英語ジャンル → 日本語ジャンル のマッピング
      */
-    private boolean isFirstTime = true;
+    private static final HashMap<String, String> genreMap = new HashMap<String, String>() {{
+        // 省略：ジャンル名マッピング（英語→日本語）
+        put("Architecture", "建築");
+        put("Art", "美術");
+        put("Biography & Autobiography", "伝記・自伝");
+        put("Body, Mind & Spirit", "ボディ・マインド・スピリット");
+        put("Business & Economics", "ビジネス・経済");
+        put("Comics & Graphic Novels", "コミックス・グラフィックノベル");
+        put("Children's stories", "児童書");
+        put("Computers", "コンピュータ");
+        put("Cooking", "料理");
+        put("Crafts & Hobbies", "クラフト・趣味");
+        put("Design", "デザイン");
+        put("Drama", "演劇");
+        put("Education", "教育");
+        put("Family & Relationships", "家族・人間関係");
+        put("Fiction", "小説");
+        put("Foreign Language Study", "外国語学習");
+        put("Health & Fitness", "健康・フィットネス");
+        put("History", "歴史");
+        put("House & Home", "家・住まい");
+        put("Humor", "ユーモア");
+        put("Juvenile Fiction", "児童小説");
+        put("Juvenile Nonfiction", "児童ノンフィクション");
+        put("Language Arts & Disciplines", "言語学・文学研究");
+        put("Law", "法律");
+        put("Literary Collections", "文学評論");
+        put("Literary Criticism", "文芸評論");
+        put("Mathematics", "数学");
+        put("Medical", "医学");
+        put("Music", "音楽");
+        put("Nature", "自然");
+        put("Performing Arts", "舞台芸術");
+        put("Pets", "ペット");
+        put("Philosophy", "哲学");
+        put("Photography", "写真");
+        put("Poetry", "詩");
+        put("Political Science", "政治学");
+        put("Psychology", "心理学");
+        put("Reference", "リファレンス");
+        put("Religion", "宗教");
+        put("Science", "科学");
+        put("Self-Help", "自己啓発");
+        put("Social Science", "社会科学");
+        put("Sports & Recreation", "スポーツ・レクリエーション");
+        put("Study Aids", "学習補助");
+        put("Technology & Engineering", "テクノロジー・エンジニアリング");
+        put("Transportation", "交通");
+        put("Travel", "旅行");
+        put("True Crime", "実録・犯罪");
+    }};
 
     /**
-     * ジャンル選択用チェックボックス群
+     * 日本語ジャンル → 英語ジャンル の逆マッピング（保存・読み込み時に使用）
      */
-    private ArrayList<CheckBox> genreCheckboxes = new ArrayList<>();
+    private static final HashMap<String, String> reverseGenreMap = new HashMap<>();
 
-    /**
-     * 前画面から受け取るニックネーム
-     */
-    private String nickname;
-
-    /**
-     * 前画面から受け取るアイコン画像（Base64形式）
-     */
-    private String iconBase64;
-
-    /**
-     * 「次へ」ボタン
-     */
-    private Button buttonNext;
+    static {
+        for (String key : genreMap.keySet()) {
+            reverseGenreMap.put(genreMap.get(key), key);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,22 +111,14 @@ public class GenreSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_genre_selection);
 
         Log.d(TAG, "onCreate開始");
-
-        // 前画面からのデータを取得
-        retrieveIntentData();
-
-        // View 初期化
-        initializeViews();
-
-        // Firestoreから保存済みジャンルを読み込む
-        loadExistingGenres();
-
-        // 「次へ」ボタンの処理設定
-        setupNextButton();
+        retrieveIntentData(); // 受け取ったデータ（ニックネーム等）を取り出す
+        initializeViews();    // チェックボックス初期化
+        loadExistingGenres(); // Firestoreからジャンル復元
+        setupNextButton();    // 次へボタンの動作設定
     }
 
     /**
-     * Intentからnickname, iconBase64, isFirstTimeを取得
+     * 前画面からのデータ（nickname, iconBase64, 初回設定かどうか）を取得
      */
     private void retrieveIntentData() {
         nickname = getIntent().getStringExtra("nickname");
@@ -88,25 +127,40 @@ public class GenreSelectionActivity extends AppCompatActivity {
     }
 
     /**
-     * View要素の初期化
+     * ID生成処理を関数かして整合性を担保
+     */
+    private String toSnakeCaseId(String englishKey) {
+        return englishKey
+                .replace("&", "and")                      // & を and に
+                .toLowerCase()
+                .replaceAll("[^a-z0-9]+", "_")            // 非英数字は _
+                .replaceAll("_+", "_")                    // __ を _
+                .replaceAll("^_|_$", "");                 // 先頭/末尾の _ を除去
+    }
+
+
+    /**
+     * レイアウトに定義されたチェックボックスを genreCheckboxes に格納
+     * ID名は checkbox_ジャンル名（英語）をスネークケースに変換した形式
      */
     private void initializeViews() {
-        genreCheckboxes.add(findViewById(R.id.checkbox_mystery));
-        genreCheckboxes.add(findViewById(R.id.checkbox_horror));
-        genreCheckboxes.add(findViewById(R.id.checkbox_biography));
-        genreCheckboxes.add(findViewById(R.id.checkbox_selfhelp));
-        genreCheckboxes.add(findViewById(R.id.checkbox_romance));
-        genreCheckboxes.add(findViewById(R.id.checkbox_history));
-        genreCheckboxes.add(findViewById(R.id.checkbox_business));
-        genreCheckboxes.add(findViewById(R.id.checkbox_scifi));
-        genreCheckboxes.add(findViewById(R.id.checkbox_fantasy));
-        genreCheckboxes.add(findViewById(R.id.checkbox_technology));
-
+        for (String jp : reverseGenreMap.keySet()) {
+            String english = reverseGenreMap.get(jp);
+            String idName = "checkbox_" + toSnakeCaseId(english);
+            int resID = getResources().getIdentifier(idName, "id", getPackageName());
+            CheckBox cb = findViewById(resID);
+            if (cb != null) {
+                genreCheckboxes.add(cb);
+            } else {
+                Log.w(TAG, "未検出チェックボックスID: " + idName);
+            }
+        }
         buttonNext = findViewById(R.id.buttonNextToComplete);
     }
 
+
     /**
-     * 「次へ」ボタンのクリック処理を設定
+     * 「次へ」ボタン押下時の処理。選択されたジャンル（日本語）を英語に変換し、Firestoreに保存。
      */
     private void setupNextButton() {
         buttonNext.setOnClickListener(v -> {
@@ -114,7 +168,9 @@ public class GenreSelectionActivity extends AppCompatActivity {
 
             for (CheckBox cb : genreCheckboxes) {
                 if (cb.isChecked()) {
-                    selectedGenres.add(cb.getText().toString());
+                    String japanese = cb.getText().toString();
+                    String english = reverseGenreMap.get(japanese);
+                    if (english != null) selectedGenres.add(english);
                 }
             }
 
@@ -128,7 +184,7 @@ public class GenreSelectionActivity extends AppCompatActivity {
     }
 
     /**
-     * Firestoreにジャンル情報を保存し、次画面に進む
+     * Firestoreにジャンル（英語）を保存。ニックネームとアイコンも一緒に保存。
      */
     private void saveGenresToFirestore(List<String> selectedGenres) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -139,30 +195,23 @@ public class GenreSelectionActivity extends AppCompatActivity {
         userData.put("iconBase64", iconBase64);
         userData.put("genre", selectedGenres);
 
-        db.collection("users").document(uid)
-                .set(userData, SetOptions.merge())
-                .addOnSuccessListener(unused -> {
-                    Log.d(TAG, "ユーザ情報の保存に成功");
-
-                    if (isFirstTime) {
-                        // 初回設定時：完了画面に遷移
-                        Intent intent = new Intent(this, CompleteActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        // 再設定時：元の画面に戻る
-                        setResult(Activity.RESULT_OK);
-                        finish();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Firestore保存失敗", e);
-                    Toast.makeText(this, "登録失敗", Toast.LENGTH_SHORT).show();
-                });
+        db.collection("users").document(uid).set(userData, SetOptions.merge()).addOnSuccessListener(unused -> {
+            Log.d(TAG, "ユーザ情報の保存に成功");
+            if (isFirstTime) {
+                startActivity(new Intent(this, CompleteActivity.class));
+                finish();
+            } else {
+                setResult(Activity.RESULT_OK);
+                finish();
+            }
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Firestore保存失敗", e);
+            Toast.makeText(this, "登録失敗", Toast.LENGTH_SHORT).show();
+        });
     }
 
     /**
-     * Firestoreから既存のジャンルを取得し、チェックボックスに反映
+     * Firestoreから保存されたジャンル（英語）を読み込み、該当するチェックボックスをチェック状態にする
      */
     private void loadExistingGenres() {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -173,7 +222,9 @@ public class GenreSelectionActivity extends AppCompatActivity {
                 List<String> savedGenres = (List<String>) document.get("genre");
                 if (savedGenres != null) {
                     for (CheckBox cb : genreCheckboxes) {
-                        if (savedGenres.contains(cb.getText().toString())) {
+                        String japanese = cb.getText().toString();
+                        String english = reverseGenreMap.get(japanese);
+                        if (english != null && savedGenres.contains(english)) {
                             cb.setChecked(true);
                         }
                     }
