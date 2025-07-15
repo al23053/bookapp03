@@ -4,9 +4,10 @@
 **************************************************************
 * 作成者: 増田学斗
 * 作成日: 2025/06/15
-* 概要: 好きな本のジャンル選択画面のレイアウト
+* 概要: 好きな本のジャンル選択画面のレイアウト（50ジャンル対応）
 * 履歴:
 *   2025/06/15 増田学斗 新規作成
+*   2025/07/15 増田学斗 ジャンルをGoogle Books API基準で50件に拡張
 **************************************************************
 -->
 
@@ -27,35 +28,108 @@
             android:text="好きなジャンルを選んでください"
             android:textSize="18sp" />
 
+        <!-- 48ジャンルのチェックボックス -->
         <CheckBox
-            android:id="@+id/checkbox_mystery"
+            android:id="@+id/checkbox_architecture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ミステリー" />
+            android:text="建築" />
 
         <CheckBox
-            android:id="@+id/checkbox_horror"
+            android:id="@+id/checkbox_art"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ホラー" />
+            android:text="美術" />
 
         <CheckBox
-            android:id="@+id/checkbox_biography"
+            android:id="@+id/checkbox_biography_and_autobiography"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="伝記" />
+            android:text="伝記・自伝" />
 
         <CheckBox
-            android:id="@+id/checkbox_selfhelp"
+            android:id="@+id/checkbox_body_mind_and_spirit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="自己啓発" />
+            android:text="ボディ・マインド・スピリット" />
 
         <CheckBox
-            android:id="@+id/checkbox_romance"
+            android:id="@+id/checkbox_business_and_economics"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="恋愛" />
+            android:text="ビジネス・経済" />
+
+        <CheckBox
+            android:id="@+id/checkbox_comics_and_graphic_novels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="コミックス・グラフィックノベル" />
+
+        <CheckBox
+            android:id="@+id/checkbox_children_s_stories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="児童書" />
+
+        <CheckBox
+            android:id="@+id/checkbox_computers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="コンピュータ" />
+
+        <CheckBox
+            android:id="@+id/checkbox_cooking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="料理" />
+
+        <CheckBox
+            android:id="@+id/checkbox_crafts_and_hobbies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="クラフト・趣味" />
+
+        <CheckBox
+            android:id="@+id/checkbox_design"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="デザイン" />
+
+        <CheckBox
+            android:id="@+id/checkbox_drama"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="演劇" />
+
+        <CheckBox
+            android:id="@+id/checkbox_education"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="教育" />
+
+        <CheckBox
+            android:id="@+id/checkbox_family_and_relationships"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="家族・人間関係" />
+
+        <CheckBox
+            android:id="@+id/checkbox_fiction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="小説" />
+
+        <CheckBox
+            android:id="@+id/checkbox_foreign_language_study"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="外国語学習" />
+
+        <CheckBox
+            android:id="@+id/checkbox_health_and_fitness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="健康・フィットネス" />
 
         <CheckBox
             android:id="@+id/checkbox_history"
@@ -64,30 +138,184 @@
             android:text="歴史" />
 
         <CheckBox
-            android:id="@+id/checkbox_business"
+            android:id="@+id/checkbox_house_and_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ビジネス" />
+            android:text="家・住まい" />
 
         <CheckBox
-            android:id="@+id/checkbox_scifi"
+            android:id="@+id/checkbox_humor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SF" />
+            android:text="ユーモア" />
 
         <CheckBox
-            android:id="@+id/checkbox_fantasy"
+            android:id="@+id/checkbox_juvenile_fiction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ファンタジー" />
+            android:text="児童小説" />
 
         <CheckBox
-            android:id="@+id/checkbox_technology"
+            android:id="@+id/checkbox_juvenile_nonfiction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="コンピュータ・IT" />
+            android:text="児童ノンフィクション" />
 
-        <!-- 必要に応じてジャンルを追加 -->
+        <CheckBox
+            android:id="@+id/checkbox_language_arts_and_disciplines"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="言語学・文学研究" />
+
+        <CheckBox
+            android:id="@+id/checkbox_law"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="法律" />
+
+        <CheckBox
+            android:id="@+id/checkbox_literary_collections"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="文学評論" />
+
+        <CheckBox
+            android:id="@+id/checkbox_literary_criticism"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="文芸評論" />
+
+        <CheckBox
+            android:id="@+id/checkbox_mathematics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="数学" />
+
+        <CheckBox
+            android:id="@+id/checkbox_medical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="医学" />
+
+        <CheckBox
+            android:id="@+id/checkbox_music"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="音楽" />
+
+        <CheckBox
+            android:id="@+id/checkbox_nature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="自然" />
+
+        <CheckBox
+            android:id="@+id/checkbox_performing_arts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="舞台芸術" />
+
+        <CheckBox
+            android:id="@+id/checkbox_pets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ペット" />
+
+        <CheckBox
+            android:id="@+id/checkbox_philosophy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="哲学" />
+
+        <CheckBox
+            android:id="@+id/checkbox_photography"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="写真" />
+
+        <CheckBox
+            android:id="@+id/checkbox_poetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="詩" />
+
+        <CheckBox
+            android:id="@+id/checkbox_political_science"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="政治学" />
+
+        <CheckBox
+            android:id="@+id/checkbox_psychology"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="心理学" />
+
+        <CheckBox
+            android:id="@+id/checkbox_reference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="リファレンス" />
+
+        <CheckBox
+            android:id="@+id/checkbox_religion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="宗教" />
+
+        <CheckBox
+            android:id="@+id/checkbox_science"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="科学" />
+
+        <CheckBox
+            android:id="@+id/checkbox_self_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="自己啓発" />
+
+        <CheckBox
+            android:id="@+id/checkbox_social_science"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="社会科学" />
+
+        <CheckBox
+            android:id="@+id/checkbox_sports_and_recreation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="スポーツ・レクリエーション" />
+
+        <CheckBox
+            android:id="@+id/checkbox_study_aids"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="学習補助" />
+
+        <CheckBox
+            android:id="@+id/checkbox_technology_and_engineering"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="テクノロジー・エンジニアリング" />
+
+        <CheckBox
+            android:id="@+id/checkbox_transportation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="交通" />
+
+        <CheckBox
+            android:id="@+id/checkbox_travel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="旅行" />
+
+        <CheckBox
+            android:id="@+id/checkbox_true_crime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="実録・犯罪" />
 
         <Button
             android:id="@+id/buttonNextToComplete"
@@ -95,5 +323,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="次へ" />
+
     </LinearLayout>
 </ScrollView>
