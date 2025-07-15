@@ -242,6 +242,7 @@ public class DisplaySummary extends AppCompatActivity {
 
     /**
      * Google Books APIで書籍を検索して候補を表示
+     * @param query 検索クエリ
      */
     private void searchBookSuggestions(String query) {
         Log.d(TAG, "Google Books API検索開始: " + query);
@@ -267,7 +268,9 @@ public class DisplaySummary extends AppCompatActivity {
     }
 
     /**
+     * 本の名前入力欄の候補を表示する
      * AutoCompleteTextViewのアダプターを更新
+     * @param books 検索結果の書籍リスト
      */
     private void updateAutoCompleteAdapter(List<Book> books) {
         if (books == null || books.isEmpty()) {
@@ -368,7 +371,10 @@ public class DisplaySummary extends AppCompatActivity {
         Log.d(TAG, "DisplaySummary onDestroy完了");
     }
 
-    /** 外部から本の名前入力欄を参照するためのゲッター */
+    /**
+     * 外部から本の名前入力欄を参照するためのゲッター
+     * @return 本の名前入力欄
+     */
     public AutoCompleteTextView getBookNameInput() {
         return bookNameInput;
     }
@@ -407,9 +413,7 @@ public class DisplaySummary extends AppCompatActivity {
     }
 
     /**
-     * モジュール名: 編集内容保存確認ダイアログ
-     * 概要: 戻るボタン押下時に保存確認を行い、「はい」で保存→ホーム遷移、
-     *       「いいえ」で即ホーム遷移する。
+     * 戻るボタン押下時に保存確認を行い、「はい」で保存→ホーム遷移、「いいえ」で即ホーム遷移する。
      */
     private void showSaveConfirmDialog() {
         new AlertDialog.Builder(this)
@@ -459,7 +463,4 @@ public class DisplaySummary extends AppCompatActivity {
         finish();
     }
 
-    public String getCurrentVolumeId() {
-        return currentVolumeId;
-    }
 }

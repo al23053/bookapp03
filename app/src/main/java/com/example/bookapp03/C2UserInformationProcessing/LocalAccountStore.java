@@ -54,19 +54,6 @@ public class LocalAccountStore {
     }
 
     /**
-     * UID をリストから削除して保存する
-     *
-     * @param context Context
-     * @param uid     削除するユーザ UID
-     */
-    public static void removeUid(Context context, String uid) {
-        List<String> list = loadUids(context);
-        if (list.remove(uid)) {
-            saveList(context, list);
-        }
-    }
-
-    /**
      * UID リストを SharedPreferences に書き込む
      *
      * @param context Context

@@ -228,7 +228,7 @@ public class DisplayHome extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                // 入力が変わったら、以前選択されたvolumeIdは無効化したい場合はcurrentVolumeId=""など
+                // 何もしない
             }
         });
 
@@ -246,6 +246,7 @@ public class DisplayHome extends AppCompatActivity {
 
     /**
      * Google Books APIで書籍を検索して候補を表示
+     * @param query 検索クエリ
      */
     private void searchBookSuggestions(String query) {
         Log.d(TAG, "書籍検索開始: " + query);
@@ -273,6 +274,7 @@ public class DisplayHome extends AppCompatActivity {
 
     /**
      * AutoCompleteTextViewのアダプターを更新
+     * @param books 検索結果の書籍リスト
      */
     private void updateAutoCompleteAdapter(List<Book> books) {
         String[] bookTitles = new String[books.size()];
@@ -306,7 +308,6 @@ public class DisplayHome extends AppCompatActivity {
             String uid = UserAuthManager.getCurrentUid();
             controlHighlightMemo = new ControlHighlightMemo(this, uid, volumeId);
 
-            // 以下は従来の処理
             String pageText = editPage.getText().toString().trim();
             String lineText = editLine.getText().toString().trim();
             String memo = editMemo.getText().toString().trim();
@@ -340,6 +341,8 @@ public class DisplayHome extends AppCompatActivity {
 
     /**
      * タイトル文字列から検索結果リストをたどり volumeId を返す
+     * @param title 検索対象のタイトル
+     * @return volumeId 検索結果のvolumeId
      */
     private String findVolumeIdByTitle(String title) {
         if (searchResults == null) return "";
@@ -461,6 +464,10 @@ public class DisplayHome extends AppCompatActivity {
         });
     }
 
+    /**
+     * ページ数・行数の入力値を取得
+     * @return 入力値
+     */
     private int getCurrentPageValue() {
         try {
             String pageText = editPage.getText().toString().trim();
@@ -483,6 +490,10 @@ public class DisplayHome extends AppCompatActivity {
         }
     }
 
+    /**
+     * 行数入力欄の入力値を取得する
+     * @return 入力値
+     */
     private int getCurrentLineValue() {
         try {
             String lineText = editLine.getText().toString().trim();
@@ -543,6 +554,9 @@ public class DisplayHome extends AppCompatActivity {
         );
     }
 
+    /**
+     * Google Books API サービスのシャットダウン
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
