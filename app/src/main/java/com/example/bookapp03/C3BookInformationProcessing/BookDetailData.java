@@ -92,11 +92,20 @@ public class BookDetailData {
     }
 
     /**
-     * 公開ステータスを取得する。
+     * 公開ステータスを日本語で取得する。
+     * 内部的な "public" や "private" の値を、表示用の「公開」「非公開」に変換して返す。
      *
-     * @return 公開ステータス ("public" または "private")
+     * @return 日本語の公開ステータス（"公開"、"非公開"）、または不明な場合は元の文字列か"不明"
      */
     public String getPublicStatus() {
-        return publicStatus;
+        if (this.publicStatus == null) {
+            return "不明";
+        } else if ("public".equalsIgnoreCase(this.publicStatus)) {
+            return "公開";
+        } else if ("private".equalsIgnoreCase(this.publicStatus)) {
+            return "非公開";
+        } else {
+            return this.publicStatus;
+        }
     }
 }
