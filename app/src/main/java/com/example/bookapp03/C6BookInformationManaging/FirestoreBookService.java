@@ -74,6 +74,8 @@ public class FirestoreBookService {
                 lowerCaseFavoriteGenres.add(genre.toLowerCase(Locale.getDefault()));
             }
         }
+        Log.d(TAG, "User Favorite Genres (lowercase): " + lowerCaseFavoriteGenres);
+
 
         db.collection("summaries")
                 .limit(FETCH_LIMIT_FOR_RANDOM)
@@ -207,7 +209,6 @@ public class FirestoreBookService {
                             if (volumeInfo.has("imageLinks")) {
                                 JsonObject imageLinks = volumeInfo.getAsJsonObject("imageLinks");
                                 String thumbnailUrl = null;
-                                // 可能な限り高解像度の画像を取得
                                 if (imageLinks.has("extraLarge")) {
                                     thumbnailUrl = imageLinks.get("extraLarge").getAsString();
                                 } else if (imageLinks.has("large")) {
@@ -236,6 +237,8 @@ public class FirestoreBookService {
                             }
                             book.setOverallSummary(overallSummaryFromFirestore);
 
+                            Log.d(TAG, "Fetched Book Categories from Google API for '" + book.getTitle() + "' (ID: " + book.getId() + "): " + book.getCategories());
+
                             callback.onSuccess(book);
                             return;
                         }
@@ -261,6 +264,8 @@ public class FirestoreBookService {
         List<Book> nonMatchingBooksFull = new ArrayList<>();
 
         for (Book book : uniqueFetchedBooks) {
+            Log.d(TAG, "Comparing Book Categories: " + book.getCategories() + " with User Favorite Genres: " + lowerCaseFavoriteGenres + " for book: " + book.getTitle());
+
             if (book.getCategories() != null && !book.getCategories().isEmpty() &&
                     isBookMatchingAnyGenre(book, lowerCaseFavoriteGenres)) {
                 matchingBooksFull.add(book);
@@ -287,13 +292,21 @@ public class FirestoreBookService {
 
     private boolean isBookMatchingAnyGenre(Book book, Set<String> lowerCaseFavoriteGenres) {
         if (book.getCategories() == null || book.getCategories().isEmpty()) {
+            Log.d(TAG, "Book '" + book.getTitle() + "' has no categories. Not matching.");
             return false;
         }
         for (String bookCategory : book.getCategories()) {
-            if (lowerCaseFavoriteGenres.contains(bookCategory.toLowerCase(Locale.getDefault()))) {
-                return true;
+            String lowerCaseBookCategory = bookCategory.toLowerCase(Locale.getDefault());
+            Log.d(TAG, "  - Checking book category: '" + bookCategory + "' (lower: '" + lowerCaseBookCategory + "') against user genres.");
+
+            for (String favoriteGenre : lowerCaseFavoriteGenres) {
+                if (lowerCaseBookCategory.contains(favoriteGenre)) {
+                    Log.d(TAG, "  - MATCH FOUND! Book category '" + bookCategory + "' contains user favorite genre '" + favoriteGenre + "'.");
+                    return true;
+                }
             }
         }
+        Log.d(TAG, "No matching genres found for book '" + book.getTitle() + "'.");
         return false;
     }
 }
