@@ -25,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bookapp03.R;
-import com.example.bookapp03.model.Review;
+import com.example.bookapp03.C3BookInformationProcessing.Review;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -78,20 +78,16 @@ public class UserReviewListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_review_list);
 
-        // Firebase Firestoreインスタンスの取得
         db = FirebaseFirestore.getInstance();
 
-        // UI要素の初期化
         bookTitleTextView = findViewById(R.id.bookTitleTextView);
         reviewsRecyclerView = findViewById(R.id.reviewsRecyclerView);
         backToSearchButton = findViewById(R.id.backToSearchButton);
 
-        // Intentから本のIDとタイトルを取得
         bookId = getIntent().getStringExtra("bookId");
-        bookTitle = getIntent().getStringExtra("bookTitle"); // ここでフィールドに代入
+        bookTitle = getIntent().getStringExtra("bookTitle");
 
-        Log.d("ReviewListDebug", "Received bookId in UserReviewListActivity: " + bookId); // ★ 追加
-        // 本のIDが取得できない場合の処理
+        Log.d("ReviewListDebug", "Received bookId in UserReviewListActivity: " + bookId);
         if (bookId == null || bookId.isEmpty()) {
             Toast.makeText(this, "本の情報がありません。", Toast.LENGTH_SHORT).show();
             finish();
@@ -150,10 +146,10 @@ public class UserReviewListActivity extends AppCompatActivity {
                                         if (nickname != null) {
                                             holder.usernameTextView.setText(nickname);
                                         } else {
-                                            holder.usernameTextView.setText("名無しユーザー"); // nicknameがない場合
+                                            holder.usernameTextView.setText("名無しユーザー");
                                         }
                                     } else {
-                                        holder.usernameTextView.setText("不明なユーザー"); // ユーザーが削除された場合など
+                                        holder.usernameTextView.setText("不明なユーザー");
                                     }
                                 } else {
                                     Log.e(TAG, "Error getting user document: ", task.getException());
@@ -161,7 +157,7 @@ public class UserReviewListActivity extends AppCompatActivity {
                                 }
                             });
                 } else {
-                    holder.usernameTextView.setText("ゲストユーザー"); // UIDがない場合
+                    holder.usernameTextView.setText("ゲストユーザー");
                 }
 
                 String comment = model.getComment();
@@ -173,8 +169,8 @@ public class UserReviewListActivity extends AppCompatActivity {
 
                 holder.itemView.setOnClickListener(v -> {
                     ReviewDetailBottomSheetFragment bottomSheet = ReviewDetailBottomSheetFragment.newInstance(
-                            model.getOverallSummary(),          // レビュー全文 (overallSummary)
-                            holder.usernameTextView.getText().toString() // 既に取得済みのユーザー名
+                            model.getOverallSummary(),
+                            holder.usernameTextView.getText().toString()
                     );
                     bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
                 });

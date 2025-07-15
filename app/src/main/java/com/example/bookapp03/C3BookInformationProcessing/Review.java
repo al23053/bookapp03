@@ -1,10 +1,15 @@
-package com.example.bookapp03.model; // あなたのパッケージ名に合わせる
-
 /**
- * 書籍レビューの情報を表現するモデルクラスです。
+ * モジュール名: Review
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/30
+ * 概要:　書籍レビューの情報を表現するモデルクラスです。
  * ユーザーID、ユーザー名、評価、コメント、およびレビュー作成日時を格納します。
  * Firebase Firestoreへの保存に適した構造になっています。
+ * 履歴:
+ * 2025/06/30 三浦寛生 新規作成
  */
+package com.example.bookapp03.C3BookInformationProcessing;
+
 public class Review {
     /**
      * レビューのコメント本文または要約。Firestoreの 'overallSummary' フィールドに対応。
@@ -53,8 +58,6 @@ public class Review {
         this.volumeId = volumeId;
         this.isPublic = isPublic;
     }
-
-    // GetterとSetter (必須)
 
     /**
      * レビューのコメント本文または要約を取得します。
@@ -128,8 +131,6 @@ public class Review {
         isPublic = aPublic;
     }
 
-    // 既存のUserReviewListActivityで使用されているメソッド名に合わせるためのエイリアス
-    // (UIロジックの修正を最小限にするため)
     public String getComment() {
         return overallSummary;
     }

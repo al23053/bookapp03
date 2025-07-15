@@ -1,4 +1,13 @@
-package com.example.bookapp03.adapter;
+/**
+ * モジュール名: BookCardAdapter
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/30
+ * 概要:　書籍情報をカード形式で表示するためのRecyclerView用アダプターです。
+ * 横スクロールリストなどで書籍のサムネイルとタイトルを表示します。
+ * 履歴:
+ * 2025/06/30 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C1UIProcessing;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,16 +18,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide; // Glideのインポート（要追加）
+import com.bumptech.glide.Glide;
 import com.example.bookapp03.R;
-import com.example.bookapp03.model.Book;
+import com.example.bookapp03.C4SearchProcessing.Book;
 
 import java.util.List;
 
-/**
- * 書籍情報をカード形式で表示するためのRecyclerView用アダプターです。
- * 横スクロールリストなどで書籍のサムネイルとタイトルを表示します。
- */
 public class BookCardAdapter extends RecyclerView.Adapter<BookCardAdapter.BookViewHolder> {
 
     /**
@@ -29,7 +34,7 @@ public class BookCardAdapter extends RecyclerView.Adapter<BookCardAdapter.BookVi
     /**
      * 書籍カードがクリックされたときに通知されるリスナー。
      */
-    private OnBookClickListener listener; // クリックリスナー
+    private OnBookClickListener listener;
 
     /**
      * 書籍カードのクリックイベントを処理するためのインターフェースです。
@@ -61,7 +66,7 @@ public class BookCardAdapter extends RecyclerView.Adapter<BookCardAdapter.BookVi
      */
     public void setBookList(List<Book> newBookList) {
         this.bookList = newBookList;
-        notifyDataSetChanged(); // データが変更されたことをアダプターに通知
+        notifyDataSetChanged();
     }
 
     /**
@@ -134,19 +139,16 @@ public class BookCardAdapter extends RecyclerView.Adapter<BookCardAdapter.BookVi
         public void bind(final Book book, final OnBookClickListener listener) {
             bookTitleTextView.setText(book.getTitle());
 
-            // Glideを使って画像のURLをImageViewに読み込む
             if (book.getThumbnailUrl() != null && !book.getThumbnailUrl().isEmpty()) {
                 Glide.with(itemView.getContext())
                         .load(book.getThumbnailUrl())
-                        .placeholder(R.drawable.ic_book_placeholder) // プレースホルダー画像（別途作成）
-                        .error(R.drawable.ic_broken_image) // エラー画像（別途作成）
+                        .placeholder(R.drawable.ic_book_placeholder)
+                        .error(R.drawable.ic_broken_image)
                         .into(bookThumbnailImageView);
             } else {
-                // サムネイルがない場合
                 bookThumbnailImageView.setImageResource(R.drawable.ic_book_placeholder);
             }
 
-            // アイテムクリックリスナーを設定
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onBookClick(book);

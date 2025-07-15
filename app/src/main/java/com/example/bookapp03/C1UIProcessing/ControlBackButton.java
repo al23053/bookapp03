@@ -23,7 +23,7 @@ public class ControlBackButton {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    activity.finish(); // Activityを終了する
+                    activity.finish();
                 }
             });
         }

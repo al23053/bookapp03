@@ -10,7 +10,7 @@
 
     <application
         android:usesCleartextTraffic="true"
-        android:name=".Searchmain.MyApplication"  android:allowBackup="true"
+        android:name=".C6BookInformationManaging.MyApplication"  android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"

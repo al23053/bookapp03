@@ -15,7 +15,7 @@
     android:layout_height="match_parent"
     tools:context=".C1UIProcessing.DisplaySearchBookNameWindow">
 
-    <com.example.bookapp03.view.SearchInputView
+    <com.example.bookapp03.C1UIProcessing.SearchInputView
         android:id="@+id/main_search_input_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

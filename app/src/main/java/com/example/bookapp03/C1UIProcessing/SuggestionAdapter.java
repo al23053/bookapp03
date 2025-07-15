@@ -1,4 +1,13 @@
-package com.example.bookapp03.adapter;
+/**
+ * モジュール名: SuggestionAdapter
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/30
+ * 概要:　検索候補をリスト形式で表示するためのRecyclerView用アダプターです。
+ * ユーザーが検索バーに文字を入力する際に表示される候補リストの表示を管理します。
+ * 履歴:
+ * 2025/06/30 三浦寛生 新規作成
+ */
+package com.example.bookapp03.C1UIProcessing;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +22,6 @@ import com.example.bookapp03.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 検索候補（サジェスト）をリスト形式で表示するためのRecyclerView用アダプターです。
- * ユーザーが検索バーに文字を入力する際に表示される候補リストの表示を管理します。
- */
 public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.SuggestionViewHolder> {
 
     /**
@@ -49,18 +54,6 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.Su
     public SuggestionAdapter(OnSuggestionClickListener listener) {
         this.suggestions = new ArrayList<>();
         this.listener = listener;
-    }
-
-    /**
-     * 検索候補のリストを更新し、RecyclerViewの表示を最新の状態にします。
-     * 古いデータをクリアし、新しいデータを追加します。
-     *
-     * @param newSuggestions 新しい検索候補のリスト
-     */
-    public void updateSuggestions(List<String> newSuggestions) {
-        this.suggestions.clear(); // 既存のデータをクリア
-        this.suggestions.addAll(newSuggestions); // 新しいデータを追加
-        notifyDataSetChanged(); // RecyclerView を更新
     }
 
     /**

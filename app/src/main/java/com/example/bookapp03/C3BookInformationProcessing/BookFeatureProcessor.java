@@ -11,8 +11,8 @@ package com.example.bookapp03.C3BookInformationProcessing;
 
 import android.util.Log;
 
-import com.example.bookapp03.manager.BookAppManager;
-import com.example.bookapp03.model.Book;
+import com.example.bookapp03.C7SearchManaging.BookAppManager;
+import com.example.bookapp03.C4SearchProcessing.Book;
 
 import java.util.List;
 

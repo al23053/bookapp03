@@ -31,7 +31,7 @@ import com.example.bookapp03.C6BookInformationManaging.database.BookInformationD
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoDao;
 import com.example.bookapp03.C6BookInformationManaging.database.HighlightMemoEntity;
 import com.example.bookapp03.R;
-import com.example.bookapp03.model.Book;
+import com.example.bookapp03.C4SearchProcessing.Book;
 import com.example.bookapp03.C7SearchManaging.GoogleBooksApiService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 

@@ -15,7 +15,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Button;
 
-import com.example.bookapp03.R; // あなたのRクラスのパス
+import com.example.bookapp03.R;
 
 public class NoReviewsActivity extends AppCompatActivity {
 
@@ -30,22 +30,17 @@ public class NoReviewsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_no_reviews);
 
-        // UI要素の参照を取得
         TextView messageTextView = findViewById(R.id.noReviewsMessage);
         Button backButton = findViewById(R.id.noReviewsBackButton);
 
-        // 前の画面から本のタイトル情報を受け取る
         String bookTitle = getIntent().getStringExtra("bookTitle");
 
         if (bookTitle != null) {
             messageTextView.setText(bookTitle + " にはまだ全体まとめが登録されていません。");
         } else {
-            // 書籍タイトルが渡されなかった場合のメッセージ
             messageTextView.setText("この本にはまだ全体まとめが登録されていません。");
         }
 
-        // 「戻る」ボタンのクリックリスナーを設定
-        // このActivityを終了して前の画面に戻ります。
         ControlBackButton.setupBackButton(backButton, this);
     }
 }

@@ -44,20 +44,17 @@ public class BookSelectionActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         db = FirebaseFirestore.getInstance();
 
-        // SearchResultActivityから渡された本のIDとタイトルを取得
         Intent intent = getIntent();
         String selectedBookId = intent.getStringExtra("bookId");
         String selectedBookTitle = intent.getStringExtra("bookTitle");
 
         if (selectedBookId != null && !selectedBookId.isEmpty()) {
-            // 本のIDが有効であれば、すぐにデータベースチェックを実行
             Log.d(TAG, "BookSelectionActivity: 自動チェックを開始します。ID: " + selectedBookId + ", Title: " + selectedBookTitle);
             checkReviews(selectedBookId, selectedBookTitle);
         } else {
-            // bookIdが渡されなかった場合はエラー表示または前の画面に戻る
             Toast.makeText(this, "本の情報が正しく渡されませんでした。", Toast.LENGTH_LONG).show();
             Log.e(TAG, "BookSelectionActivity: bookId が null または空です。");
-            finish(); // このActivityを終了して前の画面に戻る
+            finish();
         }
     }
 
@@ -71,29 +68,23 @@ public class BookSelectionActivity extends AppCompatActivity {
     private void checkReviews(String bookId, String bookTitle) {
         Log.d(TAG, "Checking reviews in 'summaries' collection for volumeId: " + bookId);
 
-        // summariesコレクションをクエリし、volumeIdがbookIdに一致するドキュメントを探す
         db.collection("summaries")
                 .whereEqualTo("volumeId", bookId)
-                .limit(1) // 少なくとも1件あるかを確認するだけで良いので、取得数を1に制限
+                .limit(1)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         QuerySnapshot querySnapshot = task.getResult();
                         if (querySnapshot != null && !querySnapshot.isEmpty()) {
-                            // レビューが1件以上存在する場合
                             Log.d(TAG, "Reviews found in 'summaries' for book: " + bookTitle);
-                            navigateToUserReviewList(bookId, bookTitle); // レビュー一覧画面へ遷移
+                            navigateToUserReviewList(bookId, bookTitle);
                         } else {
-                            // レビューが1件も存在しない場合
                             Log.d(TAG, "No reviews found in 'summaries' for book: " + bookTitle);
-                            navigateToNoReviewsActivity(bookId, bookTitle); // レビューなし画面へ遷移
+                            navigateToNoReviewsActivity(bookId, bookTitle);
                         }
                     } else {
-                        // レビュー確認中にエラーが発生した場合
                         Log.e(TAG, "Error checking reviews in 'summaries': ", task.getException());
                         Toast.makeText(this, "レビューの確認中にエラーが発生しました。", Toast.LENGTH_SHORT).show();
-                        // エラーが発生した場合も、レビューがないとみなしてNoReviewsActivityへ遷移させることが一般的です。
-                        // (例: ネットワーク接続がない、権限エラーなど)
                         navigateToNoReviewsActivity(bookId, bookTitle);
                     }
                 });

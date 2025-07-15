@@ -1,9 +1,18 @@
+/**
+ * モジュール名: GoogleBooksApiService
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/30
+ * 概要:　Google Books APIにアクセスするためのサービスです。
+ * 書籍の検索候補の取得と書籍情報の検索ロジックを担当します。
+ * 履歴:
+ * 2025/06/30 三浦寛生 新規作成
+ */
 package com.example.bookapp03.C7SearchManaging;
 
 import android.util.Log;
 
-import com.example.bookapp03.model.Book;
-import com.example.bookapp03.model.BooksApiResponse;
+import com.example.bookapp03.C4SearchProcessing.Book;
+import com.example.bookapp03.C4SearchProcessing.BooksApiResponse;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -19,10 +28,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-/**
- * Google Books APIにアクセスするためのサービスです。
- * 書籍の検索候補の取得と書籍情報の検索ロジックを担当します。
- */
 public class GoogleBooksApiService {
 
     private static final String TAG = "GoogleBooksApiService";
@@ -47,15 +52,14 @@ public class GoogleBooksApiService {
      * OkHttpClient、Gson、および非同期処理用のExecutorServiceを初期化します。
      */
     public GoogleBooksApiService() {
-        // OkHttpClient を初期化 (タイムアウトを設定)
         this.okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS) // 接続タイムアウト
-                .writeTimeout(10, TimeUnit.SECONDS)    // 書き込みタイムアウト
-                .readTimeout(30, TimeUnit.SECONDS)     // 読み込みタイムアウト
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
                 .build();
         this.gson = new Gson();
         this.executorService = Executors.newFixedThreadPool(4);
-        checkApiKey(); // APIキーのチェック
+        checkApiKey();
     }
 
     /**
@@ -90,11 +94,10 @@ public class GoogleBooksApiService {
             return;
         }
 
-        // ExecutorService を使用して非同期でAPI呼び出しを実行
         executorService.execute(() -> {
             HttpUrl.Builder urlBuilder = HttpUrl.parse(API_BASE_URL + "volumes").newBuilder();
             urlBuilder.addQueryParameter("q", query);
-            urlBuilder.addQueryParameter("maxResults", "5"); // 取得する候補の数
+            urlBuilder.addQueryParameter("maxResults", "5");
             urlBuilder.addQueryParameter("key", API_KEY);
 
             String url = urlBuilder.build().toString();
@@ -163,7 +166,7 @@ public class GoogleBooksApiService {
         executorService.execute(() -> {
             HttpUrl.Builder urlBuilder = HttpUrl.parse(API_BASE_URL + "volumes").newBuilder();
             urlBuilder.addQueryParameter("q", query);
-            urlBuilder.addQueryParameter("maxResults", "40"); // より多くの結果を取得
+            urlBuilder.addQueryParameter("maxResults", "40");
             urlBuilder.addQueryParameter("key", API_KEY);
 
             String url = urlBuilder.build().toString();
@@ -177,7 +180,6 @@ public class GoogleBooksApiService {
                     List<Book> books = new ArrayList<>();
                     if (apiResponse != null && apiResponse.getItems() != null) {
                         for (BooksApiResponse.Item item : apiResponse.getItems()) {
-                            // APIレスポンスのItemからBookモデルに変換
                             Book book = convertApiItemToBook(item);
                             if (book != null) {
                                 books.add(book);
@@ -229,7 +231,7 @@ public class GoogleBooksApiService {
                     isbn = identifier.getIdentifier();
                     break;
                 }
-                if ("ISBN_10".equals(identifier.getType()) && isbn == null) { // ISBN_13がなければISBN_10を使う
+                if ("ISBN_10".equals(identifier.getType()) && isbn == null) {
                     isbn = identifier.getIdentifier();
                 }
             }
@@ -248,11 +250,11 @@ public class GoogleBooksApiService {
         executorService.shutdown();
         try {
             if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                executorService.shutdownNow(); // タイムアウト後も終了しない場合、即時シャットダウン
+                executorService.shutdownNow();
             }
         } catch (InterruptedException e) {
-            executorService.shutdownNow(); // シャットダウン中に割り込まれた場合も即時シャットダウン
-            Thread.currentThread().interrupt(); // 現在のスレッドの割り込み状態を再設定
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
         }
         Log.d(TAG, "GoogleBooksApiService ExecutorService shut down.");
     }

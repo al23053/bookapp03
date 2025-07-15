@@ -19,8 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookapp03.R;
-import com.example.bookapp03.adapter.BookCardAdapter;
-import com.example.bookapp03.model.Book;
+import com.example.bookapp03.C4SearchProcessing.Book;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

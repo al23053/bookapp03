@@ -1,3 +1,12 @@
+/**
+ * モジュール名: UserGenreService
+ * 作成者: 三浦寛生
+ * 作成日: 2025/06/30
+ * 概要:　Firebase Firestoreからユーザーのジャンル情報を取得・保存するためのサービスです。
+ * ユーザーの好きなジャンルに関するデータベース操作をカプセル化します。
+ * 履歴:
+ * 2025/06/30 三浦寛生 新規作成
+ */
 package com.example.bookapp03.C5UserInformationManaging;
 
 import android.util.Log;
@@ -8,10 +17,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Firebase Firestoreからユーザーのジャンル情報を取得・保存するためのサービスです。
- * ユーザーの好きなジャンルに関するデータベース操作をカプセル化します。
- */
 public class UserGenreService {
 
     private static final String TAG = "UserGenreService";
@@ -54,30 +59,27 @@ public class UserGenreService {
      * @param callback 結果を通知するためのUserGenresCallback
      */
     public void getUserFavoriteGenres(String userId, UserGenresCallback callback) {
-        db.collection("users") // 'users' コレクションにアクセス
-                .document(userId) // 特定のユーザーIDのドキュメントにアクセス
-                .get() // ドキュメントを取得
-                .addOnCompleteListener(task -> { // 取得完了時のリスナーを設定
+        db.collection("users")
+                .document(userId)
+                .get()
+                .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            // Firestoreドキュメントから'favoriteGenres'フィールドを取得
-                            // フィールド名が 'favoriteGenres' で List<String> 型であると仮定しています。
                             List<String> genres = (List<String>) document.get("genre");
                             if (genres == null) {
-                                genres = new ArrayList<>(); // フィールドが存在しない、またはnullの場合は空のリストを返す
+                                genres = new ArrayList<>();
                             }
                             Log.d(TAG, "Fetched genres for user " + userId + ": " + genres);
-                            callback.onGenresReceived(genres); // 正常に取得できた場合、コールバックでジャンルリストを通知
+                            callback.onGenresReceived(genres);
                         } else {
                             Log.d(TAG, "No such document for user: " + userId);
-                            callback.onGenresReceived(new ArrayList<>()); // ドキュメントが存在しない場合は空のリストを返す
+                            callback.onGenresReceived(new ArrayList<>());
                         }
                     } else {
-                        // 取得中にエラーが発生した場合
                         String errorMessage = "Failed to fetch user genres: " + task.getException().getMessage();
                         Log.e(TAG, errorMessage, task.getException());
-                        callback.onFailure(errorMessage); // エラーメッセージをコールバックで通知
+                        callback.onFailure(errorMessage);
                     }
                 });
     }
